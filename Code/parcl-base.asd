@@ -9,10 +9,6 @@
   :description "Portable Package System, base system"
   :depends-on (#:s-expression-syntax))
 
-(defparameter *component-designators*
-  '((:file "generic-functions")
-    (:file "package-defclass")))
-
 (defparameter *string-designators*
   '(#:home-package
     #:find-package
