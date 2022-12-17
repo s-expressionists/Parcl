@@ -10,3 +10,9 @@
 ;;; PACKAGE argument of this function must be a package object,
 ;;; whereas the standard function takes a package designator.
 (defgeneric name (client package))
+
+;;; This function is used to implement the standard function
+;;; RENAME-PACKAGE.  The PACKAGE argument of this function must be a
+;;; package object.  This function does not check whether NEW-NAME is
+;;; the name of an existing package.
+(defgeneric (setf name) (new-name client package))
