@@ -36,4 +36,14 @@
 ;;; name or the nickname of any existing package.  The return value of
 ;;; this function is NEW-NICKNAMES as required by the Common Lisp
 ;;; standard.
-(defgeneric (setf name) (new-nicknames client package))
+(defgeneric (setf nicknames) (new-nicknames client package))
+
+;;; This function is used to implement the standard function
+;;; PACKAGE-SHADOWING-SYMBOLS.  Contrary to the Common Lisp standard
+;;; function, the PACKAGE argument of this function must be a package
+;;; object, whereas the standard function takes a package designator.
+;;; The return value is a list of symbols that have been defined as
+;;; shadowing symbols of PACKAGE.  This list is not freshly allocated,
+;;; so if client code wants a fresh list, it must copy what this
+;;; function returns.
+(defgeneric shadowing-symbols (client package))
