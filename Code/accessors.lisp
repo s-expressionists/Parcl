@@ -47,3 +47,10 @@
 ;;; so if client code wants a fresh list, it must copy what this
 ;;; function returns.
 (defgeneric shadowing-symbols (client package))
+
+;;; This function is used to implement the standard functions SHADOW
+;;; and SHADOWING-IMPORT.  The PACKAGE argument of this function must
+;;; be a package object.  NEW-SYMBOLS becomes the new list of
+;;; shadowing symbols of PACKAGE.  The return value of this function
+;;; is NEW-SYMBOLS as required by the Common Lisp standard.
+(defgeneric (setf shadowing-symbols) (new-symbols client package))
