@@ -54,3 +54,12 @@
 ;;; shadowing symbols of PACKAGE.  The return value of this function
 ;;; is NEW-SYMBOLS as required by the Common Lisp standard.
 (defgeneric (setf shadowing-symbols) (new-symbols client package))
+
+;;; This function is used to implement the standard function
+;;; PACKAGE-USE-LIST.  Contrary to the Common Lisp standard function,
+;;; the PACKAGE argument of this function must be a package object,
+;;; whereas the standard function takes a package designator.  The
+;;; return value is a list of package objects.  This list is not
+;;; freshly allocated, so if client code wants a fresh list, it must
+;;; copy what this function returns.
+(defgeneric package-use-list (client package))
