@@ -33,9 +33,11 @@
 ;;; package object.  NEW-NICKNAMES is a list of strings that become
 ;;; the new list of nicknames of PACKAGE.  This function does not
 ;;; check whether NEW-NICKNAMES contains a string that is already the
-;;; name or the nickname of any existing package.  The return value of
-;;; this function is NEW-NICKNAMES as required by the Common Lisp
-;;; standard.
+;;; name or the nickname of any existing package.  This function does
+;;; not copy the NEW-NICKNAMES list, so client code should make sure
+;;; this list is not used after being passed as an argument to this
+;;; function.  The return value of this function is NEW-NICKNAMES as
+;;; required by the Common Lisp standard.
 (defgeneric (setf nicknames) (new-nicknames client package))
 
 ;;; This function is used to implement the standard function
