@@ -84,3 +84,13 @@
 ;;; freshly allocated, so if client code wants a fresh list, it must
 ;;; copy what this function returns.
 (defgeneric package-used-by-list (client package))
+
+;;; This function is used to implement the standard functions
+;;; USE-PACKAGE and UNUSE-PACKAGE.  The PACKAGE argument of this
+;;; function must be a package object.  NEW-PACKAGES is a list of
+;;; package objects that become the new list of packages used by
+;;; PACKAGE.  This function does not copy the NEW-PACKAGES list, so
+;;; client code should make sure this list is not used after being
+;;; passed as an argument to this function.  The return value of this
+;;; function is NEW-PACKAGES as required by the Common Lisp standard.
+(defgeneric (setf package-used-by-list) (new-packages client package))
