@@ -114,6 +114,17 @@
 ;;; list returned by EXTERNAL-SYMBOLS, because it is typically faster.
 (defgeneric find-external-symbol (client package))
 
+;;; Given a symbol, add it as an external symbol to PACKAGE.  The
+;;; symbol must not already be an external or an internal symbol of
+;;; PACKAGE, but this situation is not tested for.  Also, if the
+;;; package of SYMBOL is NIL, we do not modify it.
+(defgeneric add-external-symbol (client package symbol))
+
+;;; Given a symbol, remove it as an external symbol from PACKAGE.  The
+;;; symbol must already be an external symbol of PACKAGE, but this
+;;; situation is not tested for.
+(defgeneric remove-external-symbol (client package symbol))
+
 ;;; Given a string, if an internal symbol with that name exists in
 ;;; PACKAGE, then return two values, the symbol and T.  If there is no
 ;;; internal symbol with that name in PACKAGE, then return NIL and
@@ -121,9 +132,31 @@
 ;;; list returned by INTERNAL-SYMBOLS, because it is typically faster.
 (defgeneric find-internal-symbol (client package))
 
+;;; Given a symbol, add it as an internal symbol to PACKAGE.  The
+;;; symbol must not already be an internal or an internal symbol of
+;;; PACKAGE, but this situation is not tested for.  Also, if the
+;;; package of SYMBOL is NIL, we do not modify it.
+(defgeneric add-internal-symbol (client package symbol))
+
+;;; Given a symbol, remove it as an internal symbol from PACKAGE.  The
+;;; symbol must already be an internal symbol of PACKAGE, but this
+;;; situation is not tested for.
+(defgeneric remove-internal-symbol (client package symbol))
+
 ;;; Given a string, if a shadowing symbol with that name exists in
 ;;; PACKAGE, then return two values, the symbol and T.  If there is no
 ;;; shadowing symbol with that name in PACKAGE, then return NIL and
 ;;; NIL.  This function exists as a convenience, but it is implemented
 ;;; as a traversal of the list returned by SHADOWING-SYMBOLS.
 (defgeneric find-shadowing-symbol (client package))
+
+;;; Given a symbol, add it as a shadowing symbol to PACKAGE.  The
+;;; symbol must not already be a shadowing or an internal symbol of
+;;; PACKAGE, but this situation is not tested for.  Also, if the
+;;; package of SYMBOL is NIL, we do not modify it.
+(defgeneric add-shadowing-symbol (client package symbol))
+
+;;; Given a symbol, remove it as a shadowing symbol from PACKAGE.  The
+;;; symbol must already be a shadowing symbol of PACKAGE, but this
+;;; situation is not tested for.
+(defgeneric remove-shadowing-symbol (client package symbol))
