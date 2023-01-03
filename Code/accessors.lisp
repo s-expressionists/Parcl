@@ -64,7 +64,7 @@
 ;;; return value is a list of package objects.  This list is not
 ;;; freshly allocated, so if client code wants a fresh list, it must
 ;;; copy what this function returns.
-(defgeneric package-use-list (client package))
+(defgeneric use-list (client package))
 
 ;;; This function is used to implement the standard functions
 ;;; USE-PACKAGE and UNUSE-PACKAGE.  The PACKAGE argument of this
@@ -74,7 +74,7 @@
 ;;; client code should make sure this list is not used after being
 ;;; passed as an argument to this function.  The return value of this
 ;;; function is NEW-PACKAGES as required by the Common Lisp standard.
-(defgeneric (setf package-use-list) (new-packages client package))
+(defgeneric (setf use-list) (new-packages client package))
 
 ;;; This function is used to implement the standard function
 ;;; PACKAGE-USED-BY-LIST.  Contrary to the Common Lisp standard
@@ -83,7 +83,7 @@
 ;;; The return value is a list of package objects.  This list is not
 ;;; freshly allocated, so if client code wants a fresh list, it must
 ;;; copy what this function returns.
-(defgeneric package-used-by-list (client package))
+(defgeneric used-by-list (client package))
 
 ;;; This function is used to implement the standard functions
 ;;; USE-PACKAGE and UNUSE-PACKAGE.  The PACKAGE argument of this
@@ -93,7 +93,7 @@
 ;;; client code should make sure this list is not used after being
 ;;; passed as an argument to this function.  The return value of this
 ;;; function is NEW-PACKAGES as required by the Common Lisp standard.
-(defgeneric (setf package-used-by-list) (new-packages client package))
+(defgeneric (setf used-by-list) (new-packages client package))
 
 ;;; Return a list of all the external symbols of PACKAGE.  This list
 ;;; must not be mutated as it reveals the internal state of the
