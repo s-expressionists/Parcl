@@ -94,3 +94,15 @@
 ;;; passed as an argument to this function.  The return value of this
 ;;; function is NEW-PACKAGES as required by the Common Lisp standard.
 (defgeneric (setf package-used-by-list) (new-packages client package))
+
+;;; Return a list of all the external symbols of PACKAGE.  This list
+;;; must not be mutated as it reveals the internal state of the
+;;; package.  The list returned by this function can be used to
+;;; implement iterators that traverse the external symbols.
+(defgeneric external-symbols (package))
+
+;;; Return a list of all the internal symbols of PACKAGE.  This list
+;;; must not be mutated as it reveals the internal state of the
+;;; package.  The list returned by this function can be used to
+;;; implement iterators that traverse the internal symbols.
+(defgeneric internal-symbols (package))
