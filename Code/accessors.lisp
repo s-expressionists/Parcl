@@ -108,8 +108,8 @@
 (defgeneric internal-symbols (client package))
 
 ;;; Given a string, if an external symbol with that name exists in
-;;; PACKAGE, then return two values, the symbol and T.  If there is no
-;;; external symbol with that name in PACKAGE, then return NIL and
+;;; PACKAGE, then return two values, the symbol and true.  If there is
+;;; no external symbol with that name in PACKAGE, then return NIL and
 ;;; NIL.  It is preferable to use this function over traversing the
 ;;; list returned by EXTERNAL-SYMBOLS, because it is typically faster.
 (defgeneric find-external-symbol (client package name))
@@ -126,8 +126,8 @@
 (defgeneric remove-external-symbol (client package symbol))
 
 ;;; Given a string, if an internal symbol with that name exists in
-;;; PACKAGE, then return two values, the symbol and T.  If there is no
-;;; internal symbol with that name in PACKAGE, then return NIL and
+;;; PACKAGE, then return two values, the symbol and true.  If there is
+;;; no internal symbol with that name in PACKAGE, then return NIL and
 ;;; NIL.  It is preferable to use this function over traversing the
 ;;; list returned by INTERNAL-SYMBOLS, because it is typically faster.
 (defgeneric find-internal-symbol (client package name))
@@ -144,8 +144,8 @@
 (defgeneric remove-internal-symbol (client package symbol))
 
 ;;; Given a string, if a shadowing symbol with that name exists in
-;;; PACKAGE, then return two values, the symbol and T.  If there is no
-;;; shadowing symbol with that name in PACKAGE, then return NIL and
+;;; PACKAGE, then return two values, the symbol and true.  If there is
+;;; no shadowing symbol with that name in PACKAGE, then return NIL and
 ;;; NIL.  This function exists as a convenience, but it is implemented
 ;;; as a traversal of the list returned by SHADOWING-SYMBOLS.
 (defgeneric find-shadowing-symbol (client package name))
