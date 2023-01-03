@@ -6,4 +6,5 @@
 (defsystem #:parcl-class
   :serial t
   :components
-  ((:file "package-defclass")))
+  ((:file "packages")
+   (:file "package-defclass")))
