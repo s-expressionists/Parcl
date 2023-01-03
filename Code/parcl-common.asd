@@ -4,4 +4,5 @@
   ((:file "accessors")
    (:file "generic-functions")
    (:file "package-defclass")
+   (:file "conditions")
    (:file "common-lisp-symbol-names")))
