@@ -1,4 +1,4 @@
-(cl:in-package #:parcl)
+(cl:in-package #:parcl-class)
 
 (defgeneric name (package))
 
