@@ -2,4 +2,4 @@
 
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.
-(defgeneric find-symbol (client package symbol-name))
+(defgeneric find-symbol (client package name))
