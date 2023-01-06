@@ -10,3 +10,7 @@
 ;;; code is responsible for setting the home package of SYMBOL to
 ;;; PACKAGE.
 (defgeneric import (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; USE-PACKAGE.
+(defgeneric use-package (client package package-to-use))
