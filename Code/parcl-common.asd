@@ -7,5 +7,5 @@
    (:file "conditions")
    (:file "find-symbol-defmethod")
    (:file "import-defmethod")
-   (:file "use-package-defmethod")
+   (:file "use-packages-defmethod")
    (:file "common-lisp-symbol-names")))
