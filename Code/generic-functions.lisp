@@ -13,4 +13,4 @@
 
 ;;; This function can be used to implement the standard function
 ;;; USE-PACKAGE.
-(defgeneric use-package (client package package-to-use))
+(defgeneric use-packages (client package packages-to-use))
