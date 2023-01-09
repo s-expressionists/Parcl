@@ -1,12 +1,10 @@
 (cl:in-package #:parcl)
 
-(defun check-for-conflict (client package symbol)
-  (check-for-conflict-with-present client package symbol)
-  (loop for used-package in (use-list package)
-        do (check-for-conflict-with-inherited
-            client package symbol used-package)))))
-
-(defmethod use-package (client package package-to-use)
-  (loop for symbol in (external-symbols-list client package-to-user)
-        do (check-for-conflict client package symbol))
-  (push package-to-use (use-list client package)))
+(defmethod use-packages (client package packages-to-use)
+  (let (;; The keys of hash table are symbol names.  The value of a
+        ;; key is is a list with one element for each distinct symbol
+        ;; with the key as a name.  Each element is alist where the
+        ;; CAR is the symbol, and the CDR is a list of packages for
+        ;; which there might be a confligt.
+        (conflicts (make-hash-table :test #'equal)))
+    nil))
