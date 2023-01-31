@@ -13,5 +13,5 @@
                     do (multiple-value-bind (symbol present-p)
                            (find-external-symbol client used-package name)
                          (when present-p
-                           (return symbol :inherited)))
-                    finally (return nil nil)))))))
+                           (return (values symbol :inherited))))
+                    finally (return (values nil nil))))))))
