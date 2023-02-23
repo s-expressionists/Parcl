@@ -58,37 +58,37 @@
 
 (defclass package ()
   ((%name
-    :initarg :name
-    :accessor name)
+      :initarg :name
+      :accessor name)
    (%nicknames
-    :initarg :nicknames
-    :initform '()
-    :accessor nicknames)
+      :initarg :nicknames
+      :initform '()
+      :accessor nicknames)
    (%local-nicknames
-    :initarg :nicknames
-    :initform '()
-    :accessor local-nicknames)
+      :initarg :nicknames
+      :initform '()
+      :accessor local-nicknames)
    (%use-list
-    :initarg :use-list
-    :initform '()
-    :accessor use-list)
+      :initarg :use-list
+      :initform '()
+      :accessor use-list)
    (%used-by-list
-    :initarg :used-by-list
-    :initform '()
-    :accessor used-by-list)
+      :initarg :used-by-list
+      :initform '()
+      :accessor used-by-list)
    (%external-symbols-table
-    :initform (make-hash-table :test #'equal)
-    :reader external-symbols)
+      :initform (make-hash-table :test #'equal)
+      :reader external-symbols)
    (%external-symbols-list
-    :initform '()
-    :accessor external-symbols-list)
+      :initform '()
+      :accessor external-symbols-list)
    (%internal-symbols-table
-    :initform (make-hash-table :test #'equal)
-    :reader internal-symbols)
+      :initform (make-hash-table :test #'equal)
+      :reader internal-symbols)
    (%internal-symbols-list
-    :initform '()
-    :accessor internal-symbols-list)
+      :initform '()
+      :accessor internal-symbols-list)
    (%shadowing-symbols
-    :initarg :shadowing-symbols
-    :initform '()
-    :accessor shadowing-symbols)))
+      :initarg :shadowing-symbols
+      :initform '()
+      :accessor shadowing-symbols)))
