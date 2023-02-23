@@ -5,7 +5,7 @@
         ;; is a list with one element for each distinct symbol with the
         ;; key as a name. Each element is a list where the CAR is the
         ;; symbol, and the CDR is a list of packages for which there
-        ;; might be a confligt.
+        ;; might be a conflict.
         (conflicts-table (make-hash-table :test #'equal)))
     (flet ((maybe-add-symbol (symbol supplying-package)
              (unless (member symbol (parcl-class:shadowing-symbols package))
