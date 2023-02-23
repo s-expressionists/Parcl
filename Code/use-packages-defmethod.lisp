@@ -3,8 +3,43 @@
 (defmethod use-packages (client package packages-to-use)
   (let (;; The keys of hash table are symbol names. The value of a key
         ;; is a list with one element for each distinct symbol with the
-        ;; key as a name. Each element is alist where the CAR is the
+        ;; key as a name. Each element is a list where the CAR is the
         ;; symbol, and the CDR is a list of packages for which there
         ;; might be a confligt.
-        (conflicts (make-hash-table :test #'equal)))
-    nil))
+        (conflicts-table (make-hash-table :test #'equal)))
+    (flet ((maybe-add-symbol (symbol supplying-package)
+             (unless (member symbol (parcl-class:shadowing-symbols package))
+               (let* ((name (symbol-name symbol))
+                      (conflicts (gethash name conflicts-table))
+                      (entry (find symbol conflicts
+                                   :test #'eq :key #'car)))
+                 (if (null entry)
+                     (push (list symbol supplying-package)
+                           (gethash name conflicts-table))
+                     (push supplying-package
+                           (cdr entry)))))))
+      (loop for package in packages-to-use
+            do (loop for symbol in (parcl-class:external-symbols package)
+                     do (maybe-add-symbol symbol package)))
+      ;; It is possible that one of the already used packages has a
+      ;; symbol that conflicts.
+      (loop for package in (parcl-class:use-list package)
+            do (loop for symbol in (parcl-class:external-symbols package)
+                     do (maybe-add-symbol symbol package)))
+      ;; We also need to check the internal and external symbos of
+      ;; PACKAGE.
+      (loop for symbol in (parcl-class:internal-symbols package)
+            do (maybe-add-symbol symbol package))
+      (loop for symbol in (parcl-class:external-symbols package)
+            do (maybe-add-symbol symbol-package))
+      ;; Remove every entry in the hash table that has a single element.
+      (loop for name being each hash-key of conflicts-table
+              using hash-value conflicts
+            when (= (length conflicts) 1)
+              do (remhash name conflicts-table))
+      ;; We can now check for conflicts.
+      (when (plusp (hash-table-count conflicts-table))
+        (error 'conflicts
+               :conflicts conflicts-table))
+      (setf (parcl-class:use-list package)
+          (union (parcl-class:use-list package) packages-to-use)))))
