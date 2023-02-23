@@ -2,4 +2,12 @@
 
 (defpackage parcl-class
   (:use #:common-lisp)
-  (:export))
+  (:export
+   #:name
+   #:nicknames
+   #:local-nicknames
+   #:use-list
+   #:used-by-list
+   #:external-symbols
+   #:internal-symbols
+   #:shadowing-symbols))
