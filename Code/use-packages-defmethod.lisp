@@ -4,14 +4,20 @@
   ((%conflicts
       :initarg :conflicts
       :reader conflicts))
-    (:report (lambda (condition stream)
-               (format stream "Conflicts:~%")
-               (loop for entries being each hash-value of (conflicts condition)
-                     Do (loop for (symbol . packages) in entries
-                              do (format stream "Symol ~s from packages" symbol)
-                                 (loop for package in packages
-                                       do (format stream " ~s" package))
-                                 (terpri stream))))))
+  (:report (lambda (condition stream)
+             (format stream "Conflicts:~%")
+             (loop for entries being each hash-value of (conflicts condition)
+                   do (loop for (symbol . packages) in entries
+                            do (format stream "Symol ~s from packages" symbol)
+                            (loop for package in packages
+                                  do (format stream " ~s" package))
+                            (terpri stream))))))
+
+;;; Currently, we do not offer any restarts, and the standard does not
+;;; require a correctable error to be signaled here. But it would
+;;; obviously be nice to have some restarts some day. The problem  is to
+;;; define exactly what restarts are useful, in particular so that they
+;;; can be used programmatically.
 
 (defmethod use-packages (client package packages-to-use)
   (let (;; The keys of hash table are symbol names. The value of a key
