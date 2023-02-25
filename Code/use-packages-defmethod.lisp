@@ -1,5 +1,18 @@
 (cl:in-package #:parcl)
 
+(define-condition conflicts ()
+  ((%conflicts
+      :initarg :conflicts
+      :reader conflicts))
+    (:report (lambda (condition stream)
+               (format stream "Conflicts:~%")
+               (loop for entries being each hash-value of (conflicts condition)
+                     Do (loop for (symbol . packages) in entries
+                              do (format stream "Symol ~s from packages" symbol)
+                                 (loop for package in packages
+                                       do (format stream " ~s" package))
+                                 (terpri stream))))))
+
 (defmethod use-packages (client package packages-to-use)
   (let (;; The keys of hash table are symbol names. The value of a key
         ;; is a list with one element for each distinct symbol with the
