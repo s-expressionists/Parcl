@@ -12,7 +12,7 @@
       (lambda ()
         (format *debug-io* "Your choice: ")
         (return-from resolve-conflict
-                     (read *debug-io*))))))
+          (read *debug-io*))))))
 
 (defmethod export (client package symbol)
   nil)
