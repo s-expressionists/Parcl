@@ -1,6 +1,6 @@
 \input texinfo
 
-@setttitle Parcl, an implementation of the Common Lisp package system.
+@settitle Parcl, an implementation of the Common Lisp package system.
 
 @titlepage
 @title Parcl documentation
