@@ -1,0 +1,32 @@
+@node Implementations
+@chapter Implementations
+
+We provide four different implementations according to two axes.
+
+The first axis provides either an @emph{extrinsic} or an
+@emph{intrinsic} implementation:
+
+@enumerate
+@item
+An @emph{extrinsic} implementation can be used in a Common Lisp system
+that has its own native package system, when it is undesirable to
+replace that native package system.  An extrinsic implementation can
+also be used for testing Parcl, without affecting the native package
+system in the Common Lisp implementation used for the test.
+@item
+An @emph{intrinsic} implementation can be used in a new Common Lisp
+system to provide a native package system when the implementation does
+not have a package system of its own.
+@end enumerate
+
+The second axis provides two different implementation strategies:
+
+@enumerate
+@item
+A @emph{traditional} implementation, where the contents of a package
+are stored in slots of an instance of the @code{package} object.
+@item
+A @emph{trampoline} implementation, where the contents of a package
+are stored in a first-class global environment, and the accessor
+functions on a @code{package} object trampoline to accessor functions
+on the environment.
