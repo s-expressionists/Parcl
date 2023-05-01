@@ -1,0 +1,140 @@
+Here are the entries in the Packages dictionary:
+
+System Class PACKAGE
+
+  - Done
+
+Function EXPORT
+
+  - Done
+  
+Function FIND-SYMBOL
+
+  - Done
+
+Function FIND-PACKAGE
+
+  - This function is not a package function.  It is an environment
+    function, so it won't be part of Parcl.
+
+Function FIND-ALL-SYMBOLS
+
+  - This function is mostly not a package function.  It won't be part
+    of Parcl.
+
+Function IMPORT
+
+  - Done
+
+Function LIST-ALL-PACKAGES
+
+  - This function is not a package function.  It is an environment
+    function, so it won't be part of Parcl.
+
+Function RENAME-PACKAGE
+
+  - This function can be trivially implemented using the accessors
+    (SETF NAME) and (SETF NICKNAMES).
+
+Function SHADOW
+
+  - This function can be trivially implemented using the accessor
+    (SETF SHADOWING-SYMBOLS)
+
+Function SHADOWING-IMPORT
+
+  - This function can be trivially implemented using the accessor
+    (SETF SHADOWING-SYMBOLS)
+
+Function DELETE-PACKAGE
+
+  - This function is not a package function.  It is an environment
+    function, so it won't be part of Parcl.
+
+Function MAKE-PACKAGE
+
+  - Part of this function is an environment function, so the client
+    must implement it.  To create the package object, MAKE-INSTANCE is
+    used as usual.
+
+Macro WITH-PACKAGE-ITERATOR
+
+  - To do.
+
+Function UNEXPORT
+
+  - To do.
+
+Function UNINTERN
+
+  - To do.
+
+Macro IN-PACKAGE
+
+  - This macro is not a package operator.  It is an environment
+    operator, so it won't be part of Parcl.
+
+Function UNUSE-PACKAGE
+
+  - To do
+
+Function USE-PACKAGE
+
+  - Done
+
+Macro DEFPACKAGE
+
+  - To do
+
+Macro DO-SYMBOLS
+
+  - To do
+
+
+Macro DO-EXTERNAL-SYMBOLS
+
+  - To do
+
+Macro DO-ALL-SYMBOLS
+
+  - This macro is partly an environment operator.
+
+Function INTERN
+
+  - To do
+
+Function PACKAGE-NAME
+
+  - Trivial to implement using accessor NAME.
+
+Function PACKAGE-NICKNAMES
+
+  - Trivial to implement using accessor NICKNAMES.
+
+Function PACKAGE-SHADOWING-SYMBOLS
+
+  - Trivial to implement using accessor SHADOWING-SYMBOLS.
+
+Function PACKAGE-USE-LIST
+
+  - Trivial to implement using accessor USE-LIST.
+
+Function PACKAGE-USED-BY-LIST
+
+  - Trivial to implement using accessor USED-BY-LIST.
+
+Function PACKAGEP
+
+  - To do
+
+Variable *PACKAGE*
+
+  - This variable is part of the environment.
+
+Condition Type PACKAGE-ERROR
+
+  - To do
+
+Function PACKAGE-ERROR-PACKAGE
+
+  - To do
