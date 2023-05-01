@@ -1,4 +1,8 @@
 @node Purpose
 @chapter Purpose
 
-The purpose of Parcl is.
+Parcl provides a complete implementation of the Common Lisp package
+system.  It can be used as either an @emph{extrinsic} system in a Common
+Lisp implementation that already has its own package system, or as an
+@emph{intrinsic} system to provide a package system in a new Common
+Lisp implementation. @xref{Implementations}.
