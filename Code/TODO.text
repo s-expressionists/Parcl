@@ -101,7 +101,7 @@ Macro DO-ALL-SYMBOLS
 
 Function INTERN
 
-  - To do
+  - Not provided by the library.
 
 Function PACKAGE-NAME
 
