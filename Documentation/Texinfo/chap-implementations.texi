@@ -30,3 +30,4 @@ A @emph{trampoline} implementation, where the contents of a package
 are stored in a first-class global environment, and the accessor
 functions on a @code{package} object trampoline to accessor functions
 on the environment.
+@end enumerate
