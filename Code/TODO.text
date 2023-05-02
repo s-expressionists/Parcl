@@ -77,7 +77,7 @@ Macro IN-PACKAGE
 
 Function UNUSE-PACKAGE
 
-  - To do
+  - Done
 
 Function USE-PACKAGE
 
