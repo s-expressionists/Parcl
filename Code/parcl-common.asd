@@ -8,5 +8,6 @@
    (:file "find-symbol-defmethod")
    (:file "import-defmethod")
    (:file "use-packages-defmethod")
+   (:file "unuse-package-defmethod")
    (:file "export-defmethod")
    (:file "common-lisp-symbol-names")))
