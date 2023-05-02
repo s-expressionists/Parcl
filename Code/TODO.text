@@ -67,7 +67,8 @@ Function UNEXPORT
 
 Function UNINTERN
 
-  - To do.
+  - This function may alter the symbol, so it is not
+    provided by this library.
 
 Macro IN-PACKAGE
 
@@ -88,12 +89,11 @@ Macro DEFPACKAGE
 
 Macro DO-SYMBOLS
 
-  - To do
-
+  - Not provided.
 
 Macro DO-EXTERNAL-SYMBOLS
 
-  - To do
+  - Not provided.
 
 Macro DO-ALL-SYMBOLS
 
