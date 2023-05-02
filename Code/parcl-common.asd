@@ -10,4 +10,5 @@
    (:file "use-packages-defmethod")
    (:file "unuse-package-defmethod")
    (:file "export-defmethod")
+   (:file "unexport-defmethod")
    (:file "common-lisp-symbol-names")))

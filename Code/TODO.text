@@ -63,7 +63,7 @@ Macro WITH-PACKAGE-ITERATOR
 
 Function UNEXPORT
 
-  - To do.
+  - Done.
 
 Function UNINTERN
 
