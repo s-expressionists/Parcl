@@ -53,7 +53,7 @@
             do (maybe-add-symbol symbol-package))
       ;; Remove every entry in the hash table that has a single element.
       (loop for name being each hash-key of conflicts-table
-              using hash-value conflicts
+              using (hash-value conflicts)
             when (= (length conflicts) 1)
               do (remhash name conflicts-table))
       ;; We can now check for conflicts.
