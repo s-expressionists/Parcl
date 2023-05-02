@@ -27,3 +27,9 @@
 ;;; symbol as opposed to a list of symbols. Client code for the standard
 ;;; function must then call this function multiple times.
 (defgeneric export (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; UNEXPORT.  It differs from the standard function in that it takes
+;;; a single symbol as opposed to a list of symbols. Client code for
+;;; the standard function must then call this function multiple times.
+(defgeneric unexport (client package symbol))
