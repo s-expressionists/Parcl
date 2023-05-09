@@ -67,8 +67,10 @@ Function UNEXPORT
 
 Function UNINTERN
 
-  - This function may alter the symbol, so it is not
-    provided by this library.
+  - To do.
+  - This function just removes the symbol from the package so that
+    it is no longer present.  Client code must alter the package
+    of the symbol.
 
 Macro IN-PACKAGE
 
