@@ -50,7 +50,7 @@
       (loop for symbol in (parcl-class:internal-symbols package)
             do (maybe-add-symbol symbol package))
       (loop for symbol in (parcl-class:external-symbols package)
-            do (maybe-add-symbol symbol-package))
+            do (maybe-add-symbol symbol package))
       ;; Remove every entry in the hash table that has a single element.
       (loop for name being each hash-key of conflicts-table
               using (hash-value conflicts)
