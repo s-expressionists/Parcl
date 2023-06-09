@@ -6,8 +6,7 @@
 
 (asdf:defsystem #:parcl-base
   :serial t
-  :description "Portable Package System, base system"
-  :depends-on (#:s-expression-syntax))
+  :description "Portable Package System, base system")
 
 (defparameter *string-designators*
   '(#:home-package
