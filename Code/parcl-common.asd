@@ -1,4 +1,6 @@
 (asdf:defsystem #:parcl-common
+  :depends-on (#:iconoclast
+               #:iconoclast-builder)
   :serial t
   :components
   ((:file "accessors")
@@ -11,4 +13,5 @@
    (:file "unuse-package-defmethod")
    (:file "export-defmethod")
    (:file "unexport-defmethod")
+   (:file "defpackage-defmacro")
    (:file "common-lisp-symbol-names")))
