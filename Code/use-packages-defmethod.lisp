@@ -27,7 +27,7 @@
         ;; might be a conflict.
         (conflicts-table (make-hash-table :test #'equal)))
     (flet ((maybe-add-symbol (symbol supplying-package)
-             (unless (member symbol (shadowing-symbols package))
+             (unless (member symbol (shadowing-symbols client package))
                (let* ((name (symbol-name symbol))
                       (conflicts (gethash name conflicts-table))
                       (entry (find symbol conflicts
@@ -38,18 +38,18 @@
                      (push supplying-package
                            (cdr entry)))))))
       (loop for package in packages-to-use
-            do (loop for symbol in (external-symbols package)
+            do (loop for symbol in (external-symbols client package)
                      do (maybe-add-symbol symbol package)))
       ;; It is possible that one of the already used packages has a
       ;; symbol that conflicts.
-      (loop for package in (use-list package)
-            do (loop for symbol in (external-symbols package)
+      (loop for package in (use-list client package)
+            do (loop for symbol in (external-symbols client package)
                      do (maybe-add-symbol symbol package)))
       ;; We also need to check the internal and external symbos of
       ;; PACKAGE.
-      (loop for symbol in (internal-symbols package)
+      (loop for symbol in (internal-symbols client package)
             do (maybe-add-symbol symbol package))
-      (loop for symbol in (external-symbols package)
+      (loop for symbol in (external-symbols client package)
             do (maybe-add-symbol symbol package))
       ;; Remove every entry in the hash table that has a single element.
       (loop for name being each hash-key of conflicts-table
@@ -60,5 +60,5 @@
       (when (plusp (hash-table-count conflicts-table))
         (error 'conflicts
                :conflicts conflicts-table))
-      (setf (use-list package)
-          (union (use-list package) packages-to-use)))))
+      (setf (use-list client package)
+          (union (use-list client package) packages-to-use)))))
