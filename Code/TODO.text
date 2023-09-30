@@ -87,7 +87,7 @@ Function USE-PACKAGE
 
 Macro DEFPACKAGE
 
-  - To do
+  - Done, but error reporting should be improved.
 
 Macro DO-SYMBOLS
 
