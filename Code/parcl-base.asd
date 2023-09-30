@@ -5,6 +5,7 @@
 (cl:in-package #:parcl-asdf)
 
 (asdf:defsystem #:parcl-base
+  :depends-on (#:iconoclast-builder)
   :serial t
   :description "Portable Package System, base system")
 
