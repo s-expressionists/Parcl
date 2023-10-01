@@ -1,6 +1,7 @@
 (cl:defpackage #:parcl-asdf
   (:use #:common-lisp)
-  (:export #:*string-designators*))
+  (:export #:*string-designators*
+           #:*exports*))
 
 (cl:in-package #:parcl-asdf)
 
@@ -40,3 +41,22 @@
     #:with-package-iterator
     #:do-symbols
     #:do-external-symbols))
+
+(defparameter *exports*
+  '(#:name
+    #:nicknames
+    #:shadowing-symbols
+    #:use-list
+    #:used-by-list
+    #:external-symbols
+    #:internal-symbols
+    #:find-external-symbol
+    #:add-external-symbol
+    #:remove-external-symbol
+    #:find-internal-symbol
+    #:add-internal-symbol
+    #:remove-internal-symbol
+    #:find-shadowing-symbol
+    #:add-shadowing-symbol
+    #:remove-shadowing-symbol))
+
