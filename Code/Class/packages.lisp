@@ -2,6 +2,7 @@
 
 (defpackage parcl-class
   (:use #:common-lisp)
+  (:shadow #:package)
   (:export
      #:name
      #:nicknames
