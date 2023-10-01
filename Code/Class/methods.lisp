@@ -1,4 +1,4 @@
-(cl:in-packaage #:parcl-class)
+(cl:in-package #:parcl-class)
 
 (defmethod parcl:name ((client client) package)
   (name package))
@@ -15,7 +15,7 @@
 (defmethod parcl:shadowing-symbols ((client client) package)
   (shadowing-symbols package))
 
-(defmethod (setf parcl:shadowing-symbols) (new-symbol (client client) package)
+(defmethod (setf parcl:shadowing-symbols) (new-symbols (client client) package)
   (setf (shadowing-symbols package) new-symbols))
 
 (defmethod parcl:use-list ((client client) package)
@@ -65,15 +65,15 @@
   (let* ((table (external-symbols-table package))
          (cell (gethash (symbol-name symbol) table)))
     (if (null (rest cell))
-        (if (null (rest (external-symbol-list package)))
+        (if (null (rest (external-symbols-list package)))
             ;; There is only this one symbol left.
-            (setf (external-symbol-list package) '())
+            (setf (external-symbols-list package) '())
             ;; Otherwise, we move the symbol from the first cell on
             ;; the list to this cell.
-            (let ((symbol-to-move (first (external-symbol-list package))))
+            (let ((symbol-to-move (first (external-symbols-list package))))
               (setf (first cell) symbol-to-move)
               (setf (gethash (symbol-name symbol-to-move) table) cell)
-              (pop (first (external-symbol-list package)))))
+              (pop (first (external-symbols-list package)))))
         (let ((next-symbol (second cell)))
           (setf (gethash (symbol-name next-symbol) table) cell)
           (setf (rest cell) (rest (rest cell)))))
@@ -94,15 +94,15 @@
   (let* ((table (internal-symbols-table package))
          (cell (gethash (symbol-name symbol) table)))
     (if (null (rest cell))
-        (if (null (rest (internal-symbol-list package)))
+        (if (null (rest (internal-symbols-list package)))
             ;; There is only this one symbol left.
-            (setf (internal-symbol-list package) '())
+            (setf (internal-symbols-list package) '())
             ;; Otherwise, we move the symbol from the first cell on
             ;; the list to this cell.
-            (let ((symbol-to-move (first (internal-symbol-list package))))
+            (let ((symbol-to-move (first (internal-symbols-list package))))
               (setf (first cell) symbol-to-move)
               (setf (gethash (symbol-name symbol-to-move) table) cell)
-              (pop (first (internal-symbol-list package)))))
+              (pop (first (internal-symbols-list package)))))
         (let ((next-symbol (second cell)))
           (setf (gethash (symbol-name next-symbol) table) cell)
           (setf (rest cell) (rest (rest cell)))))
@@ -114,13 +114,13 @@
                         :test #'string=)))
     (if (null suffix)
         (values nil nil)
-        (values (first suffix) t)))
+        (values (first suffix) t))))
 
 (defmethod parcl:add-shadowing-symbol ((client client) package symbol)
-  (push symbol (shadowing-symbols-list package)))
+  (push symbol (shadowing-symbols package)))
 
 (defmethod parcl:remove-shadowing-symbol ((client client) package symbol)
-  (setf (shadowing-symbols-list package)
+  (setf (shadowing-symbols package)
         ;; We are counting on DELETE to modify the list so as to avoid
         ;; unnecessary consing.
-        (delete symbol (shadowing-symbols-list package))))
+        (delete symbol (shadowing-symbols package))))
