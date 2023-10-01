@@ -56,7 +56,7 @@
 
 (defgeneric (setf shadowing-symbols) (new-shadowing-symbols package))
 
-(defclass package ()
+(defclass package (parcl:package)
   ((%name
       :initarg :name
       :accessor name)
