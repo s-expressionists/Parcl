@@ -6,4 +6,5 @@
                     (#:bld #:iconoclast-builder)
                     (#:ses #:s-expression-syntax))
   (:shadow . #.parcl-asdf:*string-designators*)
-  (:export . #.parcl-asdf:*string-designators*))
+  (:export . #.(append parcl-asdf:*string-designators*
+                       parcl-asdf:*exports*)))

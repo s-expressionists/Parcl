@@ -5,4 +5,6 @@
   (:local-nicknames (#:ico #:iconoclast)
                     (#:bld #:iconoclast-builder)
                     (#:ses #:s-expression-syntax))
-  (:export . #.parcl-asdf:*string-designators*))
+  (:export . #.(append parcl-asdf:*string-designators*
+                       parcl-asdf:*exports*)))
+
