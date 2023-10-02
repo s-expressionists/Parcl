@@ -124,3 +124,6 @@
         ;; We are counting on DELETE to modify the list so as to avoid
         ;; unnecessary consing.
         (delete symbol (shadowing-symbols package))))
+
+(defmethod parcl:make-package ((client client) name)
+  (make-instance 'package :name name))
