@@ -46,6 +46,7 @@
   '(#:name
     #:nicknames
     #:shadowing-symbols
+    #:use-packages
     #:use-list
     #:used-by-list
     #:external-symbols
