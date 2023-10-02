@@ -1,7 +1,10 @@
 (cl:in-package #:parcl)
 
 ;;; This function can be used to implement the standard function
-;;; FIND-SYMBOL.
+;;; FIND-SYMBOL.  Just like the standard function, it returns two
+;;; values.  The first value is either a symbol with the name NAME
+;;; accessible in PACKAGE, or NIL if there is no such symbol.  The
+;;; second value is either :INTERNAL, :EXTERNAL, :INHERITED, or NIL.
 (defgeneric find-symbol (client package name))
 
 ;;; This function can be used to implement the standard function
