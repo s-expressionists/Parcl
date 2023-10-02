@@ -41,3 +41,11 @@
 ;;; a single symbol as opposed to a list of symbols. Client code for
 ;;; the standard function must then call this function multiple times.
 (defgeneric unexport (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; SHADOW.  It differs from the standard function in that it takes a
+;;; single symbol as opposed to a list of string designators. Client
+;;; code for the standard function must then call this function
+;;; multiple times and use FIND-SYMBOL to determine whether an
+;;; existing symbol should be provided, or a new symbol created.
+(defgeneric shadow (client package symbol))
