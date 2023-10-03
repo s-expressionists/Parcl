@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "accessors")
+   (:file "configuration")
    (:file "generic-functions")
    (:file "package-defclass")
    (:file "conditions")
@@ -13,5 +14,4 @@
    (:file "unuse-package-defmethod")
    (:file "export-defmethod")
    (:file "unexport-defmethod")
-   (:file "defpackage-defmacro")
-   (:file "common-lisp-symbol-names")))
+   (:file "defpackage-defmacro")))
