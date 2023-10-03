@@ -129,4 +129,4 @@
   (make-instance 'package
     :name name
     :external-symbols (parcl:make-symbol-table)
-    :internal-symbols (parcl:make-symbol-table)
+    :internal-symbols (parcl:make-symbol-table)))
