@@ -12,6 +12,8 @@
 
 (defparameter *string-designators*
   '(#:home-package
+    #:symbol-name
+    #:symbol-package
     #:find-package
     #:delete-package
     #:make-symbol
@@ -44,6 +46,8 @@
 
 (defparameter *exports*
   '(#:name
+    #:make-symbol-table
+    #:name-to-symbol
     #:nicknames
     #:shadowing-symbols
     #:use-packages
