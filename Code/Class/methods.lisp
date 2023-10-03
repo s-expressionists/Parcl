@@ -126,4 +126,7 @@
         (delete symbol (shadowing-symbols package))))
 
 (defmethod parcl:make-package ((client client) name)
-  (make-instance 'package :name name))
+  (make-instance 'package
+    :name name
+    :external-symbols (parcl:make-symbol-table)
+    :internal-symbols (parcl:make-symbol-table)
