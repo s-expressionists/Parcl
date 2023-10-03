@@ -58,6 +58,11 @@
 (defgeneric shadow (client package name))
 
 ;;; This function can be used to implement the standard function
+;;; INTERN.  Client code is responsible for making SYMBOL external if
+;;; PACKAGE is the KEYWORD package.
+(defgeneric intern (client package name))
+
+;;; This function can be used to implement the standard function
 ;;; UNINTERN.  If SYMBOL is present in PACKAGE it is removed so that
 ;;; it is no longer present.  It is also removed from the list of
 ;;; shadowing symbols of PACKAGE.  If PACKGE is the home package of
