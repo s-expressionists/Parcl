@@ -77,13 +77,13 @@
       :initform '()
       :accessor used-by-list)
    (%external-symbols-table
-      :initform (make-hash-table :test #'equal)
+      :initarg :external-symbols
       :reader external-symbols)
    (%external-symbols-list
       :initform '()
       :accessor external-symbols-list)
    (%internal-symbols-table
-      :initform (make-hash-table :test #'equal)
+      :initarg :internal-symbols
       :reader internal-symbols)
    (%internal-symbols-list
       :initform '()
