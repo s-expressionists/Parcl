@@ -78,13 +78,13 @@
       :accessor used-by-list)
    (%external-symbols-table
       :initarg :external-symbols
-      :reader external-symbols)
+      :reader external-symbols-table)
    (%external-symbols-list
       :initform '()
       :accessor external-symbols-list)
    (%internal-symbols-table
       :initarg :internal-symbols
-      :reader internal-symbols)
+      :reader internal-symbols-table)
    (%internal-symbols-list
       :initform '()
       :accessor internal-symbols-list)
