@@ -128,5 +128,5 @@
 (defmethod parcl:make-package ((client client) name)
   (make-instance 'package
     :name name
-    :external-symbols (parcl:make-symbol-table)
-    :internal-symbols (parcl:make-symbol-table)))
+    :external-symbols (parcl:make-symbol-table client)
+    :internal-symbols (parcl:make-symbol-table client)))
