@@ -44,6 +44,20 @@
   (setf (gethash (symbol-name symbol) (external-symbols-table package))
         (first (external-symbols-list package))))
 
+(defmethod parcl:internal-symbols ((client client) package)
+  (internal-symbols-list package))
+
+(defmethod parcl:find-internal-symbol ((client client) package name)
+  (let ((cell (gethash name (internal-symbols-table package))))
+    (if (null cell)
+        (values nil nil)
+        (values (car cell) t))))
+
+(defmethod parcl:add-internal-symbol ((client client) package symbol)
+  (push symbol (internal-symbols-list package))
+  (setf (gethash (symbol-name symbol) (internal-symbols-table package))
+        (first (internal-symbols-list package))))
+
 ;;; The technique we use for removing a symbol from the list works
 ;;; like this: The hash table contains the CONS cells of the list.
 ;;; Let us say that C1 is the cell containing the symbol, say S1, to
