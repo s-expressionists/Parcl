@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:package)
   (:export
+     #:package
      #:client
      #:name
      #:nicknames
