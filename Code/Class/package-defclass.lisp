@@ -65,7 +65,7 @@
       :initform '()
       :accessor nicknames)
    (%local-nicknames
-      :initarg :nicknames
+      :initarg :local-nicknames
       :initform '()
       :accessor local-nicknames)
    (%use-list
