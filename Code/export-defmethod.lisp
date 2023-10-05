@@ -114,7 +114,9 @@
                           "Abort the EXPORT of ~s"
                           symbol))
         (return-from detect-and-resolve-export-non-accessibility
-          :abort)))))
+          :abort))))
+  ;; Return NIL to indicate that there was no conflict
+  nil)
 
 (defmethod export (client package symbol)
   (let ((action-1
@@ -122,8 +124,9 @@
            client package symbol)))
     (unless (eq action-1 :abort)
       (let ((action-2
-              (detect-and-resolve-export-conflict-1
-               client package symbol)))
+              (loop for using-package in (used-by-list client package)
+                      thereis (detect-and-resolve-export-conflict-1
+                               client symbol using-package))))
         (unless (eq action-2 :abort)
           (let ((action-3
                   (loop for using-package in (used-by-list client package)
@@ -132,4 +135,7 @@
             (unless (eq action-3 :abort)
               (unless (null action-1) (funcall action-1))
               (unless (null action-2) (funcall action-2))
-              (unless (null action-3) (funcall action-3)))))))))
+              (unless (null action-3) (funcall action-3))
+              (when (and (null action-1) (null action-2) (null action-3))
+                (remove-internal-symbol client package symbol)
+                (add-external-symbol client package symbol)))))))))
