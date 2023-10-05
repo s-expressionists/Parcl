@@ -100,12 +100,6 @@
         (values nil nil)
         (values (car cell) t))))
 
-(defmethod parcl:add-internal-symbol ((client client) package symbol)
-  (push symbol (internal-symbols-list package))
-  (setf (gethash (symbol-name symbol) (internal-symbols-table package))
-        (internal-symbols-list package))
-  (values))
-
 (defmethod parcl:remove-internal-symbol ((client client) package symbol)
   (let* ((table (internal-symbols-table package))
          (cell (gethash (symbol-name symbol) table)))
