@@ -42,7 +42,8 @@
 (defmethod parcl:add-external-symbol ((client client) package symbol)
   (push symbol (external-symbols-list package))
   (setf (gethash (symbol-name symbol) (external-symbols-table package))
-        (external-symbols-list package)))
+        (external-symbols-list package))
+  (values))
 
 (defmethod parcl:internal-symbols ((client client) package)
   (internal-symbols-list package))
