@@ -5,6 +5,6 @@
       (find-symbol client package name)
     (if (null status)
         (let ((result (make-symbol client name package)))
-          (add-internal-symbol client package name)
+          (add-internal-symbol client package symbol)
           (values result nil))
         (values symbol status))))
