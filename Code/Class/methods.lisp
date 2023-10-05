@@ -56,7 +56,8 @@
 (defmethod parcl:add-internal-symbol ((client client) package symbol)
   (push symbol (internal-symbols-list package))
   (setf (gethash (symbol-name symbol) (internal-symbols-table package))
-        (internal-symbols-list package)))
+        (internal-symbols-list package))
+  (values))
 
 ;;; The technique we use for removing a symbol from the list works
 ;;; like this: The hash table contains the CONS cells of the list.
@@ -102,7 +103,8 @@
 (defmethod parcl:add-internal-symbol ((client client) package symbol)
   (push symbol (internal-symbols-list package))
   (setf (gethash (symbol-name symbol) (internal-symbols-table package))
-        (internal-symbols-list package)))
+        (internal-symbols-list package))
+  (values))
 
 (defmethod parcl:remove-internal-symbol ((client client) package symbol)
   (let* ((table (internal-symbols-table package))
