@@ -28,7 +28,7 @@
         (conflicts-table (make-hash-table :test #'equal)))
     (flet ((maybe-add-symbol (symbol supplying-package)
              (unless (member symbol (shadowing-symbols client package))
-               (let* ((name (symbol-name symbol))
+               (let* ((name (symbol-name client symbol))
                       (conflicts (gethash name conflicts-table))
                       (entry (find symbol conflicts
                                    :test #'eq :key #'car)))
