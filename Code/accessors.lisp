@@ -100,3 +100,6 @@
 ;;; be either :INTERNAL or :EXTERNAL. If there is no present symbol
 ;;; with that name in PACKAGE, then return NIL and NIL.
 (defgeneric find-present-symbol (client package name))
+
+(defgeneric ensure-present-symbol (client package symbol))
+  
