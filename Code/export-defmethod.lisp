@@ -137,5 +137,4 @@
               (unless (null action-2) (funcall action-2))
               (unless (null action-3) (funcall action-3))
               (when (and (null action-1) (null action-2) (null action-3))
-                (remove-internal-symbol client package symbol)
-                (add-external-symbol client package symbol)))))))))
+                (ensure-exportet-symbol client package symbol)))))))))
