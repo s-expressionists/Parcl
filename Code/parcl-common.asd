@@ -15,5 +15,4 @@
    (:file "export-defmethod")
    (:file "unexport-defmethod")
    (:file "shadow-defmethod")
-   (:file "intern-defmethod")
    (:file "defpackage-defmacro")))
