@@ -102,3 +102,5 @@
 (defgeneric find-present-symbol (client package name))
 
 (defgeneric ensure-present-symbol (client package symbol))
+
+(defgeneric ensure-exported-symbol (client package symbol))
