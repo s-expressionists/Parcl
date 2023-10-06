@@ -22,17 +22,17 @@
 ;;; package of the symbol is NIL.
 (defgeneric (setf symbol-package) (new-package client symbol))
 
-;;; This function returns a symbol table, which is an object that can
-;;; map client strings to client symbols.
-(defgeneric make-symbol-table (client))
+;;; This function returns a table, which is an object that can map
+;;; client strings to client entries.
+(defgeneric make-table (client))
 
-;;; This function takes a string and a symbol table and return two
-;;; values.  the first value is a symbol in the table, or NIL if there
-;;; is no symbol in the table with the name corresponding to the
-;;; string.  The second value is true if there is a symbol with the
-;;; name corresponding to the string in the table and NIL otherwise.
-(defgeneric name-to-symbol (client name symbol-table))
+;;; This function takes a string and a table and returns two values.
+;;; the first value is an entry in the table, or NIL if there is no
+;;; entry in the table with the name corresponding to the string.  The
+;;; second value is true if there is an entry with the name
+;;; corresponding to the string in the table and NIL otherwise.
+(defgeneric name-to-entry (client name table))
 
-;;; This function takes a symbol, a symbol name, and a symbol table,
-;;; and it enters the symbol in the table associated with the name.
-(defgeneric (setf name-to-symbol) (new-symbol client name symbol-table))
+;;; This function takes a entry, a client string, and a table, and it
+;;; adds the entry in the table associated with the string.
+(defgeneric (setf name-to-entry) (new-entry client name table))
