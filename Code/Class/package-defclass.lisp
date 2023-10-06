@@ -70,3 +70,12 @@
    (%symbol-entries
       :initform '()
       :accessor symbol-entries)))
+
+(defun make-entry (symbol status)
+  (cons symbol status))
+
+(defun entry-symbol (entry)
+  (car entry))
+
+(defun entry-status (entry)
+  (cdr entry))
