@@ -33,8 +33,7 @@
 (defmethod parcl:make-package ((client client) name)
   (make-instance 'package
     :name name
-    :external-symbols (parcl:make-symbol-table client)
-    :internal-symbols (parcl:make-symbol-table client)))
+    :symbol-table (parcl:make-table client)))
 
 (defmethod parcl:find-present-symbol ((client client) package name)
   (let ((entry (parcl:name-to-entry client name (symbol-table package))))
@@ -52,7 +51,7 @@
         (let* ((symbol (parcl:make-symbol client name package))
                (entry (make-entry symbol :internal)))
           (add-entry entry package)
-          (values result nil))
+          (values symbol nil))
         (values symbol status))))
 
 (defmethod parcl:shadow ((client client) package name)
@@ -68,7 +67,7 @@
   t)
 
 (defmethod ensure-present-symbol ((client client) package symbol)
-  (let* ((name (parcl:symbol-name symbol))
+  (let* ((name (parcl:symbol-name client symbol))
          (entry (parcl:name-to-entry client name (symbol-table package))))
     (when (null entry)
       (let* ((symbol (parcl:make-symbol client name package))
@@ -76,7 +75,7 @@
         (add-entry entry package)))))
 
 (defmethod ensure-exported-symbol ((client client) package symbol)
-  (let* ((name (parcl:symbol-name symbol))
+  (let* ((name (parcl:symbol-name client symbol))
          (entry (parcl:name-to-entry client name (symbol-table package))))
     (if (null entry)
         (let* ((symbol (parcl:make-symbol client name package))
