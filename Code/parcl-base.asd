@@ -46,22 +46,10 @@
 
 (defparameter *exports*
   '(#:name
-    #:make-symbol-table
-    #:name-to-symbol
+    #:make-table
+    #:name-to-entry
     #:nicknames
     #:shadowing-symbols
     #:use-packages
     #:use-list
-    #:used-by-list
-    #:external-symbols
-    #:internal-symbols
-    #:find-external-symbol
-    #:add-external-symbol
-    #:remove-external-symbol
-    #:find-internal-symbol
-    #:add-internal-symbol
-    #:remove-internal-symbol
-    #:find-shadowing-symbol
-    #:add-shadowing-symbol
-    #:remove-shadowing-symbol))
-
+    #:used-by-list))
