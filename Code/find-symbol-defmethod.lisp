@@ -1,17 +1,13 @@
 (cl:in-package #:parcl)
 
 (defmethod find-symbol (client package name)
-  (multiple-value-bind (symbol present-p)
-      (find-internal-symbol client package name)
-    (if present-p
-        (values symbol :internal)
-        (multiple-value-bind (symbol present-p)
-            (find-external-symbol client package name)
-          (if present-p
-              (values symbol :external)
-              (loop for used-package in (use-list client package)
-                    do (multiple-value-bind (symbol present-p)
-                           (find-external-symbol client used-package name)
-                         (when present-p
-                           (return (values symbol :inherited))))
-                    finally (return (values nil nil))))))))
+  (multiple-value-bind (symbol status)
+      (find-present-symbol client package name)
+    (if (not (null status))
+        (values symbol status)
+        (loop for used-package in (use-list client package)
+              do (multiple-value-bind (symbol status)
+                     (find-present-symbol client used-package name)
+                   (unless (null status)
+                     (return (values symbol :inherited))))
+              finally (return (values nil nil))))))
