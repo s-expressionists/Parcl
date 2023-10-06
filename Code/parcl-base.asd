@@ -52,4 +52,5 @@
     #:shadowing-symbols
     #:use-packages
     #:use-list
-    #:used-by-list))
+    #:used-by-list
+    #:find-present-symbol))
