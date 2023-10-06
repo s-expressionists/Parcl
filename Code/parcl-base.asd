@@ -53,4 +53,6 @@
     #:use-packages
     #:use-list
     #:used-by-list
-    #:find-present-symbol))
+    #:find-present-symbol
+    #:ensure-present-symbol
+    #:ensure-exported-symbol))
