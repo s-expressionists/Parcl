@@ -101,6 +101,4 @@
 ;;; with that name in PACKAGE, then return NIL and NIL.
 (defgeneric find-present-symbol (client package name))
 
-(defgeneric ensure-present-symbol (client package symbol))
-
-(defgeneric ensure-exported-symbol (client package symbol))
+(defgeneric ensure-present-symbol (client package symbol &optional status))
