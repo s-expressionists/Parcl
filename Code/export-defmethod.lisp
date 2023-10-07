@@ -54,9 +54,9 @@
   (loop with name = (symbol-name client symbol)
         for used-package in (use-list client using-package)
         unless (eq used-package package)
-          do (multiple-value-bind (conflicting-symbol present-p)
-                 (find-external-symbol client used-package name)
-               (when (and present-p
+          do (multiple-value-bind (conflicting-symbol status)
+                 (find-present-symbol client used-package name)
+               (when (and (eq status :external)
                           (not (eq symbol conflicting-symbol)))
                  (restart-case (error 'symbol-conflict
                                       :package used-package
