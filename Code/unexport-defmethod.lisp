@@ -1,8 +1,12 @@
 (cl:in-package #:parcl)
 
 (defmethod unexport (client package symbol)
-  (let ((position (position symbol (external-symbols client package))))
-    (if (null position)
+  (multiple-value-bind (putative-symbol status)
+      (find-present-symbol client package (symbol-name client symbol))
+    (if (and (eq putative-symbol symbol)
+             (eq status :external))
+        (progn (ensure-present-symbol client package symbol :internal)
+               t)
         (restart-case 
             (error 'symbol-is-not-accessible
                    :package package
@@ -11,6 +15,4 @@
             :report
             (lambda (stream)
               (format stream "Continue"))
-            (return-from unexport t)))
-        (progn (remove-external-symbol client package symbol)
-               t))))
+            (return-from unexport t))))))
