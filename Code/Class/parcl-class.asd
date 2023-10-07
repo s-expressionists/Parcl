@@ -9,4 +9,6 @@
   ((:file "packages")
    (:file "client")
    (:file "package-defclass")
-   (:file "methods")))
+   (:file "methods")
+   (:file "do-symbols-expander")
+   (:file "do-external-symbols-expander")))
