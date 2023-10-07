@@ -13,11 +13,13 @@
                                   do (format stream " ~s" package))
                             (terpri stream))))))
 
-;;; Currently, we do not offer any restarts, and the standard does not
-;;; require a correctable error to be signaled here. But it would
-;;; obviously be nice to have some restarts some day. The problem  is to
-;;; define exactly what restarts are useful, in particular so that they
-;;; can be used programmatically.
+;;; Currently, we do not offer any restarts.  The dictionary entry on
+;;; USE-PACKAGE does not say that a correctable error has to be
+;;; signaled, but in section 11.1.1.2.5, it is said that any time a
+;;; name conflict is about to occur, a correctable error is signaled.
+;;; So at some point, we must define restarts.  The problem is to
+;;; define exactly what restarts are useful, in particular so that
+;;; they can be used programmatically.
 
 (defmethod use-packages (client package packages-to-use)
   (let (;; The keys of hash table are symbol names. The value of a key
