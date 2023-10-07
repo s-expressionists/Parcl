@@ -22,6 +22,10 @@
 ;;; package of the symbol is NIL.
 (defgeneric (setf symbol-package) (new-package client symbol))
 
+;;; This function returns true if and only if the two symbols have the
+;;; same name.
+(defgeneric symbol-names-equal (client symbol1 symbol2))
+
 ;;; This function returns a table, which is an object that can map
 ;;; client strings to client entries.
 (defgeneric make-table (client))
