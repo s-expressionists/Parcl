@@ -45,14 +45,18 @@
     #:do-external-symbols))
 
 (defparameter *exports*
-  '(#:name
+  '(#:*client*
+    #:name
+    #:nicknames
+    #:symbol-names-equal
     #:make-table
     #:name-to-entry
-    #:nicknames
     #:shadowing-symbols
     #:use-packages
     #:use-list
     #:used-by-list
     #:find-present-symbol
     #:ensure-present-symbol
-    #:ensure-exported-symbol))
+    #:ensure-exported-symbol
+    #:do-symbols-expander
+    #:do-external-symbols-expander))
