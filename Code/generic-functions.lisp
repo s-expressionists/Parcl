@@ -5,6 +5,16 @@
 ;;; string.
 (defgeneric make-package (client name))
 
+(defgeneric name (client package))
+
+(defgeneric nicknames (client package))
+
+(defgeneric use-list (client package))
+
+(defgeneric used-by-list (client package))
+
+(defgeneric shadowing-symbols (client package))
+
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two
 ;;; values.  The first value is either a symbol with the name NAME
@@ -73,10 +83,10 @@
 
 ;;; This function is used by the macro DO-SYMBOLS to compute the
 ;;; expansion.
-(defgeneric do-symbol-expander
-    (client symbol-variable package-designator-form result-form))
+(defgeneric do-symbols-expander
+    (client symbol-variable package-designator-form result-form body))
 
 ;;; This function is used by the macro DO-EXTERNAL-SYMBOLS to compute
 ;;; the expansion.
-(defgeneric do-external-symbol-expander
-    (client symbol-variable package-designator-form result-form))
+(defgeneric do-external-symbols-expander
+    (client symbol-variable package-designator-form result-form body))
