@@ -70,3 +70,13 @@
 ;;; function calls (SETF SYMBOL-PACKAGE) with NIL, CLIENT, and SYMBOL
 ;;; as arguments.
 (defgeneric unintern (client package symbol))
+
+;;; This function is used by the macro DO-SYMBOLS to compute the
+;;; expansion.
+(defgeneric do-symbol-expander
+    (client symbol-variable package-designator-form result-form))
+
+;;; This function is used by the macro DO-EXTERNAL-SYMBOLS to compute
+;;; the expansion.
+(defgeneric do-external-symbol-expander
+    (client symbol-variable package-designator-form result-form))
