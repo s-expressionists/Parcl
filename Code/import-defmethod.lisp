@@ -3,38 +3,14 @@
 (defmethod import (client package symbol)
   #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (let ((name (symbol-name client symbol)))
-    (multiple-value-bind (external-symbol present-p)
-        (find-external-symbol client package name)
-      (when present-p
-        (unless (eq symbol external-symbol)
+    (multiple-value-bind (present-symbol status)
+        (find-present-symbol client package name)
+      (unless (null status)
+        (unless (eq symbol present-symbol)
           ;; We have a conflict.
           (restart-case
               (error 'symbol-conflict
-                     :conflicting-symbols (list symbol external-symbol))
-            (unintern-existing-symbol ()
-              (unintern client package symbol))
-            (do-not-import ())))
-        (return-from import t)))
-    (multiple-value-bind (internal-symbol present-p)
-        (find-internal-symbol client package name)
-      (when present-p
-        (unless (eq symbol internal-symbol)
-          ;; We have a conflict.
-          (restart-case
-              (error 'symbol-conflict
-                     :conflicting-symbols (list symbol internal-symbol))
-            (unintern-existing-symbol ()
-              (unintern client package symbol))
-            (do-not-import ())))
-        (return-from import t)))
-    (multiple-value-bind (shadowing-symbol present-p)
-        (find-shadowing-symbol client package name)
-      (when present-p
-        (unless (eq symbol shadowing-symbol)
-          ;; We have a conflict.
-          (restart-case
-              (error 'symbol-conflict
-                     :conflicting-symbols (list symbol shadowing-symbol))
+                     :conflicting-symbols (list symbol present-symbol))
             (unintern-existing-symbol ()
               (unintern client package symbol))
             (do-not-import ())))
