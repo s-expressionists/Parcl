@@ -13,10 +13,11 @@
   (setf (nicknames package) new-nicknames))
 
 (defmethod parcl:shadowing-symbols ((client client) package)
-  (shadowing-symbols package))
-
-(defmethod (setf parcl:shadowing-symbols) (new-symbols (client client) package)
-  (setf (shadowing-symbols package) new-symbols))
+  (loop for entry in (symbol-entries package)
+        for status = (entry-status entry)
+        when (or (eq status :internal-shadowing)
+                 (eq status :external-shadowing))
+          collect (entry-symbol entry)))
 
 (defmethod parcl:use-list ((client client) package)
   (use-list package))
