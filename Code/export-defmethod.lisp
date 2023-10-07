@@ -95,26 +95,28 @@
 (defun detect-and-resolve-export-non-accessibility
     (client package symbol)
   #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
-  (when (and (not (member symbol (external-symbols client package)))
-             (not (member symbol (internal-symbols client package))))
-    (restart-case (error 'symbol-is-not-accessible
-                         :package package
-                         :symbol symbol)
-      (import ()
-        :report (lambda (stream)
-                  (format stream
-                          "Import ~s into ~s"
-                          symbol package))
-        (return-from detect-and-resolve-export-non-accessibility
-          (lambda ()
-            (import client package symbol))))
-      (do-not-export ()
-        :report (lambda (stream)
-                  (format stream
-                          "Abort the EXPORT of ~s"
-                          symbol))
-        (return-from detect-and-resolve-export-non-accessibility
-          :abort))))
+  (multiple-value-bind (putative-symbol status)
+      (find-symbol client package (symbol-name client symbol))
+    (unless (and (eq putative-symbol symbol)
+                 (not (null status)))
+      (restart-case (error 'symbol-is-not-accessible
+                           :package package
+                           :symbol symbol)
+        (import ()
+          :report (lambda (stream)
+                    (format stream
+                            "Import ~s into ~s"
+                            symbol package))
+          (return-from detect-and-resolve-export-non-accessibility
+            (lambda ()
+              (import client package symbol))))
+        (do-not-export ()
+          :report (lambda (stream)
+                    (format stream
+                            "Abort the EXPORT of ~s"
+                            symbol))
+          (return-from detect-and-resolve-export-non-accessibility
+            :abort)))))
   ;; Return NIL to indicate that there was no conflict
   nil)
 
@@ -137,4 +139,4 @@
               (unless (null action-2) (funcall action-2))
               (unless (null action-3) (funcall action-3))
               (when (and (null action-1) (null action-2) (null action-3))
-                (ensure-exportet-symbol client package symbol)))))))))
+                (ensure-present-symbol client package symbol :external)))))))))
