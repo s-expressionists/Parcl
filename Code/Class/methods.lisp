@@ -66,23 +66,25 @@
                 (otherwise :external-shadowing)))))
   t)
 
-(defmethod ensure-present-symbol ((client client) package symbol)
-  (let* ((name (parcl:symbol-name client symbol))
-         (entry (parcl:name-to-entry client name (symbol-table package))))
-    (when (null entry)
-      (let* ((symbol (parcl:make-symbol client name package))
-             (entry (make-entry symbol :internal)))
-        (add-entry entry package)))))
-
-(defmethod ensure-exported-symbol ((client client) package symbol)
+(defmethod ensure-present-symbol
+    ((client client) package symbol &optional status)
   (let* ((name (parcl:symbol-name client symbol))
          (entry (parcl:name-to-entry client name (symbol-table package))))
     (if (null entry)
         (let* ((symbol (parcl:make-symbol client name package))
-               (entry (make-entry symbol :external)))
+               (status (if (null status) :internal status))
+               (entry (make-entry symbol status)))
           (add-entry entry package))
         (setf (entry-status entry)
-              (case (entry-status entry)
-                (:internal :external)
-                (:internal-shadowing :external-shadowing)
+              (case status
+                (:internal
+                 (case (entry-status entry)
+                   (:external :internal)
+                   (:external-shadowing :internal-shadowing)
+                   (otherwise (entry-status entry))))
+                (:external
+                 (case (entry-status entry)
+                   (:internal :external)
+                   (:internal-shadowing :external-shadowing)
+                   (otherwise (entry-status entry))))
                 (otherwise (entry-status entry)))))))
