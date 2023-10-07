@@ -3,9 +3,11 @@
                #:iconoclast-builder)
   :serial t
   :components
-  ((:file "accessors")
+  ((:file "variables")
+   (:file "accessors")
    (:file "configuration")
    (:file "generic-functions")
+   (:file "macros")
    (:file "package-defclass")
    (:file "conditions")
    (:file "find-symbol-defmethod")
