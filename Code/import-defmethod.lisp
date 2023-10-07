@@ -1,7 +1,8 @@
 (cl:in-package #:parcl)
 
 (defmethod import (client package symbol)
-  (let ((name (symbol-name symbol)))
+  #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
+  (let ((name (symbol-name client symbol)))
     (multiple-value-bind (external-symbol present-p)
         (find-external-symbol client package name)
       (when present-p
