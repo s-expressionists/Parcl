@@ -25,15 +25,19 @@
   (let ((added-packages
           (set-difference (use-list client package) packages-to-use)))
     (let ((accessible-symbol '()))
-      (do-symbols (symbol-variable package)
-        (push (list symbol-variable) accessible-symbols))
+      (map-symbols client package
+                   (lambda (symbol)
+                     (push (list symbol-variable) accessible-symbols)))
       (loop for package-to-use in added-packages
-            do (do-external-symbols (symbol-variable package-to-use)
-                 (let ((collision (find symbol-variable accessible-symbols
-                                        :key #'car :test symbol-names-equal)))
-                   (if (null collision)
-                       (push (list symbol-variable) accessible-symbols)
-                       (push accessible-symbols (cdr collision))))))
+            do (map-external-symbols
+                client package-to-use
+                (lambda (symbol)
+                  (let ((collision (find symbol-variable accessible-symbols
+                                         :key #'car
+                                         :test symbol-names-equal)))
+                    (if (null collision)
+                        (push (list symbol-variable) accessible-symbols)
+                        (push accessible-symbols (cdr collision)))))))
       (let ((conflicts
               (remove-if (lambda (x) (null (cdr x))) accessible-symbols)))
         (unless (null conflicts)
