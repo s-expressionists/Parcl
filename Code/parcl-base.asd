@@ -58,5 +58,5 @@
     #:find-present-symbol
     #:ensure-present-symbol
     #:ensure-exported-symbol
-    #:do-symbols-expander
-    #:do-external-symbols-expander))
+    #:map-symbols
+    #:map-external-symbols))
