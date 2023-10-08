@@ -8,7 +8,6 @@
   :components
   ((:file "packages")
    (:file "client")
-   (:file "utilities")
    (:file "package-defclass")
    (:file "methods")
    (:file "map-symbols")

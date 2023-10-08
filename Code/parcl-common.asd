@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "variables")
+   (:file "utilities")
    (:file "accessors")
    (:file "configuration")
    (:file "generic-functions")
