@@ -11,4 +11,4 @@
    (:file "package-defclass")
    (:file "methods")
    (:file "map-symbols")
-   (:file "map-external")))
+   (:file "map-external-symbols")))
