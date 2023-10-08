@@ -5,16 +5,6 @@
 ;;; string.
 (defgeneric make-package (client name))
 
-(defgeneric name (client package))
-
-(defgeneric nicknames (client package))
-
-(defgeneric use-list (client package))
-
-(defgeneric used-by-list (client package))
-
-(defgeneric shadowing-symbols (client package))
-
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two
 ;;; values.  The first value is either a symbol with the name NAME
@@ -29,6 +19,8 @@
 ;;; (SETF SYMBOL-PACKAGE) with PACKAGE, CLIENT, and SYMBOL as
 ;;; arguments.
 (defgeneric import (client package symbol))
+
+(defgeneric shadowing-import (client package symbol))
 
 ;;; This function can be used to implement the standard function
 ;;; USE-PACKAGE.
