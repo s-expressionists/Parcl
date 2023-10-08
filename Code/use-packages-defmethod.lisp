@@ -24,24 +24,26 @@
 (defmethod use-packages (client package packages-to-use)
   (let ((added-packages
           (set-difference (use-list client package) packages-to-use)))
-    (let ((accessible-symbol '()))
+    (let ((accessible-symbols '()))
       (map-symbols client package
                    (lambda (symbol)
-                     (push (list symbol-variable) accessible-symbols)))
+                     (push (list symbol) accessible-symbols)))
       (loop for package-to-use in added-packages
             do (map-external-symbols
                 client package-to-use
                 (lambda (symbol)
-                  (let ((collision (find symbol-variable accessible-symbols
+                  (let ((collision (find symbol accessible-symbols
                                          :key #'car
-                                         :test symbol-names-equal)))
+                                         :test
+                                         (lambda (s1 s2)
+                                           (symbol-names-equal client s1 s2)))))
                     (if (null collision)
-                        (push (list symbol-variable) accessible-symbols)
+                        (push (list symbol) accessible-symbols)
                         (push accessible-symbols (cdr collision)))))))
       (let ((conflicts
               (remove-if (lambda (x) (null (cdr x))) accessible-symbols)))
         (unless (null conflicts)
           (error 'conflicts
-                 :conflicts conflicts-table)))
+                 :conflicts conflicts)))
       (setf (use-list client package)
             (append (use-list client package) packages-to-use)))))
