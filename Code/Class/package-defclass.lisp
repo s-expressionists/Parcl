@@ -83,7 +83,7 @@
 (defun (setf entry-status) (status entry)
   (setf (cdr entry) status))
 
-(defun add-entry (entry package)
+(defun add-entry (client name entry package)
   (setf (parcl:name-to-entry client name (symbol-table package))
         entry)
   (push entry (symbol-entries package)))
