@@ -11,5 +11,5 @@
    (:file "utilities")
    (:file "package-defclass")
    (:file "methods")
-   (:file "do-symbols-expander")
-   (:file "do-external-symbols-expander")))
+   (:file "map-symbols")
+   (:file "map-external")))
