@@ -102,3 +102,7 @@
 (defgeneric find-present-symbol (client package name))
 
 (defgeneric ensure-present-symbol (client package symbol &optional status))
+
+(defgeneric map-external-symbols (client package function))
+
+(defgeneric map-symbols (client package function))
