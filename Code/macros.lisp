@@ -12,7 +12,7 @@
       `(flet ((body-function (,symbol-variable)
                 ,@declarations
                 (tagbody ,tags-and-statements)))
-         (let ((,package-variable (find-package ,package)))
+         (let ((,package-variable (find-package ,package-designator-form)))
            (map-symbols (*client* ,package-variable #'body-function)))
          ,result-form))))
 
@@ -28,6 +28,6 @@
       `(flet ((body-function (,symbol-variable)
                 ,@declarations
                 (tagbody ,tags-and-statements)))
-         (let ((,package-variable (find-package ,package)))
+         (let ((,package-variable (find-package ,package-designator-form)))
            (map-external-symbols *client* ,package-variable #'body-function))
          ,result-form))))
