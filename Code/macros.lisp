@@ -6,8 +6,15 @@
         (package-designator-form '*package*)
         (result-form 'nil))
      &body body)
-  (do-symbols-expander
-    *client* symbol-variable package-designator-form result-form body))
+  (let ((package-variable (gensym)))
+    (multiple-value-bind (declarations tags-and-statements)
+        (separate-ordinary-body body)
+      `(flet ((body-function (,symbol-variable)
+                ,@declarations
+                (tagbody ,tags-and-statements)))
+         (let ((,package-variable (find-package ,package)))
+           (map-symbols (*client* ,package-variable #'body-function)))
+         ,result-form))))
 
 (defmacro do-external-symbols
     ((symbol-variable
@@ -15,5 +22,12 @@
         (package-designator-form '*package*)
         (result-form 'nil))
      &body body)
-  (do-external-symbols-expander
-    *client* symbol-variable package-designator-form result-form body))
+  (let ((package-variable (gensym)))
+    (multiple-value-bind (declarations tags-and-statements)
+        (separate-ordinary-body body)
+      `(flet ((body-function (,symbol-variable)
+                ,@declarations
+                (tagbody ,tags-and-statements)))
+         (let ((,package-variable (find-package ,package)))
+           (map-external-symbols *client* ,package-variable #'body-function))
+         ,result-form))))
