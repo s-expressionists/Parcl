@@ -4,4 +4,4 @@
   (loop for entry in (symbol-entries package)
         when (or (eq (entry-status entry) :external)
                  (eq (entry-status entry) :external-shadowing))
-          do (funcall function symbol)))
+          do (funcall function (entry-symbol entry))))
