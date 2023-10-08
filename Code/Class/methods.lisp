@@ -51,7 +51,7 @@
     (if (null status)
         (let* ((symbol (parcl:make-symbol client name package))
                (entry (make-entry symbol :internal)))
-          (add-entry entry package)
+          (add-entry client name entry package)
           (values symbol nil))
         (values symbol status))))
 
@@ -60,7 +60,7 @@
     (if (null entry)
         (let* ((symbol (parcl:make-symbol client name package))
                (entry (make-entry symbol :internal-shadowing)))
-          (add-entry entry package))
+          (add-entry client name entry package))
         (setf (entry-status entry)
               (case (entry-status entry)
                 ((:internal :internal-shadowing) :internal-shadowing)
@@ -75,7 +75,7 @@
         (let* ((symbol (parcl:make-symbol client name package))
                (status (if (null status) :internal status))
                (entry (make-entry symbol status)))
-          (add-entry entry package))
+          (add-entry client name entry package))
         (setf (entry-status entry)
               (case status
                 (:internal
