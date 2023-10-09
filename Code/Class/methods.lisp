@@ -67,7 +67,7 @@
                 (otherwise :external-shadowing)))))
   t)
 
-(defmethod ensure-present-symbol
+(defmethod parcl:ensure-present-symbol
     ((client client) package symbol &optional status)
   (let* ((name (parcl:symbol-name client symbol))
          (entry (parcl:name-to-entry client name (symbol-table package))))
