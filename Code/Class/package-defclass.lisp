@@ -8,6 +8,9 @@
 
 (defgeneric (setf nicknames) (new-nicknames package))
 
+;;; Return a list of pairs of the form (<name> . <package>) where
+;;; <name> is a string representing a nickname and <package> is a
+;;; package object with that nickname.
 (defgeneric local-nicknames (package))
 
 (defgeneric (setf local-nicknames) (new-local-nicknames package))
@@ -52,6 +55,7 @@
       :initarg :nicknames
       :initform '()
       :accessor nicknames)
+   ;; See the definition of the accessor above.
    (%local-nicknames
       :initarg :local-nicknames
       :initform '()
