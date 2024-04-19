@@ -9,11 +9,17 @@
 (defgeneric (setf nicknames) (new-nicknames package))
 
 ;;; Return a list of pairs of the form (<name> . <package>) where
-;;; <name> is a string representing a nickname and <package> is a
-;;; package object with that nickname.
+;;; <name> is a string representing a package-local nickname and
+;;; <package> is a package object with that nickname.
 (defgeneric local-nicknames (package))
 
 (defgeneric (setf local-nicknames) (new-local-nicknames package))
+
+;;; Return a list of packages that have package-local nicknames for
+;;; this package.
+(defgeneric locally-nicknamed-by (package))
+
+(defgeneric (setf locally-nicknamed-by) (packages package))
 
 (defgeneric use-list (package))
 
@@ -60,6 +66,11 @@
       :initarg :local-nicknames
       :initform '()
       :accessor local-nicknames)
+   ;; See the definition of the accessor above.
+   (%locally-nicknamed-by
+    :initarg :locally-nicknamed-by
+    :initform '()
+    :accessor locally-nicknamed-by)
    (%use-list
       :initarg :use-list
       :initform '()
