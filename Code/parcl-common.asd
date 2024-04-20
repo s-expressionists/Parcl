@@ -18,4 +18,5 @@
    (:file "export-defmethod")
    (:file "unexport-defmethod")
    (:file "add-package-local-nickname")
+   (:file "remove-package-local-nickname")
    (:file "defpackage-defmacro")))
