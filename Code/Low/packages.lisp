@@ -17,4 +17,16 @@
                  #:unintern
                  #:symbol-name
                  #:symbol-package))
-  (:export . #1#))
+  (:export #:name-to-entry
+           #:name
+           #:nicknames
+           #:shadowing-symbols
+           #:use-list
+           #:used-by-list
+           #:make-table
+           #:find-present-symbol
+           #:ensure-present-symbol
+           #:map-symbols
+           #:map-external-symbols
+           #:symbol-names-equal
+           . #1#))
