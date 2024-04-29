@@ -8,5 +8,6 @@
    (:file "accessors")
    (:file "configuration")
    (:file "generic-functions")
+   (:file "package-class")
    (:file "find-symbol")
    (:file "import")))
