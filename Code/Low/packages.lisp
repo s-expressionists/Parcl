@@ -29,4 +29,6 @@
            #:map-symbols
            #:map-external-symbols
            #:symbol-names-equal
+           #:local-nicknames
+           #:locally-nicknamed-by
            . #1#))
