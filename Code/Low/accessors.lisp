@@ -101,6 +101,11 @@
 ;;; with that name in PACKAGE, then return NIL and NIL.
 (defgeneric find-present-symbol (client package name))
 
+;;; This function is used to implement the semi-standard function
+;;; PACKAGE-LOCAL-NICKNAMES.  The PACKAGE argument of this function
+;;; must be a package object.
+(defgeneric local-nicknames (client package))
+
 (defgeneric ensure-present-symbol (client package symbol &optional status))
 
 (defgeneric map-external-symbols (client package function))
