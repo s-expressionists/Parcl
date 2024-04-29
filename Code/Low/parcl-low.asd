@@ -10,4 +10,5 @@
    (:file "generic-functions")
    (:file "package-class")
    (:file "find-symbol")
-   (:file "import")))
+   (:file "import")
+   (:file "use-package")))
