@@ -88,6 +88,16 @@
 ;;; LOCALLY-NICKNAMED-BY.
 (defgeneric add-local-nickname (client nickname nicknamed-package package))
 
+;;; This function can be used to implement the semi-standard function
+;;; REMOVE-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that
+;;; represents the local nickname to be removed from PACKAGE.  PACKAGE
+;;; is a package object from which NICKNAME is to be removed.  If
+;;; NICKNAME is the local nickname of any package in PACKAGE, then it
+;;; is removed, and this function returns true.  If NICKNAME is not
+;;; the local nickname of any package in PACKAGE, then this function
+;;; has no effect, and returns NIL.
+(defgeneric remove-local-nickname (client nickname package))
+
 ;;; This function is used by the macro DO-SYMBOLS to compute the
 ;;; expansion.
 (defgeneric do-symbols-expander
