@@ -73,6 +73,21 @@
 ;;; as arguments.
 (defgeneric unintern (client package symbol))
 
+;;; This function can be used to implement the semi-standard function
+;;; ADD-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that represents
+;;; the local nickname to be used to refer to the nicknamed package.
+;;; NICKNAMED-PACKAGE is a package object to be nicknamed.  PACKAGE is
+;;; a package object to which the NICKNAME/NICKNAMED-PACKAGE pair is
+;;; to be added.  If the NICKNAME/NICKNAMED-PACKAGE pair exists in
+;;; PACKAGE already, then the call to this function has no effect.  If
+;;; a NICKNAME/NICKNAMED-PACKAGE pair exists exists in PACKAGE already
+;;; with the same nickname but a different nicknamed package, then an
+;;; error is signaled.  Otherwise, the NICKNAME/NICKNAMED-PACKAGE pair
+;;; is added to PACKAGE using the accessor LOCAL-NICKNAMES, and
+;;; PACKAGE is added to NICKNAMED-PACKAGE using the accessor
+;;; LOCALLY-NICKNAMED-BY.
+(defgeneric add-local-nickname (client nickname nicknamed-package package))
+
 ;;; This function is used by the macro DO-SYMBOLS to compute the
 ;;; expansion.
 (defgeneric do-symbols-expander
