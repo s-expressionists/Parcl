@@ -15,4 +15,4 @@
    (:file "unuse-package")
    (:file "export")
    (:file "unexport")
-   (:file "add-package-local-nickname")))
+   (:file "add-local-nickname")))
