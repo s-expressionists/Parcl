@@ -31,6 +31,6 @@
            #:symbol-names-equal
            #:local-nicknames
            #:locally-nicknamed-by
-           #:add-package-local-nickname
-           #:remove-package-local-nickname
+           #:add-local-nickname
+           #:remove-local-nickname
            . #1#))
