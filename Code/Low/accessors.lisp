@@ -106,10 +106,14 @@
 ;;; must be a package object.
 (defgeneric local-nicknames (client package))
 
+(defgeneric (setf local-nicknames) (new-value client package))
+
 ;;; This function is used to implement the semi-standard function
 ;;; PACKAGE-LOCALLY-NICKNAMED-BY-LIST.  The PACKAGE argument of this
 ;;; function must be a package object.
 (defgeneric locally-nicknamed-by (client package))
+
+(defgeneric (setf locally-nicknamed-by) (new-value client package))
 
 (defgeneric ensure-present-symbol (client package symbol &optional status))
 
