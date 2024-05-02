@@ -3,4 +3,5 @@
 (defsystem "parcl-macros"
   :serial t
   :components
-  ((:file "do-symbols")))
+  ((:file "do-symbols")
+   (:file "do-external-symbols")))
