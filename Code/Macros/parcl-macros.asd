@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "do-symbols")
-   (:file "do-external-symbols")))
+   (:file "do-external-symbols")
+   (:file "defpackage")))
