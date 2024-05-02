@@ -14,7 +14,6 @@
   '(#:home-package
     #:symbol-name
     #:symbol-package
-    #:find-package
     #:delete-package
     #:make-symbol
     #:package
