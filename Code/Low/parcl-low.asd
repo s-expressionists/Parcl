@@ -16,4 +16,5 @@
    (:file "export")
    (:file "unexport")
    (:file "add-local-nickname")
-   (:file "remove-local-nickname")))
+   (:file "remove-local-nickname")
+   (:file "condition-types")))
