@@ -23,3 +23,24 @@
                       ~s"
                      (package-to-unuse condition)
                      (package-error-package condition)))))
+
+(define-condition nickname-refers-to-different-package (package-error)
+  ((%nickname
+    :initarg :nickname
+    :reader nickname)
+   (%nicknamed-package
+    :initarg :nicknamed-package
+    :reader nicknamed-package))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to add the package-local nickname:~@
+                      ~s~@
+                      to refer to the package:~@
+                      ~s~@
+                      in the package:~@
+                      ~s,~@
+                      but that nickname already refers to a different~@
+                      package."
+                     (nickname condition)
+                     (nicknamed-package condition)
+                     (package-error-package condition)))))
