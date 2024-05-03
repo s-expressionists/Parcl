@@ -1,6 +1,4 @@
 (asdf:defsystem #:parcl-common
-  :depends-on (#:iconoclast
-               #:iconoclast-builder)
   :serial t
   :components
   ((:file "variables")
