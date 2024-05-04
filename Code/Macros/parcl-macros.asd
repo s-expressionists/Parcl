@@ -5,6 +5,7 @@
                #:iconoclast-builder)
   :serial t
   :components
-  ((:file "do-symbols")
+  ((:file "with-package-iterator")
+   (:file "do-symbols")
    (:file "do-external-symbols")
    (:file "defpackage")))
