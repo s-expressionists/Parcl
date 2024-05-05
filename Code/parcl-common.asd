@@ -3,7 +3,6 @@
   :components
   ((:file "variables")
    (:file "utilities")
-   (:file "accessors")
    (:file "configuration")
    (:file "package-defclass")
    (:file "conditions")))
