@@ -29,6 +29,7 @@
            #:map-symbols
            #:map-external-symbols
            #:symbol-names-equal
+           #:use-packages
            #:local-nicknames
            #:locally-nicknamed-by
            #:add-local-nickname
