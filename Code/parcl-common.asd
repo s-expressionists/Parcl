@@ -7,6 +7,4 @@
    (:file "configuration")
    (:file "generic-functions")
    (:file "package-defclass")
-   (:file "conditions")
-   (:file "add-package-local-nickname")
-   (:file "remove-package-local-nickname")))
+   (:file "conditions")))
