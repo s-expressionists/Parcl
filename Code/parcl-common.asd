@@ -5,6 +5,5 @@
    (:file "utilities")
    (:file "accessors")
    (:file "configuration")
-   (:file "generic-functions")
    (:file "package-defclass")
    (:file "conditions")))
