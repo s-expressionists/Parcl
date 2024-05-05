@@ -8,7 +8,6 @@
    (:file "generic-functions")
    (:file "package-defclass")
    (:file "conditions")
-   (:file "use-packages-defmethod")
    (:file "unuse-package-defmethod")
    (:file "export-defmethod")
    (:file "unexport-defmethod")
