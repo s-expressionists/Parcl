@@ -4,5 +4,4 @@
   ((:file "variables")
    (:file "utilities")
    (:file "configuration")
-   (:file "package-defclass")
    (:file "conditions")))
