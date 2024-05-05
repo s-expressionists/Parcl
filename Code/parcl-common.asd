@@ -3,5 +3,4 @@
   :components
   ((:file "variables")
    (:file "utilities")
-   (:file "configuration")
    (:file "conditions")))
