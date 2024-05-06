@@ -1,4 +1,5 @@
 (asdf:defsystem #:parcl-common
+  :depends-on ("ecclesia")
   :serial t
   :components
   ((:file "variables")
