@@ -7,4 +7,5 @@
    (:file "find-symbol")
    (:file "import")
    (:file "use-package")
+   (:file "unuse-package")
    (:file "condition-types")))
