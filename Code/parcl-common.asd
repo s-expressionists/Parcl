@@ -9,4 +9,5 @@
    (:file "use-package")
    (:file "unuse-package")
    (:file "export")
+   (:file "unexport")
    (:file "condition-types")))
