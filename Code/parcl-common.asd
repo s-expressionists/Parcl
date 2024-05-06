@@ -6,4 +6,5 @@
    (:file "utilities")
    (:file "find-symbol")
    (:file "import")
+   (:file "use-package")
    (:file "condition-types")))
