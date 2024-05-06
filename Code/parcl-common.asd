@@ -3,4 +3,5 @@
   :components
   ((:file "variables")
    (:file "utilities")
-   (:file "find-symbol")))
+   (:file "find-symbol")
+   (:file "condition-types")))
