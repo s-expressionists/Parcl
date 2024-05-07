@@ -13,6 +13,7 @@
   '(#:*package*
     #:package-name
     #:package-nicknames
+    #:package-shadowing-symbols
     #:package-use-list
     #:package-used-by-list
     #:package-error
