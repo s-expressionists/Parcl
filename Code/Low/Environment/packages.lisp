@@ -1,5 +1,5 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage parcl-environment
+(defpackage parcl-low-environment
   (:use #:common-lisp)
   (:export))
