@@ -8,6 +8,7 @@
    (:file "package-nicknames")
    (:file "package-shadowing-symbols")
    (:file "package-use-list")
+   (:file "package-used-by-list")
    (:file "find-symbol")
    (:file "import")
    (:file "use-package")
