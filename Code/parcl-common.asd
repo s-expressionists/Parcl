@@ -5,6 +5,7 @@
   ((:file "variables")
    (:file "utilities")
    (:file "package-name")
+   (:file "package-nicknames")
    (:file "find-symbol")
    (:file "import")
    (:file "use-package")
