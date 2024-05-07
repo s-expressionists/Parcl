@@ -43,17 +43,5 @@
 
 (defparameter *exports*
   '(#:*client*
-    #:name
-    #:nicknames
-    #:symbol-names-equal
-    #:make-table
-    #:name-to-entry
-    #:shadowing-symbols
-    #:use-packages
-    #:use-list
-    #:used-by-list
-    #:find-present-symbol
-    #:ensure-present-symbol
-    #:ensure-exported-symbol
     #:map-symbols
     #:map-external-symbols))
