@@ -7,6 +7,7 @@
    (:file "package-name")
    (:file "package-nicknames")
    (:file "package-shadowing-symbols")
+   (:file "package-use-list")
    (:file "find-symbol")
    (:file "import")
    (:file "use-package")
