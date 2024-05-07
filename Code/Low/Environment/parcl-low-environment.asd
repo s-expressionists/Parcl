@@ -4,7 +4,7 @@
 ;;;; with no slots in it.  The package contents is instead contained
 ;;;; in an environment object.
 
-(defsystem #:parcl-environment
+(defsystem #:parcl-low-environment
   :serial t
   :components
   ((:file "packages")
