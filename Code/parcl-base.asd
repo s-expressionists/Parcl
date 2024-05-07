@@ -10,14 +10,7 @@
   :description "Portable Package System, base system")
 
 (defparameter *string-designators*
-  '(#:home-package
-    #:symbol-name
-    #:symbol-package
-    #:delete-package
-    #:make-symbol
-    #:package
-    #:packagep
-    #:*package*
+  '(#:*package*
     #:package-name
     #:package-nicknames
     #:package-use-list
