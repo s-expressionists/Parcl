@@ -1,12 +1,12 @@
 @node Low system
 @chapter Low system
 
-@deffn {Generic Function} name client package
+@deffn {Generic function} name client package
 Given a client object and a package object, this function returns the
 name of the package.
 @end deffn
 
-@deffn {Generic Function} (setf name) new-name client package
+@deffn {Generic function} {(setf name)} new-name client package
 Given a name, a client object, and a package object, this function
 replaces the current name of @emph{package} with @emph{new-name}.
 @end deffn
