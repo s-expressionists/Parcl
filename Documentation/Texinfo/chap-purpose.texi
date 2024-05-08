@@ -7,17 +7,8 @@ Lisp implementation that already has its own package system, or as an
 @emph{intrinsic} system to provide a package system in a new Common
 Lisp implementation. @xref{Implementations}.
 
-A large part of the code base consists of code for signaling
-correctable errors as required by the standard.  However, it does not
-contain code for the precise functions required by the standard.
-Instead, it contains functions that will be be called by the standard
-functions, and that do the essence of the work required.  Client code
-must define the standard functions to call the analogous Parcl
-functions.  The reason for this organization is that the Parcl
-functions have an additional @code{client} parameter and this
-corresponding argument must be supplied by the standard function.  The
-way the standard function obtains the value to pass is specific to the
-client, which is why Parcl does not impose a particular technique.
+The way the standard function obtains the value to pass is specific to
+the client, which is why Parcl does not impose a particular technique.
 One possibility for client code is to define the standard function as
 a @emph{closure}, closing over the @code{client} object.  Another
 possibility is to keep the @code{client} object as the value of a
