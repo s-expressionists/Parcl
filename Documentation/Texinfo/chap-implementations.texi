@@ -1,6 +1,23 @@
 @node Implementations
 @chapter Implementations
 
+The Parcl repository is mainly organized into a ``low'' system and a
+``high'' system.
+
+@section The ``low'' system
+
+The ``low'' system exists in a single version, common to the extrinsic
+and the intrinsic systems.  The ``low'' system contains the bulk of
+the functionality of Parcl, but the operators in this system are
+defined as generic functions taking an additional {@tt client}
+parameter compared to the standard operators.  A large part of the
+code for the package system consists of checking for symbol conflicts
+and other exceptional situations, and those situations are handled by
+the signaling of correctable errors, as required by the standard.
+All this code is present in the ``low'' system.
+
+@section The ``high'' system.
+
 We provide four different implementations according to two axes.
 
 The first axis provides either an @emph{extrinsic} or an
