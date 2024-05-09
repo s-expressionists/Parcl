@@ -11,6 +11,7 @@
 
 (defparameter *string-designators*
   '(#:*package*
+    #:find-package
     #:package-name
     #:package-nicknames
     #:package-shadowing-symbols
