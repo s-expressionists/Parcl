@@ -9,6 +9,7 @@
    (:file "package-shadowing-symbols")
    (:file "package-use-list")
    (:file "package-used-by-list")
+   (:file "intern")
    (:file "find-symbol")
    (:file "import")
    (:file "use-package")
