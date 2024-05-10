@@ -16,6 +16,7 @@
    (:file "unuse-package")
    (:file "export")
    (:file "unexport")
+   (:file "shadow")
    (:file "add-package-local-nickname")
    (:file "remove-package-local-nickname")
    (:file "condition-types")))
