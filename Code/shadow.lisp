@@ -4,5 +4,5 @@
   (let ((package (find-package package-designator))
         (names (if (listp names) names (list names))))
     (loop for name in names
-          do (parcl-low:shadow *client* package name))))
-
+          for string-name = (string name)
+          do (parcl-low:shadow *client* package string-name))))
