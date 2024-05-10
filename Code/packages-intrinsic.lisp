@@ -2,6 +2,5 @@
 
 (defpackage parcl
   (:use #:common-lisp)
-  (:export . #.(append parcl-asdf:*string-designators*
-                       parcl-asdf:*exports*)))
-
+  (:export #:add-package-local-nickname
+           #:remove-package-local-nickname))
