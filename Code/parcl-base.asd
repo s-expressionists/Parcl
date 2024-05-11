@@ -1,7 +1,6 @@
 (cl:defpackage #:parcl-asdf
   (:use #:common-lisp)
-  (:export #:*string-designators*
-           #:*exports*))
+  (:export #:*string-designators*))
 
 (cl:in-package #:parcl-asdf)
 
@@ -35,8 +34,3 @@
     #:with-package-iterator
     #:do-symbols
     #:do-external-symbols))
-
-(defparameter *exports*
-  '(#:*client*
-    #:map-symbols
-    #:map-external-symbols))
