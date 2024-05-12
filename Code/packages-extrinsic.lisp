@@ -29,5 +29,7 @@
          #:do-symbols
          #:do-external-symbols))
   (:export #:*client*
+           #:add-package-local-nickname
+           #:remove-package-local-nickname
            #:store-package
            .  #1#))
