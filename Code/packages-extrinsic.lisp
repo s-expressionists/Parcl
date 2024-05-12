@@ -29,4 +29,5 @@
          #:do-symbols
          #:do-external-symbols))
   (:export #:*client*
+           #:store-package
            .  #1#))
