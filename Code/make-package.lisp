@@ -20,7 +20,8 @@
                ~@
                This function creates a new package and makes it~@
                available in the global environment so that FIND-PACKAGE~@
-               can find and return it.~@
+               can find and return it.  This function returns the new~@
+               package.~@
                ~@
                NAME is a string designator that determines the name~@
                of the new package.  NICKNAMES is a list of string~@
