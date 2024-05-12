@@ -19,4 +19,5 @@
    (:file "shadow")
    (:file "add-package-local-nickname")
    (:file "remove-package-local-nickname")
+   (:file "make-package")
    (:file "condition-types")))
