@@ -16,12 +16,12 @@
                PACKAGE-DESIGNATOR.  This function returns two values.~@
                The first value is the symbol found or NIL if no symbol~@
                named STRING is accessible in the designated package.~@
-               The second value~@ is one of the keywords :INHERITED,~@
+               The second value is one of the keywords :INHERITED,~@
                :EXTERNAL, or :INTERNAL, or the symbol NIL if no symbol~@
                named STRING is accessible in the designated package.~@
                ~@
                If the optional argument is not supplied, it defaults~@
-               to the current package, i.e., the value of *PACKAGE*.
+               to the current package, i.e., the value of *PACKAGE*.~@
                ~@
                If STRING is not a string, then an error of type TYPE-ERROR~@
                is signaled.  If PACKAGE-DESIGNATOR is given, but it is not~@
