@@ -11,6 +11,7 @@
    (:file "package-class")
    (:file "find-symbol")
    (:file "import")
+   (:file "shadowing-import")
    (:file "use-packages")
    (:file "unuse-package")
    (:file "export")
