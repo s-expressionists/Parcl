@@ -12,6 +12,7 @@
    (:file "intern")
    (:file "find-symbol")
    (:file "import")
+   (:file "shadowing-import")
    (:file "use-package")
    (:file "unuse-package")
    (:file "export")
