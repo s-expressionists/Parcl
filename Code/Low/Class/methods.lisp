@@ -88,3 +88,17 @@
                    (:internal-shadowing :external-shadowing)
                    (otherwise (entry-status entry))))
                 (otherwise (entry-status entry)))))))
+
+(defmethod parcl-low:local-nicknames ((client client) package)
+  (local-nicknames package))
+
+(defmethod (setf parcl-low:local-nicknames)
+    (new-local-nicknames (client client) package)
+  (setf (local-nicknames package) new-local-nicknames))
+
+(defmethod parcl-low:locally-nicknamed-by ((client client) package)
+  (locally-nicknamed-by package))
+
+(defmethod (setf parcl-low:locally-nicknamed-by)
+    (new-packages (client client) package)
+  (setf (locally-nicknamed-by package) new-packages))
