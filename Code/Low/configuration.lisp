@@ -18,8 +18,9 @@
 (defgeneric symbol-package (client symbol))
 
 ;;; Given a symbol and a package, this function sets the package of
-;;; that symbol.  Parcl code will call this function only when the
-;;; package of the symbol is NIL.
+;;; that symbol.  Parcl code will call this function with a package
+;;; object only when the symbol does not have a home package, and with
+;;; NIL only when the symbol does have a home package.
 (defgeneric (setf symbol-package) (new-package client symbol))
 
 ;;; This function returns true if and only if the two symbols have the
@@ -40,3 +41,8 @@
 ;;; This function takes a entry, a client string, and a table, and it
 ;;; adds the entry in the table associated with the string.
 (defgeneric (setf name-to-entry) (new-entry client name table))
+
+;;; This function takes a string and a table and removes the entry
+;;; with that name from the table.  It is assumed that the entry is
+;;; present in the table. 
+(defgeneric remove-entry (client name table))
