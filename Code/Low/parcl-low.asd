@@ -16,6 +16,7 @@
    (:file "unuse-package")
    (:file "export")
    (:file "unexport")
+   (:file "unintern")
    (:file "add-local-nickname")
    (:file "remove-local-nickname")
    (:file "condition-types")))
