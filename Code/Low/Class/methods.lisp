@@ -89,6 +89,14 @@
                    (otherwise (entry-status entry))))
                 (otherwise (entry-status entry)))))))
 
+(defmethod parcl-low:remove-present-symbol ((client client) package symbol)
+  (parcl-low:remove-entry
+   client (symbol-name symbol) (symbol-table package))
+  (setf (symbol-entries package)
+        (remove symbol (symbol-entries package) :test #'eq :key #'car))
+  (when (eq (parcl-low:symbol-package client symbol) package)
+    (setf (parcl-low:symbol-package client symbol) nil)))
+
 (defmethod parcl-low:local-nicknames ((client client) package)
   (local-nicknames package))
 
