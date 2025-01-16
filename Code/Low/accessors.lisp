@@ -120,3 +120,5 @@
 (defgeneric map-external-symbols (client package function))
 
 (defgeneric map-symbols (client package function))
+
+(defgeneric remove-present-symbol (client package symbol))
