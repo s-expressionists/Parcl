@@ -18,6 +18,7 @@
                  #:symbol-name
                  #:symbol-package))
   (:export #:name-to-entry
+           #:remove-entry
            #:name
            #:nicknames
            #:shadowing-symbols
@@ -26,6 +27,7 @@
            #:make-table
            #:find-present-symbol
            #:ensure-present-symbol
+           #:remove-present-symbol
            #:map-symbols
            #:map-external-symbols
            #:symbol-names-equal
