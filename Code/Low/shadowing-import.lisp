@@ -9,4 +9,5 @@
         ;; We have a conflict.  We must first unintern the conflicting
         ;; symbol.
         (unintern client package present-symbol))))
-  (pushnew symbol (shadowing-symbols client package)))
+  (import client package symbol)
+  (shadow client package (symbol-name client symbol)))
