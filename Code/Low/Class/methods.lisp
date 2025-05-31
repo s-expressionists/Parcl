@@ -12,6 +12,13 @@
 (defmethod (setf parcl-low:nicknames) (new-nicknames (client client) package)
   (setf (nicknames package) new-nicknames))
 
+(defmethod parcl-low:symbol-entries ((client client) package)
+  (symbol-entries package))
+
+(defmethod (setf parcl-low:symbol-entries)
+    (symbol-entries (client client) package)
+  (setf (symbol-entries package) symbol-entries))
+
 (defmethod parcl-low:shadowing-symbols ((client client) package)
   (loop for entry in (symbol-entries package)
         for status = (entry-status entry)
