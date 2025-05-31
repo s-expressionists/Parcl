@@ -19,6 +19,7 @@
                  #:symbol-package))
   (:export #:name-to-entry
            #:remove-entry
+           #:symbol-entries
            #:name
            #:nicknames
            #:shadowing-symbols
