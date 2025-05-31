@@ -122,3 +122,15 @@
 (defgeneric map-symbols (client package function))
 
 (defgeneric remove-present-symbol (client package symbol))
+
+;;; The SYMBOL ENTRIES of a package is a list of CONS cells, each
+;;; representing a present symbol and its status.  The CAR of such a
+;;; CONS cell is the symbol itself, and the CDR is the status which is
+;;; one of :INTERNAL, :INTERNAL-SHADOWING, :EXTERNAL, and
+;;; :EXTERNAL-SHADOWING.
+
+;;; This function returns the symbol entries of a package.
+(defgeneric symbol-entries (client package))
+
+;;; This function sets the symbol entries of a package.
+(defgeneric (setf symbol-entries) (symbol-entries client package))
