@@ -8,7 +8,7 @@
      &body body)
   (let ((package-variable (gensym)))
     (multiple-value-bind (declarations tags-and-statements)
-        (separate-ordinary-body body)
+        (ecclesia:separate-ordinary-body body)
       `(flet ((body-function (,symbol-variable)
                 ,@declarations
                 (tagbody ,tags-and-statements)))
