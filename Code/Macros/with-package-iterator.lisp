@@ -10,6 +10,24 @@
 ;; being the list of entries of the present symbols of the first
 ;; package of REMAINING-PACKAGES.
 
+(defun symbol-is-external/internal (entry status)
+  (ecase status
+    (:external
+     (member (cdr entry) '(:external :external-shadowing)))
+    (:internal
+     (member (cdr entry) '(:internal :internal-shadowing)))))
+
+(defun symbol-is-shadowed (symbol package)
+  (let* ((symbol-entries
+           (parcl-low:symbol-entries parcl:*client* package))
+         (present-symbol-entry
+           (find symbol symbol-entries
+                 :key #'car
+                 :test (lambda (s1 s2)
+                         (parcl-low:symbol-names-equal
+                          parcl:*client* s1 s2)))))
+    (not (eq symbol (car present-symbol-entry)))))
+
 (defun make-closure (package-list symbol-types)
   (when (or (null package-list) (null symbol-types))
     (return-from make-closure (lambda () nil)))
@@ -22,7 +40,8 @@
         (remaining-symbol-entries
           (if (eq (first symbol-types) :inherited)
               '()
-              (symbol-entries (first package-list)))))
+              (parcl-low:symbol-entries
+               parcl:*client* (first package-list)))))
     (labels
         ((result ()
            (case (first remaining-symbol-types)
@@ -33,8 +52,8 @@
                      (go no-more-symbols-but-maybe-more-used-packages)
                      (let ((entry (pop remaining-symbol-entries)))
                        (if (and (symbol-is-external/internal entry :external)
-                                ;; This is wrong.  Not ENTRY.
-                                (symbol-is-not-shadowed entry))
+                                (not (symbol-is-shadowed
+                                      (car entry) (first remaining-packages))))
                            (return-from result
                              (values t
                                      (car entry)
@@ -58,16 +77,18 @@
                                       (setf remaining-symbol-entries
                                             (if (eq (first symbol-types) :inherited)
                                                 '()
-                                                (symbol-entries (first package-list))))
+                                                (parcl-low:symbol-entries
+                                                 parcl:*client* (first package-list))))
                                       (result)))
                            (progn
                              (setf remaining-used-packages
-                                   (use-list
-                                    (first remaining-packages)))
+                                   (parcl-low:use-list
+                                    parcl:*client* (first remaining-packages)))
                              (go no-more-symbols-but-maybe-more-used-packages))))
                      (let ((used-package (pop remaining-used-packages)))
                        (setf remaining-symbol-entries
-                             (symbol-entries used-package))
+                             (parcl-low:symbol-entries
+                              parcl:*client* used-package))
                        (go maybe-more-symbols)))))
              ((:external :internal)
               (tagbody
@@ -88,7 +109,8 @@
                                       (setf remaining-symbol-entries
                                             (if (eq (first symbol-types) :inherited)
                                                 '()
-                                                (symbol-entries (first package-list))))
+                                                (parcl-low:symbol-entries
+                                                 parcl:*client* (first package-list))))
                                       (result)))
                            (progn
                              (setf remaining-symbol-entries
