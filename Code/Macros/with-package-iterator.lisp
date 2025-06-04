@@ -32,7 +32,7 @@
                  (if (null remaining-symbol-entries)
                      (go no-more-symbols-but-maybe-more-used-packages)
                      (let ((entry (pop remaining-symbol-entries)))
-                       (if (and (symbol-is-external entry)
+                       (if (and (symbol-is-external/internal entry :external)
                                 ;; This is wrong.  Not ENTRY.
                                 (symbol-is-not-shadowed entry))
                            (return-from result
@@ -69,7 +69,7 @@
                        (setf remaining-symbol-entries
                              (symbol-entries used-package))
                        (go maybe-more-symbols)))))
-             (:external
+             ((:external :internal)
               (tagbody
                maybe-more-symbols
                  (if (null remaining-symbol-entries)
@@ -96,44 +96,10 @@
                                     (first remaining-packages)))
                              (go maybe-more-symbols))))
                      (let ((entry (pop remaining-symbol-entries)))
-                       (if (symbol-is-external entry)
+                       (if (symbol-is-external/internal entry (first remaining-symbol-types))
                            (return-from result
                              (values t
                                      (car entry)
-                                     :external
-                                     (first remaining-packages)))
-                           (go maybe-more-symbols))))))
-             (:internal
-              (tagbody
-               maybe-more-symbols
-                 (if (null remaining-symbol-entries)
-                     (progn
-                       (pop remaining-packages)
-                       (if (null remaining-packages)
-                           (if (null (rest remaining-symbol-types))
-                               (return-from result nil)
-                               (progn (pop remaining-symbol-types)
-                                      (setf remaining-packages
-                                            package-list)
-                                      (setf remaining-used-packages
-                                            (if (eq (first symbol-types) :inherited)
-                                                (package-used-by-list (first package-list))
-                                                '()))
-                                      (setf remaining-symbol-entries
-                                            (if (eq (first symbol-types) :inherited)
-                                                '()
-                                                (symbol-entries (first package-list))))
-                                      (result)))
-                           (progn
-                             (setf remaining-symbol-entries
-                                   (symbols
-                                    (first remaining-packages)))
-                             (go maybe-more-symbols))))
-                     (let ((entry (pop remaining-symbol-entries)))
-                       (if (symbol-is-internal entry)
-                           (return-from result
-                             (values t
-                                     (car entry)
-                                     :internal
+                                     (first remaining-symbol-types)
                                      (first remaining-packages)))
                            (go maybe-more-symbols))))))))))))
