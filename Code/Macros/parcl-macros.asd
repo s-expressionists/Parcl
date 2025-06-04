@@ -8,4 +8,4 @@
   ((:file "with-package-iterator")
    (:file "do-symbols")
    (:file "do-external-symbols")
-   (:file "defpackage")))
+   #+(or)(:file "defpackage")))
