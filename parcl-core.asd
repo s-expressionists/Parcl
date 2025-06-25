@@ -5,7 +5,8 @@
   :license "BSD" ; see LICENSE file
   :author "Robert Strandh"
   :depends-on  ("parcl-core/sentinel"
-                "ecclesia")
+                "ecclesia"
+                "acclimation")
   :components  (;; Code that can be shared between the low and high
                 ;; modules as well as different package system
                 ;; implementations
@@ -14,7 +15,9 @@
                  :serial     t
                  :components ((:file "variables")
                               (:file "condition-types")
-                              (:file "utilities")))
+                              (:file "utilities")
+                               ;; Messages
+                              (:file "messages-english")))
 
                 (:module     "low"
                  :pathname   "code/low"

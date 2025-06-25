@@ -1,25 +1,18 @@
 (cl:in-package #:parcl)
 
-(define-condition symbol-name-must-be-string (type-error)
+(define-condition package-system-condition (acclimation:condition)
+  ())
+
+(define-condition symbol-name-must-be-string (type-error
+                                              package-system-condition)
   ()
-  (:report (lambda (condition stream)
-             (format stream
-                     "Symbol name must be a string, but the~@
-                      following was given instead:~@
-                      ~s"
-                     (type-error-datum condition))))
   (:default-initargs :expected-type 'string))
 
-(define-condition symbols-must-be-designator-for-list-of-symbols (error)
-  ((%symbols :initarg :symbols :reader symbols))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Argument must be a designator for a list of symbols,~@
-                      but the following was found instead:~@
-                      ~s"
-                     (symbols condition)))))
+(define-condition symbols-must-be-designator-for-list-of-symbols
+    (error package-system-condition)
+  ((%symbols :initarg :symbols :reader symbols)))
 
-(define-condition package-error (error)
+(define-condition package-error (error package-system-condition)
   ((%package :initarg #1=:package
              :reader  package-error-package))
   (:default-initargs
@@ -37,33 +30,10 @@
 ;;; not used, so that it can't be unused.
 (define-condition package-is-not-used (package-error)
   ((%package-to-unuse :initarg :package-to-unuse
-                      :reader  package-to-unuse))
-  (:report (lambda (condition stream)
-             (format stream
-                     "A package to be unused must be a used package,~@
-                      but the package:~@
-                      ~s~@
-                      is not used by the package:~@
-                      ~s"
-                     (package-to-unuse condition)
-                     (package-error-package condition)))))
+                      :reader  package-to-unuse)))
 
 (define-condition nickname-refers-to-different-package (package-error)
   ((%nickname          :initarg :nickname
                        :reader  nickname)
    (%nicknamed-package :initarg :nicknamed-package
-                       :reader  nicknamed-package))
-  (:report
-   (lambda (condition stream)
-     (format stream
-             "~@<Attempt to add the package-local nickname:~@
-              ~s~@
-              to refer to the package:~@
-              ~s~@
-              in the package:~@
-              ~s,~@
-              but that nickname already refers to a different~@
-              package.~@:>"
-             (nickname condition)
-             (nicknamed-package condition)
-             (package-error-package condition)))))
+                       :reader  nicknamed-package)))
