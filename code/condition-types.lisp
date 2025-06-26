@@ -18,6 +18,13 @@
   (:default-initargs
    #1# (error "Required argument ~s" #1#)))
 
+(define-condition package-does-not-exist-error (package-error)
+  ()
+  (:report
+   (lambda (condition stream)
+     (format stream "~@<~S does designate a package.~@:>"
+             (package-error-package condition)))))
+
 (define-condition symbol-conflict (package-error)
   ((%conflicting-symbols :initarg :conflicting-symbols
                          :reader  conflicting-symbols)))

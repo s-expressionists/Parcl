@@ -61,6 +61,10 @@
                     ~S.~@:>"
             (symbols condition)))
 
+  (define-reporter ((condition package-does-not-exist-error) stream)
+    (format stream "~@<~S does designate a package.~@:>"
+            (package-error-package condition)))
+
   (define-reporter ((condition symbol-conflict) stream)
     ;; TODO: the condition should probably contain information about
     ;; the attempted operation
