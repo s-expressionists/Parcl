@@ -6,3 +6,9 @@
 *.aux
 *.log
 *.toc
+
+*.info
+
+*.pdf
+
+*.html
