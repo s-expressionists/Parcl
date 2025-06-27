@@ -1,7 +1,5 @@
 (cl:in-package #:parcl)
 
-(defgeneric find-package (package-designator))
-
 ;;; Restart reports
 
 (defun report-restart (restart-name stream &rest arguments)

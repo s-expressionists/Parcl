@@ -1,5 +1,7 @@
 (cl:in-package #:parcl-low)
 
+(defgeneric find-package (client package-designator))
+
 ;;; This function can be used to implement the standard function
 ;;; MAKE-PACKAGE.  As opposed to the standard function, NAME must be a
 ;;; string.

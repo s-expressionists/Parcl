@@ -3,6 +3,7 @@
    #:common-lisp)
   (:shadow
    . #1=(#:package
+         #:find-package
          #:make-symbol
          #:make-package
          #:find-symbol
@@ -17,6 +18,7 @@
          #:unintern
          #:symbol-name
          #:symbol-package))
+  ;; TODO: fix this in the package clean up commit
   (:export
    #:name-to-entry
    #:remove-entry

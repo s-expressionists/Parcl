@@ -43,7 +43,8 @@
                  :pathname   "code"
                  :depends-on ("common" "low")
                  :serial     t
-                 :components ((:file "package-name")
+                 :components ((:file "find-package")
+                              (:file "package-name")
                               (:file "package-nicknames")
                               (:file "package-shadowing-symbols")
                               (:file "package-use-list")

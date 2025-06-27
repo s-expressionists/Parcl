@@ -7,15 +7,14 @@ System Class PACKAGE
 Function EXPORT
 
   - Done
-  
+
 Function FIND-SYMBOL
 
   - Done
 
 Function FIND-PACKAGE
 
-  - This function is not a package function.  It is an environment
-    function, so it won't be part of Parcl.
+  - Done
 
 Function FIND-ALL-SYMBOLS
 
