@@ -16,7 +16,8 @@ This document describes the implementation of Parcl.
 @menu
 * Purpose:: The reason for the existence of Parcl.
 * Implementations:: Several different implementations.
-* Index:: Complete index.
+* Low system:: Protocols for package system implementations.
+* Index:: Concept Index.
 @end menu
 
 @include chap-purpose.texi
