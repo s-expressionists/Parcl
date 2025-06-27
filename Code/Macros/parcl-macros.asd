@@ -1,11 +1,9 @@
-(cl:in-package #:asdf-user)
-
 (defsystem "parcl-macros"
-  :depends-on (#:iconoclast
-               #:iconoclast-builder)
+  :description "Definitions of macros related to the package system."
+  :depends-on ("iconoclast"
+               "iconoclast-builder")
   :serial t
-  :components
-  ((:file "with-package-iterator")
-   (:file "do-symbols")
-   (:file "do-external-symbols")
-   #+(or)(:file "defpackage")))
+  :components ((:file "with-package-iterator")
+               (:file "do-symbols")
+               (:file "do-external-symbols")
+               #+(or)(:file "defpackage")))
