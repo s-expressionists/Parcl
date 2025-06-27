@@ -1,0 +1,8 @@
+@c Abbreviations
+
+@macro sysname
+Parcl
+@end macro
+@macro commonlisp
+Common Lisp
+@end macro

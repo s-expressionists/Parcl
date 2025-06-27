@@ -1,17 +1,30 @@
 \input texinfo
 
-@settitle Parcl, an implementation of the Common Lisp package system.
+@include macros.texi
+@include generated-version.texi
+
+@settitle @sysname{}, an implementation of the Common Lisp package system.
+
+@copying
+This manual is for @sysname{} version @sysversion{}.
+
+Copyright @copyright{} 2022 - 2025 s-expressionists
+@end copying
 
 @titlepage
-@title Parcl documentation
+@title @sysname{} documentation
+
+@insertcopying
 @end titlepage
 
 @contents
 
+@ifnottex
 @node Top
 @top Parcl
 
-This document describes the implementation of Parcl.
+@insertcopying
+@end ifnottex
 
 @menu
 * Purpose:: The reason for the existence of Parcl.
