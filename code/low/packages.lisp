@@ -23,6 +23,7 @@
    #:name-to-entry
    #:remove-entry
    #:symbol-entries
+   #:make-package-object
    #:name
    #:nicknames
    #:shadowing-symbols

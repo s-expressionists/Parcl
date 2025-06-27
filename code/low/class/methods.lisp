@@ -38,7 +38,7 @@
 (defmethod (setf parcl-low:used-by-list) (new-packages (client client) package)
   (setf (used-by-list package) new-packages))
 
-(defmethod parcl-low:make-package ((client client) name)
+(defmethod parcl-low:make-package-object ((client client) name)
   (make-instance 'package
     :name name
     :symbol-table (parcl-low:make-table client)))

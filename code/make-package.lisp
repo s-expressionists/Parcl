@@ -5,14 +5,8 @@
 (defun make-package (package-name &key nicknames use)
   (let ((canonicalized-name (string package-name))
         (canonicalized-nicknames (mapcar #'string nicknames))
-        (canonicalized-packages
-          (loop for package-to-use in use
-                collect (find-package package-to-use))))
-    (let ((result (parcl-low:make-package *client* canonicalized-name)))
-      (setf (parcl-low:nicknames *client* result) canonicalized-nicknames)
-      (parcl-low:use-packages *client* result canonicalized-packages)
-      (store-package result canonicalized-name canonicalized-nicknames)
-      result)))
+        (canonicalized-used-packages (mapcar #'find-package use)))
+    (parcl-low:make-package *client* canonicalized-name canonicalized-nicknames canonicalized-used-packages)))
 
 (setf (documentation 'make-package 'function)
       (format nil

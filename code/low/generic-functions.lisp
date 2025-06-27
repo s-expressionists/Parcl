@@ -2,10 +2,12 @@
 
 (defgeneric find-package (client package-designator))
 
+(defgeneric make-package (client name nicknames used-packages))
+
 ;;; This function can be used to implement the standard function
 ;;; MAKE-PACKAGE.  As opposed to the standard function, NAME must be a
 ;;; string.
-(defgeneric make-package (client name))
+(defgeneric make-package-object (client name))
 
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two

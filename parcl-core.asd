@@ -28,6 +28,7 @@
                               (:file "configuration")
                               (:file "generic-functions")
                               (:file "package-class")
+                              (:file "make-package")
                               (:file "find-symbol")
                               (:file "import")
                               (:file "shadowing-import")
