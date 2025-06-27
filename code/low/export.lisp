@@ -12,10 +12,8 @@
                (not (member conflicting-symbol
                             (shadowing-symbols client using-package)
                             :test #'eq)))
-      (restart-case (error 'symbol-conflict
-                           :package using-package
-                           :conflicting-symbols
-                           (list symbol conflicting-symbol))
+      (restart-case
+          (parcl::symbol-conflict using-package symbol conflicting-symbol)
         (unintern ()
           :report (lambda (stream)
                     (parcl::report-restart
@@ -53,10 +51,9 @@
                  (find-present-symbol client used-package name)
                (when (and (eq status :external)
                           (not (eq symbol conflicting-symbol)))
-                 (restart-case (error 'symbol-conflict
-                                      :package used-package
-                                      :conflicting-symbols
-                                      (list symbol conflicting-symbol))
+                 (restart-case
+                     (parcl::symbol-conflict
+                      used-package symbol conflicting-symbol)
                    (make-old-shadowing ()
                      :report (lambda (stream)
                                (parcl::report-restart 'make-old-shadowing

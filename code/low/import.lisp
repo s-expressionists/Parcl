@@ -8,8 +8,7 @@
       (unless (or (null status) (eq symbol present-symbol))
         ;; We have a conflict.
         (restart-case
-            (error 'symbol-conflict
-                   :conflicting-symbols (list symbol present-symbol))
+            (parcl::symbol-conflict package symbol present-symbol)
           (unintern-existing-symbol ()
             (unintern client package present-symbol)
             ;; TODO(jmoringe): should we skip the other conflict check?
@@ -25,9 +24,7 @@
                      (ensure-present-symbol client package symbol)
                      ;; We have a conflict.
                      (restart-case
-                         (error 'symbol-conflict
-                                :conflicting-symbols
-                                (list symbol inherited-symbol))
+                         (parcl::symbol-conflict package symbol inherited-symbol)
                        (make-a-shadowing-symbol ()
                          (shadowing-import client package symbol)
                          (return-from import t))

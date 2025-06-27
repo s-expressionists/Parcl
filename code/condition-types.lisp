@@ -29,6 +29,10 @@
   ((%conflicting-symbols :initarg :conflicting-symbols
                          :reader  conflicting-symbols)))
 
+(defun symbol-conflict (package &rest conflicting-symbols)
+  (error 'symbol-conflict :package             package
+                          :conflicting-symbols conflicting-symbols))
+
 (define-condition symbol-is-not-accessible (package-error)
   ((%symbol :initarg :symbol
             :reader  inaccessible-symbol)))
