@@ -1,6 +1,13 @@
 (cl:in-package #:parcl-low)
 
 (defmethod make-package ((client t) (name t) (nicknames t) (used-packages t))
+  (mapc (lambda (name)
+          (let ((existing-package (find-package client name)))
+            (when (not (null existing-package))
+              (with-simple-restart (return-existing "Return the existing package ~A" existing-package)
+                (error #++ 'package-exists-error 'package-error :package existing-package))
+              (return-from make-package existing-package))))
+        (list* name nicknames))
   (let ((result (make-package-object client name)))
     (setf (nicknames client result) nicknames)
     (use-packages client result used-packages)
