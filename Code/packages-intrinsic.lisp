@@ -2,6 +2,7 @@
 
 (defpackage parcl
   (:use #:common-lisp)
-  (:export #:add-package-local-nickname
+  (:export #:*client*
+           #:add-package-local-nickname
            #:remove-package-local-nickname
            #:store-package))
