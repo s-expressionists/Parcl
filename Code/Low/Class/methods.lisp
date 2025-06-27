@@ -83,18 +83,19 @@
                (entry (make-entry symbol status)))
           (add-entry client name entry package))
         (setf (entry-status entry)
-              (case status
-                (:internal
-                 (case (entry-status entry)
-                   (:external :internal)
-                   (:external-shadowing :internal-shadowing)
-                   (otherwise (entry-status entry))))
-                (:external
-                 (case (entry-status entry)
-                   (:internal :external)
-                   (:internal-shadowing :external-shadowing)
-                   (otherwise (entry-status entry))))
-                (otherwise (entry-status entry)))))))
+              (let ((old-status (entry-status entry)))
+                (case status
+                  (:internal
+                   (case old-status
+                     (:external :internal)
+                     (:external-shadowing :internal-shadowing)
+                     (otherwise old-status)))
+                  (:external
+                   (case (entry-status entry)
+                     (:internal :external)
+                     (:internal-shadowing :external-shadowing)
+                     (otherwise old-status)))
+                  (otherwise old-status)))))))
 
 (defmethod parcl-low:remove-present-symbol ((client client) package symbol)
   (parcl-low:remove-entry

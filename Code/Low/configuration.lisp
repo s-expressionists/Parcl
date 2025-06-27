@@ -44,5 +44,5 @@
 
 ;;; This function takes a string and a table and removes the entry
 ;;; with that name from the table.  It is assumed that the entry is
-;;; present in the table. 
+;;; present in the table.
 (defgeneric remove-entry (client name table))

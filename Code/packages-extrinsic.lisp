@@ -1,7 +1,6 @@
-(cl:in-package #:common-lisp-user)
-
-(defpackage parcl
-  (:use #:common-lisp)
+(cl:defpackage #:parcl
+  (:use
+   #:common-lisp)
   (:shadow
    . #1=(#:*package*
          #:find-package
@@ -28,8 +27,9 @@
          #:with-package-iterator
          #:do-symbols
          #:do-external-symbols))
-  (:export #:*client*
-           #:add-package-local-nickname
-           #:remove-package-local-nickname
-           #:store-package
-           .  #1#))
+  (:export
+   #:*client*
+   #:add-package-local-nickname
+   #:remove-package-local-nickname
+   #:store-package
+   .  #1#))

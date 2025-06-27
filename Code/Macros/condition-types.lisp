@@ -1,4 +1,4 @@
-(in-package #:parcl)
+(cl:in-package #:parcl)
 
 (define-condition not-a-package-designator (type-error)
   ()
