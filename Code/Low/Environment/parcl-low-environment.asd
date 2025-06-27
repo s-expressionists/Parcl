@@ -3,6 +3,8 @@
   :long-description "This system defines a package system that uses a package class
 with no slots in it.  The package contents is instead contained in an
 environment object."
+  :license "BSD" ; see LICENSE file
+  :author "Robert Strandh"
   :version (:read-file-form "../../../data/version-string.sexp")
   :serial t
   :components ((:file "packages")

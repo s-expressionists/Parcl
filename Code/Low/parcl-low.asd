@@ -1,5 +1,7 @@
 (defsystem "parcl-low"
   :description "Protocols and shared code for package system implementations."
+  :license "BSD" ; see LICENSE file
+  :author "Robert Strandh"
   :serial t
   :components ((:file "packages")
                (:file "accessors")
