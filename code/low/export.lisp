@@ -5,8 +5,7 @@
 ;;; PACKAGE.  The standard says that such a conflict can be resolved
 ;;; in favor of SYMBOL by uninterning S in USING-PACKAGE, or by making
 ;;; S a shadowing symbol in USING-PACKAGE.
-(defun detect-and-resolve-export-conflict-1
-    (client symbol using-package)
+(defun detect-and-resolve-export-conflict-1 (client symbol using-package)
   (multiple-value-bind (conflicting-symbol status)
       (find-symbol client using-package (symbol-name client symbol))
     (when (and (or (eq status :internal) (eq status :external))
@@ -19,24 +18,22 @@
                            (list symbol conflicting-symbol))
         (unintern ()
           :report (lambda (stream)
-                    (format stream
-                            "Unintern ~s from ~s"
-                            conflicting-symbol using-package))
+                    (parcl::report-restart
+                     'unintern stream conflicting-symbol using-package))
           (return-from detect-and-resolve-export-conflict-1
             (lambda ()
               (unintern client using-package symbol))))
         (shadow ()
           :report (lambda (stream)
-                    (format stream
-                            "Make ~s a shadowing symbol in ~s"
-                            conflicting-symbol using-package))
+                    (parcl::report-restart
+                     'shadow  stream conflicting-symbol using-package))
           (return-from detect-and-resolve-export-conflict-1
             (lambda ()
               (push conflicting-symbol
                     (shadowing-symbols client using-package)))))
         (do-not-export ()
           :report (lambda (stream)
-                    (format stream "Abort the EXPORT of ~s" symbol))
+                    (parcl::report-restart 'do-not-export stream symbol stream))
           (return-from detect-and-resolve-export-conflict-1
             :abort)))))
   ;; Return NIL to indicate that there was no conflict
@@ -62,27 +59,26 @@
                                       (list symbol conflicting-symbol))
                    (make-old-shadowing ()
                      :report (lambda (stream)
-                               (format stream
-                                       "Make ~s a shadowing symbol in ~s"
-                                       conflicting-symbol using-package))
+                               (parcl::report-restart 'make-old-shadowing
+                                                      stream
+                                                      conflicting-symbol
+                                                      using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
                          (push conflicting-symbol
                                (shadowing-symbols client using-package)))))
                    (make-new-shadowing ()
                      :report (lambda (stream)
-                               (format stream
-                                       "Make ~s a shadowing symbol in ~s"
-                                       symbol using-package))
+                               (parcl::report-restart
+                                'make-new-shadowing stream symbol using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
                          (push symbol
                                (shadowing-symbols client using-package)))))
                    (do-not-export ()
                      :report (lambda (stream)
-                               (format stream
-                                       "Abort the EXPORT of ~s"
-                                       symbol))
+                               (parcl::report-restart
+                                'do-not-export stream symbol))
                      (return-from detect-and-resolve-export-conflict-2
                        :abort))))))
   ;; Return NIL to indicate that there was no conflict
@@ -90,37 +86,28 @@
 
 ;;; This function handles the case where SYMBOL is not accessible in
 ;;; PACKAGE
-(defun detect-and-resolve-export-non-accessibility
-    (client package symbol)
+(defun detect-and-resolve-export-non-accessibility (client package symbol)
   (multiple-value-bind (putative-symbol status)
       (find-symbol client package (symbol-name client symbol))
-    (unless (and (eq putative-symbol symbol)
-                 (not (null status)))
-      (restart-case (error 'symbol-is-not-accessible
-                           :package package
-                           :symbol symbol)
-        (import ()
-          :report (lambda (stream)
-                    (format stream
-                            "Import ~s into ~s"
-                            symbol package))
-          (return-from detect-and-resolve-export-non-accessibility
+    (if (and (eq putative-symbol symbol)
+             (not (null status)))
+        nil ; Return NIL to indicate that there was no conflict
+        (restart-case (error 'symbol-is-not-accessible
+                             :package package
+                             :symbol symbol)
+          (import ()
+            :report (lambda (stream)
+                      (parcl::report-restart 'import stream symbol package))
             (lambda ()
-              (import client package symbol))))
-        (do-not-export ()
-          :report (lambda (stream)
-                    (format stream
-                            "Abort the EXPORT of ~s"
-                            symbol))
-          (return-from detect-and-resolve-export-non-accessibility
+              (import client package symbol)))
+          (do-not-export ()
+            :report (lambda (stream)
+                      (parcl::report-restart 'do-not-export stream symbol))
             :abort)))))
-  ;; Return NIL to indicate that there was no conflict
-  nil)
 
 (defmethod export (client package symbol)
-  (let ((action-1
-          (detect-and-resolve-export-non-accessibility
-           client package symbol)))
+  (let ((action-1 (detect-and-resolve-export-non-accessibility
+                   client package symbol)))
     (unless (eq action-1 :abort)
       (let ((action-2
               (loop for using-package in (used-by-list client package)

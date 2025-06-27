@@ -1,5 +1,45 @@
 (cl:in-package #:parcl)
 
+;;; Recovery strategy descriptions
+
+(macrolet ((define-restart-reporter ((restart-name
+                                      &optional (stream-var 'stream)
+                                      &rest parameters)
+                                     &body body)
+             `(defmethod acclimation:report-function
+                  ((restart (eql ',restart-name))
+                   (language acclimation:english))
+                ,(if (typep body '(cons string null))
+                     `(lambda (,stream-var)
+                        (apply #'format ,(first body) ,stream-var))
+                     `(lambda (,stream-var ,@parameters)
+                        ,@body)))))
+
+  (define-restart-reporter (unintern stream conflicting-symbol using-package)
+    (format stream "~@<Unintern ~s from ~s~@:>"
+            conflicting-symbol using-package))
+
+  (define-restart-reporter (shadow stream conflicting-symbol using-package)
+    (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
+            conflicting-symbol using-package))
+
+  (define-restart-reporter (do-not-export stream symbol)
+    (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
+
+  (define-restart-reporter (make-old-shadowing stream conflicting-symbol using-package)
+    (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
+            conflicting-symbol using-package))
+
+  (define-restart-reporter (make-new-shadowings stream symbol using-package)
+    (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
+            symbol using-package))
+
+  (define-restart-reporter (do-not-export stream symbol)
+    (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
+
+  (define-restart-reporter (import stream symbol package)
+    (format stream "~@<Import ~s into ~s~@:>" symbol package)))
+
 (macrolet ((define-reporter (((condition-var condition-specializer) stream-var
                               &optional (language-var 'language))
                              &body body)
