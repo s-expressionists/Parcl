@@ -7,7 +7,6 @@
 ;;; S a shadowing symbol in USING-PACKAGE.
 (defun detect-and-resolve-export-conflict-1
     (client symbol using-package)
-  #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (multiple-value-bind (conflicting-symbol status)
       (find-symbol client using-package (symbol-name client symbol))
     (when (and (or (eq status :internal) (eq status :external))
@@ -50,7 +49,6 @@
 ;;; can be imported into USING-PACKAGE as a shadowing symbol.
 (defun detect-and-resolve-export-conflict-2
     (client package symbol using-package)
-  #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (loop with name = (symbol-name client symbol)
         for used-package in (use-list client using-package)
         unless (eq used-package package)
@@ -94,7 +92,6 @@
 ;;; PACKAGE
 (defun detect-and-resolve-export-non-accessibility
     (client package symbol)
-  #+sbcl (declare (sb-ext:muffle-conditions sb-ext:compiler-note))
   (multiple-value-bind (putative-symbol status)
       (find-symbol client package (symbol-name client symbol))
     (unless (and (eq putative-symbol symbol)
