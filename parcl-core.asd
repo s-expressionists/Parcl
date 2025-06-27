@@ -34,8 +34,7 @@
                               (:file "unexport")
                               (:file "unintern")
                               (:file "add-local-nickname")
-                              (:file "remove-local-nickname")
-                              (:file "condition-types")))
+                              (:file "remove-local-nickname")))
 
                 (:module     "high"
                  :pathname   "code"

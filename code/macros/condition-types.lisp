@@ -29,6 +29,3 @@
                       but the following was found instead:~@
                       ~s"
                      (type-error-datum condition)))))
-
-(define-condition package-error (error)
-  ((%package :initarg :package :reader package-error-package)))
