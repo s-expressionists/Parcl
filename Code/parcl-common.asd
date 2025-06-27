@@ -1,5 +1,6 @@
 (defsystem "parcl-common"
   :description "Code that can be shared between different package system implementations"
+  :version (:read-file-form "../data/version-string.sexp")
   :depends-on ("ecclesia")
   :serial t
   :components ((:file "variables")
