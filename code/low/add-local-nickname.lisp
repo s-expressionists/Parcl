@@ -1,7 +1,7 @@
 (cl:in-package #:parcl-low)
 
 (defmethod add-local-nickname (client nickname nicknamed-package package)
-  (let* ((nickname-string (string nickname))
+  (let* ((nickname-string (string nickname)) ; TODO: designator should already be handled
          (existing-nickname-pair
            (assoc nickname-string
                   (local-nicknames client package)
