@@ -1,6 +1,6 @@
 (cl:in-package #:parcl-low)
 
-(define-condition conflicts ()
+(define-condition conflicts () ; TODO: move
   ((%conflicts
       :initarg :conflicts
       :reader conflicts))
