@@ -11,7 +11,7 @@
         (ecclesia:separate-ordinary-body body)
       `(flet ((body-function (,symbol-variable)
                 ,@declarations
-                (tagbody ,tags-and-statements)))
+                (tagbody ,@tags-and-statements)))
          (let ((,package-variable (find-package ,package-designator-form)))
-           (map-symbols (*client* ,package-variable #'body-function)))
+           (parcl-low:map-symbols *client* ,package-variable #'body-function))
          ,result-form))))
