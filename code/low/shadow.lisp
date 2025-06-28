@@ -1,0 +1,13 @@
+(cl:in-package #:parcl-low)
+
+(defmethod shadow (client package name)
+  (multiple-value-bind (present-symbol status)
+      (find-symbol client package name)
+    (let ((symbol (if (null status)
+                      (let ((symbol (make-symbol client name package)))
+                        (ensure-present-symbol client package symbol :internal))
+                      present-symbol)))
+      (setf (shadowing-symbols client package)
+            (adjoin symbol (shadowing-symbols client package)
+                    :test #'eq))
+      symbol)))

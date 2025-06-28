@@ -9,4 +9,5 @@
         ;; symbol.
         (unintern client package present-symbol))))
   (import client package symbol)
+  ;; TODO: this does too much work since we know that the symbol is present in PACKAGE
   (shadow client package (symbol-name client symbol)))
