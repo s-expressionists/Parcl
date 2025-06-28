@@ -1,0 +1,153 @@
+(cl:in-package #:parcl-low-environment)
+
+(defmethod low:find-package ((client client) (package-designator string))
+  (assert (stringp package-designator))
+  (let* ((environment (environment client))
+         (entry       (env:lookup package-designator :package environment
+                                                     :if-does-not-exist nil)))
+    (if (null entry)
+        nil
+        (car entry))))
+
+(defclass package (low:package env::equal-namespace)
+  ((%name :accessor %name
+          :initform nil)
+   ;; (%nicknames
+   ;;  :initarg :nicknames
+   ;;  :initform '()
+   ;;  :accessor nicknames)
+   ;; ;; See the definition of the accessor above.
+   ;; (%local-nicknames
+   ;;  :initarg :local-nicknames
+   ;;  :initform '()
+   ;;  :accessor local-nicknames)
+   ;; ;; See the definition of the accessor above.
+   ;; (%locally-nicknamed-by
+   ;;  :initarg :locally-nicknamed-by
+   ;;  :initform '()
+   ;;  :accessor locally-nicknamed-by)
+   ;; (%use-list
+   ;;  :initarg :use-list
+   ;;  :initform '()
+   ;;  :accessor use-list)
+   ;; (%used-by-list
+   ;;  :initarg :used-by-list
+   ;;  :initform '()
+   ;;  :accessor used-by-list)
+   ;; (%symbol-table
+   ;;  :initarg :symbol-table
+   ;;  :reader symbol-table)
+   ;; (%symbol-entries
+   ;;  :initform '()
+   ;;  :accessor symbol-entries)
+   ))
+
+(defmethod print-object ((object package) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    ;; TODO(jmoringe): number of symbols etc., deletion status
+    (format stream "~A" (%name object))))
+
+;; TODO(jmoringe): should not be needed; better parcl-low:packagep client maybe-package
+(defmethod parcl:find-package ((package-designator package))
+  package-designator)
+
+(defmethod initialize-instance :after ((instance package) &key name)
+  (let* ((client      parcl:*client*)
+         (environment (environment client)))
+    (setf (env:lookup instance 'env:namespace environment) instance) ; TODO: could use a separate equal-namespace object
+    (setf (low:name client instance) name)))
+
+(defmethod low:make-package (client name)
+  (make-instance 'package :name name))
+
+(defmethod low:name ((client client) (package package))
+  (%name package))
+
+(defmethod (setf low:name) ((new-value t)
+                            (client    client)
+                            (package   package))
+  (setf (%name package) new-value))
+
+(defmethod (setf low:name) :around ((new-value t)
+                                    (client    client)
+                                    (package   package))
+  (let ((environment (environment client))
+        (old-name    (%name package)))
+    (unless (null old-name)
+      (setf (env:lookup old-name :package environment) nil))
+    (prog1
+        (call-next-method)
+      (setf (env:lookup new-value :package environment) (cons package '())))))
+
+(macrolet ((define (accessor key)
+             `(progn
+                (defmethod ,accessor ((client  client)
+                                      (package package))
+                  (let* ((environment (environment client))
+                         (name        (%name package))
+                         (entry       (env:lookup name :package environment
+                                                       :if-does-not-exist nil)))
+                    ;; TODO: what if it is null?
+                    (unless (null entry)
+                      (destructuring-bind (package* . data) entry
+                        (assert (eq package* package))
+                        (getf data ,key)))))
+
+                (defmethod (setf ,accessor) ((new-value t)
+                                             (client    client)
+                                             (package   package))
+                  (let ((environment (environment client))
+                        (name        (%name package)))
+                    (env:make-or-update
+                     name :package environment
+                     (lambda () (error "should not happen"))
+                     (lambda (existing container)
+                       (declare (ignore container))
+                       (destructuring-bind (package* . data) existing
+                         (assert (eq package* package))
+                         (let ((new-data (list* ,key new-value
+                                                (alexandria:remove-from-plist data ,key))))
+                           (values (cons package* new-data) t)))))))))
+           )
+  (define low:nicknames    :nicknames)
+  (define low:use-list     :use-list)
+  (define low:used-by-list :used-by-list))
+
+(defmethod low:map-symbols ((client   client)
+                            (package  package)
+                            (function t))
+  (let* ((environment (environment client))
+         #++ (name        (%name package))
+         #++ (entry       (env:lookup name :package environment
+                                       :if-does-not-exist nil)))
+    (env:map-entries (lambda (name entry container)
+                       (declare (ignore name container))
+                       (funcall function (car entry)))
+                     package environment)))
+
+(defmethod low:find-present-symbol ((client   client)
+                                    (package  package)
+                                    (name     t))
+  (let* ((environment (environment client))
+         #++ (name        (%name package))
+         (entry       (env:lookup name package environment
+                                  :if-does-not-exist nil)))
+    (if (null entry)
+        (values nil nil)
+        (destructuring-bind (symbol . status) entry
+          (values symbol status)))))
+
+(defmethod low:ensure-present-symbol ((client   client)
+                                      (package  package)
+                                      (symbol   t)
+                                      &optional status)
+  ;; TODO(jmoringe): very simplified
+  (let* ((environment (environment client))
+         (name        (low:symbol-name client symbol)))
+    (setf (env:lookup name package environment)
+          (cons symbol status))))
+
+
+
+#+no (defmethod low:nicknames ((client client) (package package))
+       )
