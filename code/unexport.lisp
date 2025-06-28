@@ -6,10 +6,11 @@
                    (every #'symbolp symbols)))
     (error 'symbols-must-be-designator-for-list-of-symbols
            :symbols symbols))
-  (let ((symbols (if (listp symbols) symbols (list symbols)))
-        (package (find-package package-designator)))
+  (let ((client *client*)
+        (symbols (if (listp symbols) symbols (list symbols)))
+        (package (find-package-or-error package-designator)))
     (loop for symbol in symbols
-          do (parcl-low:unexport *client* package symbol))))
+          do (parcl-low:unexport client package symbol))))
 
 (setf (documentation 'unexport 'function)
       (format nil

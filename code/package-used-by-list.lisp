@@ -1,7 +1,8 @@
 (cl:in-package #:parcl)
 
 (defun package-used-by-list (package-designator)
-  (parcl-low:used-by-list *client* (find-package package-designator)))
+  (let ((package (find-package-or-error package-designator)))
+   (parcl-low:used-by-list *client* package)))
 
 (setf (documentation 'package-used-by-list 'function)
       (format nil

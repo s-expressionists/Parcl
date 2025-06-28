@@ -2,4 +2,5 @@
 
 (defun remove-package-local-nickname
     (old-nickname &optional(package-designator *package*))
-  (parcl-low:remove-local-nickname *client* old-nickname package-designator))
+  (let ((package (find-package-or-error package-designator)))
+    (parcl-low:remove-local-nickname *client* old-nickname package)))

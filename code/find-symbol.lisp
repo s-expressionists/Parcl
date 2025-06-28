@@ -4,7 +4,7 @@
   (unless (stringp name)
     (error 'symbol-name-must-be-string
            :datum name))
-  (let ((package (find-package package-designator)))
+  (let ((package (find-package-or-error package-designator)))
     (parcl-low:find-symbol *client* package name)))
 
 (setf (documentation 'find-symbol 'function)

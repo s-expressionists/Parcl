@@ -1,11 +1,12 @@
 (cl:in-package #:parcl)
 
 (defun use-package (packages-to-use &optional (package-designator *package*))
-  (let ((packages (if (listp packages-to-use)
-                      (mapcar #'find-package packages-to-use)
-                      (list (find-package packages-to-use))))
-        (package (find-package package-designator)))
-    (parcl-low:use-packages *client* package packages)))
+  (let ((client *client*)
+        (packages (if (listp packages-to-use)
+                      (mapcar #'find-package-or-error packages-to-use)
+                      (list (find-package-or-error packages-to-use))))
+        (package (find-package-or-error package-designator)))
+    (parcl-low:use-packages client package packages)))
 
 (setf (documentation 'use-package 'function)
       (format nil
