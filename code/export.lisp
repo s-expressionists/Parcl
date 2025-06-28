@@ -3,6 +3,7 @@
 (defun export (symbols &optional (package-designator *package*))
   (unless (or (symbolp symbols)
               (and (ecclesia:proper-list-p symbols)
+                   ;; TODO(jmoringe): (every (lambda (symbol-designator) (or (stringp symbol-designator) (parcl-low:symbolp symbol-designator))
                    (every #'symbolp symbols)))
     (error 'symbols-must-be-designator-for-list-of-symbols
            :symbols symbols))

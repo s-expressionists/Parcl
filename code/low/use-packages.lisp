@@ -1,12 +1,12 @@
 (cl:in-package #:parcl-low)
 
-(define-condition conflicts () ; TODO: move
+(define-condition conflicts () ; TODO: move ; TODO: is this not an error?
   ((%conflicts
       :initarg :conflicts
       :reader conflicts))
   (:report (lambda (condition stream)
              (format stream "Conflicts:~%")
-             (loop for entries being each hash-value of (conflicts condition)
+             (loop for entries being each hash-value of (conflicts condition) ; TODO: a function related to the condition should create the hash-table (if a hash-table is needed at all)
                    do (loop for (symbol . packages) in entries
                             do (format stream "Symol ~s from packages" symbol)
                             (loop for package in packages
