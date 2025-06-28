@@ -61,6 +61,7 @@
                               (:file "export")
                               (:file "unexport")
                               (:file "shadow")
+                              (:file "unintern")
                               (:file "add-package-local-nickname")
                               (:file "remove-package-local-nickname")
                               (:file "make-package")))))
