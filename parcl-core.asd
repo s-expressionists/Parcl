@@ -29,6 +29,7 @@
                               (:file "generic-functions")
                               (:file "package-class")
                               (:file "make-package")
+                              (:file "intern")
                               (:file "find-symbol")
                               (:file "import")
                               (:file "shadowing-import")
