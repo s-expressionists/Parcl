@@ -11,6 +11,7 @@
          #:package-error-package
          ;; Functions
          #:find-package
+         #:delete-package
          #:package-name
          #:package-nicknames
          #:package-shadowing-symbols

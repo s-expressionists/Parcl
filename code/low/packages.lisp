@@ -6,6 +6,7 @@
          #:find-package
          #:make-symbol
          #:make-package
+         #:delete-package
          #:find-symbol
          #:import
          #:shadowing-import

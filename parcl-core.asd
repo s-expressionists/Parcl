@@ -29,6 +29,7 @@
                               (:file "generic-functions")
                               (:file "package-class")
                               (:file "make-package")
+                              (:file "delete-package")
                               (:file "intern")
                               (:file "find-symbol")
                               (:file "import")
@@ -64,7 +65,8 @@
                               (:file "unintern")
                               (:file "add-package-local-nickname")
                               (:file "remove-package-local-nickname")
-                              (:file "make-package")))))
+                              (:file "make-package")
+                              (:file "delete-package")))))
 
 ;;; This system ensures, ideally before any other operations are
 ;;; attempted, that the PARCL package is already defined when
