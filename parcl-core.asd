@@ -81,7 +81,8 @@
                               (:file "delete-package")
                               (:file "rename-package")
                               ;; ?
-                              (:file "find-symbol")))))
+                              (:file "find-symbol"))))
+  :in-order-to ((test-op (test-op "parcl-core/test"))))
 
 ;;; This system ensures, ideally before any other operations are
 ;;; attempted, that the PARCL package is already defined when
@@ -96,3 +97,32 @@
                        either the system ~S or the system ~S has to be ~
                        loaded.~@:>"
                       "parcl-core" "parcl-intrinsic" "parcl-extrinsic"))))
+
+(defsystem "parcl-core/test"
+  :depends-on ("alexandria"
+               "fiveam"
+
+               "parcl-core")
+
+  :components ((:module     "test"
+                :serial     t
+                :components ((:file "package")
+                             ;; Mock package system
+                             (:file "mock-client")
+                             (:file "mock-symbol")
+                             (:file "mock-package")
+                             ;; Utilities
+                             (:file "utilities")
+                             ;; Tests
+
+                             ;; Package-package relation functions
+                             (:file "use-package")
+                             (:file "unuse-package")
+                             ;; Environment functions
+                             ;; TODO (:file "find-package")
+                             (:file "make-package")
+                             (:file "delete-package")
+                             (:file "rename-package"))))
+
+  :perform     (test-op (operation component)
+                 (uiop:symbol-call '#:parcl.test '#:run-tests)))

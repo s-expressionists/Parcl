@@ -1,0 +1,53 @@
+(cl:in-package #:parcl.test)
+
+;;; Fixtures
+
+(defun call-with-mock-package-system (continuation)
+  (let* ((client (make-instance 'mock-client))
+         (parcl:*client* client))
+    (funcall continuation client)))
+
+(defmacro with-mock-package-system
+    ((&optional (client-var (gensym "CLIENT") client-var-supplied-p)) &body body)
+  `(call-with-mock-package-system
+    (lambda (,client-var)
+      ,@(unless client-var-supplied-p `((declare (ignore ,client-var))))
+      ,@body)))
+
+(defun call-with-fresh-package-system (continuation)
+  (unwind-protect
+       (funcall continuation)
+    (clear parcl:*client*)))
+
+(defmacro with-fresh-package-system (() &body body)
+  `(call-with-fresh-package-system (lambda () ,@body)))
+
+(defun call-with-mock-package (continuation name)
+  (let ((package (parcl:make-package name)))
+    (funcall continuation package)))
+
+(defmacro with-mock-package ((package-var name) &body body)
+  (multiple-value-bind (package-var ignorep)
+      (if (null package-var)
+          (values (gensym "PACKAGE-VAR") t)
+          (values package-var            nil))
+    `(call-with-mock-package
+      (lambda (,package-var)
+        ,@(when ignorep `((declare (ignore ,package-var))))
+        ,@body)
+      ,name)))
+
+;;;
+
+(defmacro do-string-designators ((variable string) &body body)
+  (let ((do-it (gensym "DO-IT")))
+    `(flet ((,do-it (,variable) ,@body))
+       (,do-it ,string)
+       (,do-it (parcl:make-symbol ,string)))))
+
+(defmacro do-string-list-designators ((variable string) &body body)
+  (let ((do-it (gensym "DO-IT")))
+    `(do-string-designators (,variable ,string)
+       (flet ((,do-it (,variable) ,@body))
+         (,do-it ,variable)
+         (,do-it (list ,variable))))))
