@@ -17,9 +17,11 @@
 
 (defclass my-symbol ()
   ((%name    :initarg  :name
+             :type     string
              :reader   %name)
    (%package :initarg  :package
-             :reader   %package
+             ; :type     (or null )
+             :accessor %package
              :initform nil)))
 
 (defmethod print-object ((object my-symbol) stream)
@@ -30,14 +32,19 @@
    (print-unreadable-object (object stream :type t :identity t)
      (format stream "~@[~A:~]~A" package-name name))))
 
-(defmethod parcl-low:make-symbol ((client parcl-client) (name t) (package t))
-  (make-instance 'my-symbol :name name :package package))
-
 (defmethod parcl-low:symbol-name ((client parcl-client) (symbol my-symbol))
   (%name symbol))
 
 (defmethod parcl-low:symbol-package ((client parcl-client) (symbol my-symbol))
   (%package symbol))
+
+(defmethod (setf parcl-low:symbol-package) ((new-value t)
+                                            (client    parcl-client)
+                                            (symbol    my-symbol))
+  (setf (%package symbol) new-value))
+
+(defmethod parcl-low:make-symbol ((client parcl-client) (name t) (package t))
+  (make-instance 'my-symbol :name name :package package))
 
 ;;;
 
@@ -46,6 +53,17 @@
   (let ((env (make-instance 'env:global-environment)))
     (setf (env:lookup :package 'env:namespace env) (make-instance 'env::equal-namespace))
     env))
+
+(defun test-delete-twice ()
+  (let* ((parcl:*client* (make-instance 'parcl-client :environment *environment*))
+         (package (parcl:make-package "some-package")))
+    (parcl:shadow "1" package)
+    (parcl:shadow '#:a package)
+    (parcl:shadow '("3" #:b :4) package)
+    (parcl:export (mapcar (lambda (name) (parcl:find-symbol name package)) '(:3 "4")) package)
+    (clouseau:inspect *environment*)
+    (parcl:delete-package package)
+    (parcl:delete-package package)))
 
 (defun test ()
   (let* ((parcl:*client* (make-instance 'parcl-client :environment *environment*))
