@@ -9,6 +9,15 @@
         nil
         (car entry))))
 
+(defmethod (setf low:find-package) ((new-value t)
+                                    (client client)
+                                    (package-designator string))
+  (assert (stringp package-designator))
+  (let ((environment (environment client)))
+    (setf (env:lookup package-designator :package environment)
+          (cons new-value '()))
+    new-value))
+
 (defclass package (low:package env::equal-namespace)
   ((%name :accessor %name
           :initform nil)
@@ -48,7 +57,7 @@
     (format stream "~A" (%name object))))
 
 ;; TODO(jmoringe): should not be needed; better parcl-low:packagep client maybe-package
-(defmethod parcl:find-package ((package-designator package))
+(defmethod low:find-package ((client client) (package-designator package))
   package-designator)
 
 (defmethod initialize-instance :after ((instance package) &key name)
@@ -57,7 +66,7 @@
     (setf (env:lookup instance 'env:namespace environment) instance) ; TODO: could use a separate equal-namespace object
     (setf (low:name client instance) name)))
 
-(defmethod low:make-package (client name)
+(defmethod low:make-package-object ((client client) (name string))
   (make-instance 'package :name name))
 
 (defmethod low:name ((client client) (package package))
@@ -71,6 +80,7 @@
 (defmethod (setf low:name) :around ((new-value t)
                                     (client    client)
                                     (package   package))
+  ;; TODO: wrong there is a separate protocol for this
   (let ((environment (environment client))
         (old-name    (%name package)))
     (unless (null old-name)
@@ -109,11 +119,33 @@
                                                 (alexandria:remove-from-plist data ,key))))
                            (values (cons package* new-data) t)))))))))
            )
-  (define low:nicknames    :nicknames)
-  (define low:use-list     :use-list)
-  (define low:used-by-list :used-by-list))
+  (define low:nicknames            :nicknames)
+  (define low:use-list             :use-list)
+  (define low:used-by-list         :used-by-list)
+  (define low:local-nicknames      :local-nicknames)
+  (define low:locally-nicknamed-by :locally-nicknamed-by))
 
-(defmethod low:map-symbols ((client   client)
+(defmethod low::map-symbol-entries
+    ((client client) (function t) (package package) &optional status)
+  (let ((environment (environment client))
+        ;; TODO: is this worth the effort? could just do the cases in the local function
+        (visit       (cond ((null status)
+                            (lambda (name entry container)
+                              (declare (ignore name container))
+                              (funcall function (car entry))))
+                           ((symbolp status)
+                            (lambda (name entry container)
+                              (declare (ignore name container))
+                              (when (eq (cdr entry) status)
+                                (funcall function (car entry)))))
+                           ((listp status)
+                            (lambda (name entry container)
+                              (declare (ignore name container))
+                              (when (member (cdr entry) status :test #'eq)
+                                (funcall function (car entry))))))))
+    (env:map-entries visit package environment)))
+
+#++ (defmethod low:map-symbols ((client   client)
                             (package  package)
                             (function t))
   (let* ((environment (environment client))
@@ -124,6 +156,28 @@
                        (declare (ignore name container))
                        (funcall function (car entry)))
                      package environment)))
+
+(defmethod low::symbol-entry ((client  client)
+                              (name    string)
+                              (package package))
+  (let* ((environment (environment client))
+         #++ (name        (%name package))
+         (entry       (env:lookup name package environment
+                                  :if-does-not-exist nil)))
+    (if (null entry)
+        (values nil nil)
+        (destructuring-bind (symbol . status) entry
+          (values symbol status)))))
+
+(defmethod low::set-symbol-entry ((symbol  t)
+                                  (status  t)
+                                  (client  client)
+                                  (name    string)
+                                  (package package))
+  (let ((environment (environment client)))
+    (setf (env:lookup name package environment) (if (null status)
+                                                    nil
+                                                    (cons symbol status)))))
 
 (defmethod low:find-present-symbol ((client   client)
                                     (package  package)
