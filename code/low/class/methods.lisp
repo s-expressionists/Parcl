@@ -12,7 +12,7 @@
 (defmethod (setf parcl-low:nicknames) (new-nicknames (client client) package)
   (setf (nicknames package) new-nicknames))
 
-(defmethod parcl-low:symbol-entries ((client client) package)
+(defmethod parcl-low:symbol-entries ((client client) package &optional status)
   (symbol-entries package))
 
 (defmethod (setf parcl-low:symbol-entries)
@@ -52,27 +52,7 @@
                   ((:internal :internal-shadowing) :internal)
                   (otherwise :external))))))
 
-(defmethod parcl-low:intern ((client client) package name)
-  (multiple-value-bind (symbol status)
-      (parcl-low:find-symbol client package name)
-    (if (null status)
-        (let* ((symbol (parcl-low:make-symbol client name package))
-               (entry (make-entry symbol :internal)))
-          (add-entry client name entry package)
-          (values symbol nil))
-        (values symbol status))))
 
-(defmethod parcl-low:shadow ((client client) package name)
-  (let ((entry (parcl-low:name-to-entry client name (symbol-table package))))
-    (if (null entry)
-        (let* ((symbol (parcl-low:make-symbol client name package))
-               (entry (make-entry symbol :internal-shadowing)))
-          (add-entry client name entry package))
-        (setf (entry-status entry)
-              (case (entry-status entry)
-                ((:internal :internal-shadowing) :internal-shadowing)
-                (otherwise :external-shadowing)))))
-  t)
 
 (defmethod parcl-low:ensure-present-symbol
     ((client client) package symbol &optional status)

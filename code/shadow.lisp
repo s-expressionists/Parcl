@@ -1,12 +1,11 @@
 (cl:in-package #:parcl)
 
-(defun shadow (names &optional (package-designator *package*))
-  (let ((client *client*)
-        (package (find-package-or-error package-designator))
-        (names (if (listp names) names (list names))))
+(defun shadow (names &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (package package-designator)
+                                         (names   string-list-designator))
     (loop for name in names
-          for string-name = (string name)
-          do (parcl-low:shadow client package string-name))))
+          do (parcl-low:shadow client package name))))
 
 (setf (documentation 'shadow 'function)
       (format nil

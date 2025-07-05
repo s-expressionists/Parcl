@@ -38,7 +38,7 @@
   nil)
 
 ;;; This function detects and resolves a conflict between SYMBOL and
-;;; an external symbol is some package P that is used by
+;;; an external symbol in some package P that is used by
 ;;; USING-PACKAGE.  The standard does not mention what possible ways
 ;;; such a conflict can be resolved, but we think that either symbol
 ;;; can be imported into USING-PACKAGE as a shadowing symbol.
@@ -48,7 +48,7 @@
         for used-package in (use-list client using-package)
         unless (eq used-package package)
           do (multiple-value-bind (conflicting-symbol status)
-                 (find-present-symbol client used-package name)
+                 (symbol-entry client name used-package)
                (when (and (eq status :external)
                           (not (eq symbol conflicting-symbol)))
                  (restart-case
@@ -102,7 +102,7 @@
                       (parcl::report-restart 'do-not-export stream symbol))
             :abort)))))
 
-(defmethod export (client package symbol)
+(defmethod export ((client t) (package t) (symbol t))
   (let ((action-1 (detect-and-resolve-export-non-accessibility
                    client package symbol)))
     (unless (eq action-1 :abort)
@@ -113,11 +113,24 @@
         (unless (eq action-2 :abort)
           (let ((action-3
                   (loop for using-package in (used-by-list client package)
-                        thereis (detect-and-resolve-export-conflict-2
-                                 client package symbol using-package))))
+                          thereis (detect-and-resolve-export-conflict-2
+                                   client package symbol using-package))))
             (unless (eq action-3 :abort)
               (unless (null action-1) (funcall action-1))
               (unless (null action-2) (funcall action-2))
               (unless (null action-3) (funcall action-3))
               (when (and (null action-1) (null action-2) (null action-3))
-                (ensure-present-symbol client package symbol :external)))))))))
+                (let ((name (symbol-name client symbol)))
+                  (multiple-value-bind (old-symbol old-status)
+                      (symbol-entry client name package)
+                    (declare (ignore old-symbol))
+                    (case old-status
+                      ((nil :internal)
+                       (setf (symbol-entry client name package)
+                             (values symbol :external)))
+                      (:internal-shadowing
+                       (setf (symbol-entry client name package)
+                             (values symbol :external-shadowing))))))
+                #++ (ensure-present-symbol client package symbol :external))))))))
+  ;; TODO: return value?
+  )

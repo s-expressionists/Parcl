@@ -15,6 +15,9 @@
                      `(lambda (,stream-var ,@parameters)
                         ,@body)))))
 
+  (define-restart-reporter (return-existing stream existing-package)
+    (format stream "~@<Return the existing package ~S~@:>" existing-package))
+
   (define-restart-reporter (unintern stream conflicting-symbol using-package)
     (format stream "~@<Unintern ~s from ~s~@:>"
             conflicting-symbol using-package))
@@ -49,6 +52,8 @@
                  (,language-var acclimation:english))
                 ,@body)))
 
+  ;; Symbol related conditions
+
   (define-reporter ((condition symbol-name-must-be-string) stream)
     (format stream "~@<Symbol name must be a string, but the ~
                     following was given instead: ~S.~@:>"
@@ -61,8 +66,19 @@
                     ~S.~@:>"
             (symbols condition)))
 
+  ;; Package related conditions
+
+  (define-reporter ((condition package-name-occupied-error) stream)
+    (format stream "~@<The package name ~S is already occupied by the ~
+                    package ~S.~@:>"
+            (new-name condition) (existing-package condition)))
+
   (define-reporter ((condition package-does-not-exist-error) stream)
     (format stream "~@<~S does designate a package.~@:>"
+            (package-error-package condition)))
+
+  (define-reporter ((condition package-has-been-deleted-error) stream)
+    (format stream "~@<The package ~S has been deleted and cannot be operated on.~@:>"
             (package-error-package condition)))
 
   (define-reporter ((condition symbol-conflict) stream)
@@ -92,4 +108,83 @@
                     package.~@:>"
             (nickname condition)
             (nicknamed-package condition)
-            (package-error-package condition))))
+            (package-error-package condition)))
+
+  ;; Conditions related to package-symbol relations
+
+  (define-reporter ((condition symbol-conflicts-error) stream)
+    (let ((package   (package-error-package condition))
+          (conflicts (conflicts condition))
+          (labels    (package-labels condition)))
+      (pprint-logical-block (stream '())
+        ;; TODO mention the operation
+        (format stream "~@<The operation would introduce the following conflicts ~
+                        in package ~A:~@:>~@:_~@:_"
+                package)
+        (report-conflicts stream conflicts package :labels labels)
+        #++ (loop for (name . infos) in conflicts
+              do (format stream "~@:_Symbol named ~S from packages ~{~A~^, ~}"
+                         name (mapcar #'cdr infos)))))))
+
+
+(defun report-conflicts (stream conflicts package &key labels)
+  (let ((clusters (make-hash-table :test #'equal))
+        (first?   t))
+    (flet ((add-conflict (conflict)
+             (let* ((infos    (cdr conflict))
+                    (packages (mapcar #'cdr infos))
+                    (sorted   (sort packages  #'string< :key (lambda (p) (package-name p)))) ; TODO: capture *client* or something
+                    (key      (if (find package sorted :test #'eq)
+                                  (list* package (remove package packages :test #'eq :count 1))
+                                  sorted)))
+               (push conflict (gethash key clusters '()))))
+           (report-cluster (packages conflicts)
+             (if first?
+                 (setf first? nil)
+                 (format stream "~@:_~@:_"))
+             (format-table
+              stream
+              (list* (list* "Name" (mapcar (lambda (a-package)
+                                             (format nil "Package ~S~@[ (~A)~]"
+                                                     (package-name a-package)
+                                                     (cdr (assoc a-package labels :test #'eq))
+                                                     )) ; TODO: capture *client* or extract names earlier
+                                           packages))
+                     (loop for (name . infos) in conflicts
+                           for symbols = (loop for package in packages
+                                               for (symbol . nil) = (rassoc package infos
+                                                                          :test #'eq)
+                                               collect (prin1-to-string symbol))
+                           collect (list* (prin1-to-string name) symbols))))
+             #++ (destructuring-bind (name-length . conflicts) cluster
+                   (setf conflicts (sort conflicts #'string< :key #'car)) ; TODO: properly
+                   (format stream "~V<Name~> ~{~{~V@<Package ~S~>~}~^ ~}~%"
+                           name-length (loop for package in packages
+                                             collect (list 20 (package-name package))))
+                   (loop for (name . infos) in conflicts
+                         for symbols = (loop for package in packages
+                                             for (name . nil) = (rassoc package infos
+                                                                        :test #'eq)
+                                             collect (list 20 name))
+                         do (format stream "~V@<~S~> ~{~{~VS~}~^ ~}~%"
+                                    name-length name symbols)))))
+      (mapc #'add-conflict conflicts)
+      (maphash #'report-cluster clusters))))
+
+(defun format-table (stream rows)
+  (unless (null rows)
+    (let ((widths (make-array (length (first rows)) :initial-element 0)))
+      (loop for row in rows
+            do (loop for cell in row
+                     for i from 0
+                     ;; TODO a:maxf
+                     do (setf (aref widths i) (max (aref widths i) (length cell)))))
+      (loop for first? = t then nil
+            for row in rows
+            do (format stream "~:[~@:_~;~]~{~V@<~A~>~^  ~}"
+                       first?
+                       (loop for cell in row
+                             for i from 0
+                             ;; TODO a:maxf
+                             collect (aref widths i)
+                             collect cell))))))

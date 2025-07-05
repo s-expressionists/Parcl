@@ -1,8 +1,9 @@
 (cl:in-package #:parcl)
 
-(defun package-name (package-designator)
-  (let ((package (find-package package-designator)))
-    (parcl-low:name *client* package)))
+(defun package-name (package)
+  (with-client-and-resolved-designators (client
+                                         (package package-designator/weak))
+    (parcl-low:name client package)))
 
 (setf (documentation 'package-name 'function)
       (format nil

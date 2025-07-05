@@ -5,9 +5,8 @@
   ;; called for each such relation or the operation cannot complete.
   (loop for using-package in (used-by-list client package)
         do (restart-case
-               (error 'package-in-use-error
-                      :package packge
-                      :using-package using-package)
+               (error 'parcl::package-in-use-error :package package
+                                                   :used-by using-package)
              (unuse-package ()
                :report (lambda (stream)
                          (parcl::report-restart 'unuse-package
@@ -17,8 +16,16 @@
                (unuse-package client using-package package))))
   ;; Remove PACKAGE as the home package.
   ;; TODO: maps over wrong set of symbols
-  (map-symbols client package (lambda (symbol)
-                                (setf (symbol-package symbol) nil)))
-  ;;
-  (setf (deletedp client package) t) ; TODO: indicate this some other way?
+  (map-symbol-entries
+   client
+   (lambda (symbol status)
+     (declare (ignore status))
+     (setf (symbol-package client symbol) nil))
+   package)
+  ;; Update environment
+  (loop for name in (list* (name client package)
+                           (nicknames client package))
+        do (setf (find-package client name) nil))
+  ;; Mark as deleted
+  (setf (name client package) nil)
   t)

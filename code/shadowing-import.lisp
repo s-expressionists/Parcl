@@ -1,15 +1,11 @@
 (cl:in-package #:parcl)
 
-(defun shadowing-import (symbols &optional (package-designator *package*))
-  (unless (or (symbolp symbols)
-              (and (ecclesia:proper-list-p symbols)
-                   (every #'symbolp symbols)))
-    (error 'symbols-must-be-designator-for-list-of-symbols
-           :symbols symbols))
-  (let ((symbols (if (listp symbols) symbols (list symbols)))
-        (package (find-package-or-error package-designator)))
+(defun shadowing-import (symbols &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (package package-designator)
+                                         (symbols symbol-list-designator))
     (loop for symbol in symbols
-          do (parcl-low:shadowing-import *client* package symbol))))
+          do (parcl-low:shadowing-import client package symbol))))
 
 (setf (documentation 'shadowing-import 'function)
       (format nil

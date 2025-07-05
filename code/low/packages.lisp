@@ -3,6 +3,7 @@
    #:common-lisp)
   (:shadow
    . #1=(#:package
+         #:packagep
          #:find-package
          #:make-symbol
          #:make-package
@@ -12,11 +13,13 @@
          #:shadowing-import
          #:use-package
          #:unuse-package
+         #:rename-package
          #:export
          #:unexport
          #:shadow
          #:intern
          #:unintern
+         #:symbolp
          #:symbol-name
          #:symbol-package))
   ;; TODO: fix this in the package clean up commit

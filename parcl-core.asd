@@ -28,6 +28,9 @@
                               (:file "configuration")
                               (:file "generic-functions")
                               (:file "package-class")
+                              ;;
+                              (:file "utilities")
+                              ;;
                               (:file "make-package")
                               (:file "delete-package")
                               (:file "intern")
@@ -41,32 +44,44 @@
                               (:file "shadow")
                               (:file "unintern")
                               (:file "add-local-nickname")
-                              (:file "remove-local-nickname")))
+                              (:file "remove-local-nickname")
+                              ;; Environment functions
+                              (:file "rename-package")))
 
                 (:module     "high"
                  :pathname   "code"
                  :depends-on ("common" "low")
                  :serial     t
-                 :components ((:file "find-package")
+                 :components ((:file "designator-utilities")
+                              ;; Symbol functions
+                              (:file "symbol-functions")
+                              ;; Package functions
+                              (:file "packagep")
                               (:file "package-name")
                               (:file "package-nicknames")
                               (:file "package-shadowing-symbols")
                               (:file "package-use-list")
                               (:file "package-used-by-list")
-                              (:file "intern")
-                              (:file "find-symbol")
-                              (:file "import")
-                              (:file "shadowing-import")
+                              (:file "make-package") ; TODO: diagram has this in environment
+                              ;; Package-package relation functions
                               (:file "use-package")
                               (:file "unuse-package")
+                              (:file "add-package-local-nickname")
+                              (:file "remove-package-local-nickname")
+                              ;; Package-symbol relation functions
+                              (:file "intern")
+                              (:file "import")
+                              (:file "shadowing-import")
                               (:file "export")
                               (:file "unexport")
                               (:file "shadow")
                               (:file "unintern")
-                              (:file "add-package-local-nickname")
-                              (:file "remove-package-local-nickname")
-                              (:file "make-package")
-                              (:file "delete-package")))))
+                              ;; Environment functions
+                              (:file "find-package")
+                              (:file "delete-package")
+                              (:file "rename-package")
+                              ;; ?
+                              (:file "find-symbol")))))
 
 ;;; This system ensures, ideally before any other operations are
 ;;; attempted, that the PARCL package is already defined when

@@ -3,10 +3,11 @@
 (defgeneric store-package (package name nicknames))
 
 (defun make-package (package-name &key nicknames use)
-  (let ((canonicalized-name (string package-name))
-        (canonicalized-nicknames (mapcar #'string nicknames))
-        (canonicalized-used-packages (mapcar #'find-package use)))
-    (parcl-low:make-package *client* canonicalized-name canonicalized-nicknames canonicalized-used-packages)))
+  (with-client-and-resolved-designators (client
+                                         (package-name string-designator)
+                                         (nicknames    string-designator-list)
+                                         (use          package-designator-list))
+    (parcl-low:make-package client package-name nicknames use)))
 
 (setf (documentation 'make-package 'function)
       (format nil

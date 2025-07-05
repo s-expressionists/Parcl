@@ -1,8 +1,9 @@
 (cl:in-package #:parcl)
 
-(defun package-shadowing-symbols (package-designator)
-  (let ((package (find-package package-designator)))
-    (parcl-low:shadowing-symbols *client* package)))
+(defun package-shadowing-symbols (package)
+  (with-client-and-resolved-designators (client
+                                         (package package-designator))
+    (parcl-low:shadowing-symbols client package)))
 
 (setf (documentation 'package-shadowing-symbols 'function)
       (format nil

@@ -1,7 +1,11 @@
 (cl:in-package #:parcl)
 
+;;;
+
 (define-condition package-system-condition (acclimation:condition)
   ())
+
+;;; Symbol related conditions
 
 (define-condition symbol-name-must-be-string (type-error
                                               package-system-condition)
@@ -12,6 +16,15 @@
     (error package-system-condition)
   ((%symbols :initarg :symbols :reader symbols)))
 
+;;; Package related conditions
+
+;;; TODO package-name-condition?
+(define-condition package-name-occupied-error (error package-system-condition)
+  ((%new-name         :initarg :new-name
+                      :reader  new-name)
+   (%existing-package :initarg :existing-package
+                      :reader  existing-package)))
+
 (define-condition package-error (error package-system-condition)
   ((%package :initarg #1=:package
              :reader  package-error-package))
@@ -19,11 +32,34 @@
    #1# (error "Required argument ~s" #1#)))
 
 (define-condition package-does-not-exist-error (package-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (format stream "~@<~S does designate a package.~@:>"
-             (package-error-package condition)))))
+  ())
+
+(define-condition package-has-been-deleted-error (package-error)
+  ())
+
+
+
+;;; Conditions related to package-package relations
+
+;; signaled from `delete-package'
+(define-condition package-in-use-error (package-error)
+  ((%used-by :initarg :used-by
+             :reader  used-by)))
+
+;;; This condition is signaled by UNUSE-PACKAGE when the package is
+;;; not used, so that it can't be unused.
+(define-condition package-is-not-used (package-error) ; TODO: is this used?
+  ((%package-to-unuse :initarg :package-to-unuse
+                      :reader  package-to-unuse)))
+
+;; TODO: is this used?
+(define-condition nickname-refers-to-different-package (package-error)
+  ((%nickname          :initarg :nickname
+                       :reader  nickname)
+   (%nicknamed-package :initarg :nicknamed-package
+                       :reader  nicknamed-package)))
+
+;;; Conditions related to package-symbol relations
 
 (define-condition symbol-conflict (package-error)
   ((%conflicting-symbols :initarg :conflicting-symbols
@@ -33,18 +69,13 @@
   (error 'symbol-conflict :package             package
                           :conflicting-symbols conflicting-symbols))
 
+(define-condition symbol-conflicts-error (package-error)
+  ((%conflicts      :initarg  :conflicts
+                    :reader   conflicts)
+   (%package-labels :initarg  :package-labels
+                    :reader   package-labels
+                    :initform '())))
+
 (define-condition symbol-is-not-accessible (package-error)
   ((%symbol :initarg :symbol
             :reader  inaccessible-symbol)))
-
-;;; This condition is signaled by UNUSE-PACKAGE when the package is
-;;; not used, so that it can't be unused.
-(define-condition package-is-not-used (package-error)
-  ((%package-to-unuse :initarg :package-to-unuse
-                      :reader  package-to-unuse)))
-
-(define-condition nickname-refers-to-different-package (package-error)
-  ((%nickname          :initarg :nickname
-                       :reader  nickname)
-   (%nicknamed-package :initarg :nicknamed-package
-                       :reader  nicknamed-package)))

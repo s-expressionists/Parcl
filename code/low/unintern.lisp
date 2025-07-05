@@ -4,7 +4,7 @@
   (let ((result '()))
     (loop for package in packages
           do (multiple-value-bind (symbol status)
-                 (find-present-symbol client package name)
+                 (symbol-entry client name package)
                (when (eq status :external)
                  (pushnew symbol result :test #'eq))))
     result))
@@ -12,10 +12,10 @@
 (defmethod unintern (client package symbol)
   (let ((name (symbol-name client symbol)))
     (multiple-value-bind (present-symbol status)
-        (find-present-symbol client package name)
+        (symbol-entry client name package)
       (cond ((or (null status) (not (eq present-symbol symbol)))
              nil)
-            ((member symbol (shadowing-symbols client package))
+            ((member symbol (shadowing-symbols client package)) ; TODO: can't we tell from STATUS?
              (let* ((used-packages (use-list client package))
                     (symbols (find-exported-symbols-in-packages
                               client used-packages name)))

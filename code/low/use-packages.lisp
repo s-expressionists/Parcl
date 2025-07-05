@@ -1,18 +1,5 @@
 (cl:in-package #:parcl-low)
 
-(define-condition conflicts () ; TODO: move ; TODO: is this not an error?
-  ((%conflicts
-      :initarg :conflicts
-      :reader conflicts))
-  (:report (lambda (condition stream)
-             (format stream "Conflicts:~%")
-             (loop for entries being each hash-value of (conflicts condition) ; TODO: a function related to the condition should create the hash-table (if a hash-table is needed at all)
-                   do (loop for (symbol . packages) in entries
-                            do (format stream "Symol ~s from packages" symbol)
-                            (loop for package in packages
-                                  do (format stream " ~s" package))
-                            (terpri stream))))))
-
 ;;; Currently, we do not offer any restarts.  The dictionary entry on
 ;;; USE-PACKAGE does not say that a correctable error has to be
 ;;; signaled, but in section 11.1.1.2.5, it is said that any time a
@@ -21,29 +8,44 @@
 ;;; define exactly what restarts are useful, in particular so that
 ;;; they can be used programmatically.
 
-(defmethod use-packages (client package packages-to-use)
-  (let ((added-packages
-          (set-difference (use-list client package) packages-to-use)))
-    (let ((accessible-symbols '()))
-      (map-symbols client package
-                   (lambda (symbol)
-                     (push (list symbol) accessible-symbols)))
-      (loop for package-to-use in added-packages
-            do (map-external-symbols
-                client package-to-use
-                (lambda (symbol)
-                  (let ((collision (find symbol accessible-symbols
-                                         :key #'car
-                                         :test
-                                         (lambda (s1 s2)
-                                           (symbol-names-equal client s1 s2)))))
-                    (if (null collision)
-                        (push (list symbol) accessible-symbols)
-                        (push accessible-symbols (cdr collision)))))))
-      (let ((conflicts
-              (remove-if (lambda (x) (null (cdr x))) accessible-symbols)))
-        (unless (null conflicts)
-          (error 'conflicts
-                 :conflicts conflicts)))
-      (setf (use-list client package)
-            (append (use-list client package) packages-to-use)))))
+;;; TODO: why does this low-level operator accept multiple packages at once? i guess it is more efficient this way
+(defmethod use-packages ((client t) (package t) (packages-to-use t))
+  ;; TODO: return if packages-to-use is empty
+  (let* ((old-uses           (use-list client package))
+         (added-uses         (set-difference packages-to-use old-uses
+                                             :test #'eq))
+         (new-uses           (append added-uses old-uses))
+         (accessible-symbols '())
+         (conflicts          '()))
+    ;; Look for conflicts among the present symbols of PACKAGE and the
+    ;; symbols PACKAGE would inherit from all packages in NEW-USES.
+    (map-accessible-entries
+     client
+     (lambda (other-package symbol status)
+       (declare (ignore status))
+       (let* ((name      (symbol-name client symbol))
+              (info      (cons symbol other-package))
+              (collision (find name accessible-symbols
+                               :key #'car :test #'string=)))
+         (cond ((null collision)
+                (push (cons name (list info)) accessible-symbols))
+               (t
+                (push info (cdr collision))
+                (pushnew collision conflicts :test #'eq)))))
+     package new-uses)
+    (unless (null conflicts)
+      (error 'parcl::symbol-conflicts-error
+             :package        package
+             :conflicts      conflicts
+             :package-labels (nconc (list (cons package "using"))
+                                    (loop for package in old-uses
+                                          collect (cons package "old used"))
+                                    (loop for package in added-uses
+                                          collect (cons package "new used")))))
+    ;; Update use and used-by relations.
+    (setf (use-list client package) new-uses)
+    (loop for used-package in added-uses
+          do (assert (not (member package (used-by-list client used-package)))) ; TODO: remove later
+             (push package (used-by-list client used-package))))
+  ;; TODO: return value
+  )

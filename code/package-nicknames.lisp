@@ -1,8 +1,9 @@
 (cl:in-package #:parcl)
 
-(defun package-nicknames (package-designator)
-  (let ((package (find-package-or-error package-designator)))
-    (parcl-low:nicknames *client* package)))
+(defun package-nicknames (package)
+  (with-client-and-resolved-designators (client
+                                         (package package-designator))
+    (parcl-low:nicknames client package)))
 
 (setf (documentation 'package-nicknames 'function)
       (format nil

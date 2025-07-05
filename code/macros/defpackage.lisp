@@ -22,7 +22,7 @@
     `(progn
        (make-package
         ',name
-        :nicknames 
+        :nicknames
         '`(,(mapcar #'ico:designated-string (ico:nickname-asts ast)))
         :use '())
        (shadow

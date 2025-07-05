@@ -9,26 +9,38 @@
          ;; Conditions
          #:package-error
          #:package-error-package
-         ;; Functions
-         #:find-package
-         #:delete-package
+         ;; Symbol functions
+         #:symbolp
+         #:symbol-name
+         #:symbol-package
+         #:make-symbol
+         ;; Package functions
+         #:packagep
          #:package-name
          #:package-nicknames
          #:package-shadowing-symbols
          #:package-use-list
          #:package-used-by-list
-         #:rename-package
-         #:make-package
+         #:make-package ; TODO: diagram has this as environment function
+         ;; Package-package relation functions
+         #:unuse-package
+         #:use-package
+         ;; Package-symbol relation functions
          #:import
          #:intern
          #:unintern
-         #:find-symbol
          #:export
          #:unexport
          #:shadow
          #:shadowing-import
-         #:unuse-package
-         #:use-package
+         ;; ?
+         #:find-symbol
+         #:find-all-symbols ; TODO: not implemented
+         ;; Environment functions
+         #:list-all-packages ; TODO: not implemented
+         #:find-package
+         #:delete-package
+         #:rename-package
          ;; Macros
          #:defpackage
          #:with-package-iterator
@@ -40,6 +52,8 @@
   ;; Export names of operators for the package-local nicknames
   ;; extension.
   (:export
+   #:package-local-nicknames ; TODO: not implemented
+   #:package-locally-nicknamed-by ; TODO: not implemented
    #:add-package-local-nickname
    #:remove-package-local-nickname)
   ;; Export the names of additional variables and functions that

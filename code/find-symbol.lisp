@@ -1,11 +1,10 @@
 (cl:in-package #:parcl)
 
-(defun find-symbol (name &optional (package-designator *package*))
-  (unless (stringp name)
-    (error 'symbol-name-must-be-string
-           :datum name))
-  (let ((package (find-package-or-error package-designator)))
-    (parcl-low:find-symbol *client* package name)))
+(defun find-symbol (name &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (package package-designator)
+                                         (name    string-designator))
+    (parcl-low:find-symbol client package name)))
 
 (setf (documentation 'find-symbol 'function)
       (format nil

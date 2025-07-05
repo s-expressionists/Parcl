@@ -1,16 +1,11 @@
 (cl:in-package #:parcl)
 
-(defun export (symbols &optional (package-designator *package*))
-  (unless (or (symbolp symbols)
-              (and (ecclesia:proper-list-p symbols)
-                   ;; TODO(jmoringe): (every (lambda (symbol-designator) (or (stringp symbol-designator) (parcl-low:symbolp symbol-designator))
-                   (every #'symbolp symbols)))
-    (error 'symbols-must-be-designator-for-list-of-symbols
-           :symbols symbols))
-  (let ((symbols (if (listp symbols) symbols (list symbols)))
-        (package (find-package-or-error package-designator)))
+(defun export (symbols &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (symbols symbol-list-designator)
+                                         (package package-designator))
     (loop for symbol in symbols
-          do (parcl-low:export *client* package symbol))))
+          do (parcl-low:export client package symbol))))
 
 (setf (documentation 'export 'function)
       (format nil

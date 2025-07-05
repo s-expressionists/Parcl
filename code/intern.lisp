@@ -1,7 +1,9 @@
 (cl:in-package #:parcl)
 
-(defun intern (name &optional (package-designator *package*))
-  (parcl-low:intern *client* (find-package-or-error package-designator) name))
+(defun intern (name &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (package package-designator))
+    (parcl-low:intern client package name)))
 
 (setf (documentation 'intern 'function)
       (format nil

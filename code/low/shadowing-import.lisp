@@ -1,6 +1,6 @@
 (cl:in-package #:parcl-low)
 
-(defmethod shadowing-import (client package symbol)
+(defmethod shadowing-import ((client t) (package t) (symbol t))
   (let ((name (symbol-name client symbol)))
     (multiple-value-bind (present-symbol status)
         (find-present-symbol client package name)

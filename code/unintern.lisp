@@ -1,8 +1,10 @@
 (cl:in-package #:parcl)
 
-(defun unintern (symbol &optional (package-designator *package*))
-  (let ((package (find-package-or-error package-designator)))
-    (parcl-low:unintern *client* package symbol)))
+(defun unintern (symbol &optional (package *package*))
+  (with-client-and-resolved-designators (client
+                                         (package package-designator)
+                                         (symbol  symbol))
+    (parcl-low:unintern client package symbol)))
 
 (setf (documentation 'unintern 'function)
       (format nil

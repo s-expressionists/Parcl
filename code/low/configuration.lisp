@@ -5,10 +5,17 @@
 ;;;; method on each one of these functions, specialized to the
 ;;;; paticular client object it uses.
 
+
+
 ;;; This function creates a symbol.  NAME is a string to be used as
 ;;; the name of the symbol.  PACKAGE is a package object or NIL.  If
 ;;; PACKAGE is NIL, then an uninterned symbol is created.
 (defgeneric make-symbol (client name package))
+
+(defgeneric symbolp (client object)
+    ;; Default behavior
+  (:method ((client t) (object t))
+    nil))
 
 ;;; Given a symbol, this function returns the name of that symbol.
 (defgeneric symbol-name (client symbol))
