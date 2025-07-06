@@ -16,7 +16,7 @@
                  :components ((:file "variables")
                               (:file "condition-types")
                               (:file "utilities")
-                               ;; Messages
+                              ;; Messages
                               (:file "messages-english")))
 
                 (:module     "low"
@@ -24,29 +24,34 @@
                  :depends-on ("common")
                  :serial     t
                  :components ((:file "packages")
-                              (:file "accessors")
-                              (:file "configuration")
-                              (:file "generic-functions")
-                              (:file "package-class")
-                              ;;
-                              (:file "utilities")
-                              ;;
-                              (:file "make-package")
-                              (:file "delete-package")
-                              (:file "intern")
-                              (:file "find-symbol")
-                              (:file "import")
-                              (:file "shadowing-import")
-                              (:file "use-packages")
-                              (:file "unuse-package")
-                              (:file "export")
-                              (:file "unexport")
-                              (:file "shadow")
-                              (:file "unintern")
-                              (:file "add-local-nickname")
-                              (:file "remove-local-nickname")
-                              ;; Environment functions
-                              (:file "rename-package")))
+                              (:file "types")
+                              (:file "protocol")
+                              (:file "package-class")))
+
+                (:module      "middle"
+                 :pathname    "code/middle"
+                 :depends-on  ("common" "low")
+                 :serial      t
+                 :components  ((:file "protocol")
+                               (:file "utilities")
+                               ;; Package-package relations
+                               (:file "use-packages")
+                               (:file "unuse-package")
+                               (:file "add-local-nickname")
+                               (:file "remove-local-nickname")
+                               ;; Package-symbol relations
+                               (:file "find-symbol")
+                               (:file "intern")
+                               (:file "unintern")
+                               (:file "import")
+                               (:file "shadowing-import")
+                               (:file "shadow")
+                               (:file "export")
+                               (:file "unexport")
+                               ;; Environment functions
+                               (:file "make-package")
+                               (:file "delete-package")
+                               (:file "rename-package")))
 
                 (:module     "high"
                  :pathname   "code"

@@ -1,35 +1,5 @@
 (cl:in-package #:parcl-low)
 
-;;;; This file contains definitions of generic functions that are
-;;;; called by various parts of Parcl.  Client code must supply a
-;;;; method on each one of these functions, specialized to the
-;;;; paticular client object it uses.
-
-
-
-;;; This function creates a symbol.  NAME is a string to be used as
-;;; the name of the symbol.  PACKAGE is a package object or NIL.  If
-;;; PACKAGE is NIL, then an uninterned symbol is created.
-(defgeneric make-symbol (client name package))
-
-(defgeneric symbolp (client object)
-    ;; Default behavior
-  (:method ((client t) (object t))
-    nil))
-
-;;; Given a symbol, this function returns the name of that symbol.
-(defgeneric symbol-name (client symbol))
-
-;;; Given a symbol, this function returns the package of that symbol.
-;;; If the symbol is uninterned, then NIL is returned.
-(defgeneric symbol-package (client symbol))
-
-;;; Given a symbol and a package, this function sets the package of
-;;; that symbol.  Parcl code will call this function with a package
-;;; object only when the symbol does not have a home package, and with
-;;; NIL only when the symbol does have a home package.
-(defgeneric (setf symbol-package) (new-package client symbol))
-
 ;;; This function returns true if and only if the two symbols have the
 ;;; same name.
 (defgeneric symbol-names-equal (client symbol1 symbol2))

@@ -1,15 +1,44 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl-low) ; TODO: middle
 
-(defgeneric find-package (client name))
-
-(defgeneric (setf find-package) (new-value client name))
-
-(defgeneric make-package (client name nicknames used-packages))
+;;;; Package-package relation functions
 
 ;;; This function can be used to implement the standard function
-;;; MAKE-PACKAGE.  As opposed to the standard function, NAME must be a
-;;; string.
-(defgeneric make-package-object (client name))
+;;; USE-PACKAGE.
+(defgeneric use-packages (client package packages-to-use))
+
+;;; This function can be used to implement the standard function
+;;; UNUSE-PACKAGE.  It differs from the standard function in that it
+;;; takes a single package to unuse as opposed to a list of packages
+;;; to unuse. Client code for the standard function must then call
+;;; this function multiple times.
+(defgeneric unuse-package (client package package-to-unuse))
+
+;;; This function can be used to implement the semi-standard function
+;;; ADD-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that represents
+;;; the local nickname to be used to refer to the nicknamed package.
+;;; NICKNAMED-PACKAGE is a package object to be nicknamed.  PACKAGE is
+;;; a package object to which the NICKNAME/NICKNAMED-PACKAGE pair is
+;;; to be added.  If the NICKNAME/NICKNAMED-PACKAGE pair exists in
+;;; PACKAGE already, then the call to this function has no effect.  If
+;;; a NICKNAME/NICKNAMED-PACKAGE pair exists exists in PACKAGE already
+;;; with the same nickname but a different nicknamed package, then an
+;;; error is signaled.  Otherwise, the NICKNAME/NICKNAMED-PACKAGE pair
+;;; is added to PACKAGE using the accessor LOCAL-NICKNAMES, and
+;;; PACKAGE is added to NICKNAMED-PACKAGE using the accessor
+;;; LOCALLY-NICKNAMED-BY.
+(defgeneric add-local-nickname (client nickname nicknamed-package package))
+
+;;; This function can be used to implement the semi-standard function
+;;; REMOVE-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that
+;;; represents the local nickname to be removed from PACKAGE.  PACKAGE
+;;; is a package object from which NICKNAME is to be removed.  If
+;;; NICKNAME is the local nickname of any package in PACKAGE, then it
+;;; is removed, and this function returns true.  If NICKNAME is not
+;;; the local nickname of any package in PACKAGE, then this function
+;;; has no effect, and returns NIL.
+(defgeneric remove-local-nickname (client nickname package))
+
+;;;; Package-symbol relation functions
 
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two
@@ -27,17 +56,6 @@
 (defgeneric import (client package symbol))
 
 (defgeneric shadowing-import (client package symbol))
-
-;;; This function can be used to implement the standard function
-;;; USE-PACKAGE.
-(defgeneric use-packages (client package packages-to-use))
-
-;;; This function can be used to implement the standard function
-;;; UNUSE-PACKAGE.  It differs from the standard function in that it
-;;; takes a single package to unuse as opposed to a list of packages
-;;; to unuse. Client code for the standard function must then call
-;;; this function multiple times.
-(defgeneric unuse-package (client package package-to-unuse))
 
 ;;; This function can be used to implement the standard function EXPORT.
 ;;; It differs from the standard function in that it takes a single
@@ -79,37 +97,10 @@
 ;;; as arguments.
 (defgeneric unintern (client package symbol))
 
-;;; This function can be used to implement the semi-standard function
-;;; ADD-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that represents
-;;; the local nickname to be used to refer to the nicknamed package.
-;;; NICKNAMED-PACKAGE is a package object to be nicknamed.  PACKAGE is
-;;; a package object to which the NICKNAME/NICKNAMED-PACKAGE pair is
-;;; to be added.  If the NICKNAME/NICKNAMED-PACKAGE pair exists in
-;;; PACKAGE already, then the call to this function has no effect.  If
-;;; a NICKNAME/NICKNAMED-PACKAGE pair exists exists in PACKAGE already
-;;; with the same nickname but a different nicknamed package, then an
-;;; error is signaled.  Otherwise, the NICKNAME/NICKNAMED-PACKAGE pair
-;;; is added to PACKAGE using the accessor LOCAL-NICKNAMES, and
-;;; PACKAGE is added to NICKNAMED-PACKAGE using the accessor
-;;; LOCALLY-NICKNAMED-BY.
-(defgeneric add-local-nickname (client nickname nicknamed-package package))
+;;;; Environment functions
 
-;;; This function can be used to implement the semi-standard function
-;;; REMOVE-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that
-;;; represents the local nickname to be removed from PACKAGE.  PACKAGE
-;;; is a package object from which NICKNAME is to be removed.  If
-;;; NICKNAME is the local nickname of any package in PACKAGE, then it
-;;; is removed, and this function returns true.  If NICKNAME is not
-;;; the local nickname of any package in PACKAGE, then this function
-;;; has no effect, and returns NIL.
-(defgeneric remove-local-nickname (client nickname package))
+(defgeneric make-package (client name nicknames used-packages))
 
-;;; This function is used by the macro DO-SYMBOLS to compute the
-;;; expansion.
-(defgeneric do-symbols-expander
-    (client symbol-variable package-designator-form result-form body))
+(defgeneric delete-package (client package))
 
-;;; This function is used by the macro DO-EXTERNAL-SYMBOLS to compute
-;;; the expansion.
-(defgeneric do-external-symbols-expander
-    (client symbol-variable package-designator-form result-form body))
+(defgeneric rename-package (client package new-name new-nicknames))
