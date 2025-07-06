@@ -186,5 +186,4 @@
                        (loop for cell in row
                              for i from 0
                              ;; TODO a:maxf
-                             collect (aref widths i)
-                             collect cell))))))
+                             collect (aref widths i) collect cell))))))
