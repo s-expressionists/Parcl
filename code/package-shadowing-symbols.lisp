@@ -3,7 +3,7 @@
 (defun package-shadowing-symbols (package)
   (with-client-and-resolved-designators (client
                                          (package package-designator))
-    (parcl-low:shadowing-symbols client package)))
+    (parcl.middle:shadowing-symbols client package)))
 
 (setf (documentation 'package-shadowing-symbols 'function)
       (format nil

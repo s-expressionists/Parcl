@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod make-package ((client t) (name t) (nicknames t) (used-packages t))
   (check-names-unoccupied ((name existing-package signal-error)
@@ -9,11 +9,9 @@
         :report (lambda (stream)
                   (parcl::report-restart '#1# stream existing-package))
         (return-from make-package existing-package))))
-  (let ((result (make-package-object client name)))
-    (setf (find-package client name) result)
-    (loop for nickname in nicknames
-          do (setf (find-package client nickname) result))
-    (setf (nicknames client result) nicknames)
-                                        ; (parcl:store-package result name nicknames)
+  (let ((result (low:make-package-object client name)))
+    (loop for name in (list* name nicknames)
+          do (setf (low:find-package client name) result))
+    (setf (low:nicknames client result) nicknames)
     (use-packages client result used-packages)
     result))

@@ -1,13 +1,15 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod shadowing-import ((client t) (package t) (symbol t))
-  (let ((name (symbol-name client symbol)))
+  (let ((name (low:symbol-name client symbol)))
     (multiple-value-bind (present-symbol status)
-        (find-present-symbol client package name)
+        (low:symbol-entry client name package)
       (unless (or (null status) (eq symbol present-symbol))
         ;; We have a conflict.  We must first unintern the conflicting
         ;; symbol.
-        (unintern client package present-symbol))))
-  (import client package symbol)
-  ;; TODO: this does too much work since we know that the symbol is present in PACKAGE
-  (shadow client package (symbol-name client symbol)))
+        (unintern client package present-symbol)))
+    (import client package symbol)
+    ;; TODO: this does too much work since we know that the symbol is present in PACKAGE
+    (shadow client package name)
+    ;; TODO: return value
+    ))

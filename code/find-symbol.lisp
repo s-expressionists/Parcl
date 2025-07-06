@@ -4,7 +4,7 @@
   (with-client-and-resolved-designators (client
                                          (package package-designator)
                                          (name    string-designator))
-    (parcl-low:find-symbol client package name)))
+    (parcl.middle:find-symbol client package name))) ; TODO arguments: client name package
 
 (setf (documentation 'find-symbol 'function)
       (format nil

@@ -1,7 +1,7 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod import ((client t) (package t) (symbol t))
-  (prog ((name (symbol-name client symbol))
+  (prog ((name       (low:symbol-name client symbol))
          (new-status :internal))
      (flet ((check-symbol (other-package other-symbol status)
               ;; TODO(jmoringe): can't we stop checking if the symbol is already present?
@@ -28,9 +28,9 @@
        (map-accessible-entries-with-name client #'check-symbol name package))
    :check-done
      ;;
-     (setf (symbol-entry client name package) (values symbol new-status))
-     (when (null (symbol-package client symbol))
-       (setf (symbol-package client symbol) package))
+     (setf (low:symbol-entry client name package) (values symbol new-status))
+     (when (null (low:symbol-package client symbol))
+       (setf (low:symbol-package client symbol) package))
    t)) ; TODO: useful return value since this is our own protocol
 
 #++ (defmethod import ((client t) (package t) (symbol t))

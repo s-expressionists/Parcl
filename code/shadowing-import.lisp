@@ -5,7 +5,7 @@
                                          (package package-designator)
                                          (symbols symbol-list-designator))
     (loop for symbol in symbols
-          do (parcl-low:shadowing-import client package symbol))))
+          do (parcl.middle:shadowing-import client package symbol))))
 
 (setf (documentation 'shadowing-import 'function)
       (format nil

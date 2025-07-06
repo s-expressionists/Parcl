@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 ;;; This function detects and resolves a conflict between SYMBOL and a
 ;;; present symbol S in USING-PACKAGE where USING-PACKAGE uses
@@ -7,10 +7,10 @@
 ;;; S a shadowing symbol in USING-PACKAGE.
 (defun detect-and-resolve-export-conflict-1 (client symbol using-package)
   (multiple-value-bind (conflicting-symbol status)
-      (find-symbol client using-package (symbol-name client symbol))
+      (low:symbol-entry client (low:symbol-name client symbol) using-package)
     (when (and (or (eq status :internal) (eq status :external))
                (not (member conflicting-symbol
-                            (shadowing-symbols client using-package)
+                            (shadowing-symbols client using-package) ; TODO: wrong?
                             :test #'eq)))
       (restart-case
           (parcl::symbol-conflict using-package symbol conflicting-symbol)
@@ -27,7 +27,7 @@
                      'shadow  stream conflicting-symbol using-package))
           (return-from detect-and-resolve-export-conflict-1
             (lambda ()
-              (push conflicting-symbol
+              (push conflicting-symbol ; TODO: isn't this done via status?
                     (shadowing-symbols client using-package)))))
         (do-not-export ()
           :report (lambda (stream)
@@ -44,11 +44,11 @@
 ;;; can be imported into USING-PACKAGE as a shadowing symbol.
 (defun detect-and-resolve-export-conflict-2
     (client package symbol using-package)
-  (loop with name = (symbol-name client symbol)
-        for used-package in (use-list client using-package)
+  (loop with name = (low:symbol-name client symbol)
+        for used-package in (low:use-list client using-package)
         unless (eq used-package package)
           do (multiple-value-bind (conflicting-symbol status)
-                 (symbol-entry client name used-package)
+                 (low:symbol-entry client name used-package)
                (when (and (eq status :external)
                           (not (eq symbol conflicting-symbol)))
                  (restart-case
@@ -62,7 +62,7 @@
                                                       using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
-                         (push conflicting-symbol
+                         (push conflicting-symbol ; TODO: via status?
                                (shadowing-symbols client using-package)))))
                    (make-new-shadowing ()
                      :report (lambda (stream)
@@ -70,7 +70,7 @@
                                 'make-new-shadowing stream symbol using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
-                         (push symbol
+                         (push symbol ; TODO: via status?
                                (shadowing-symbols client using-package)))))
                    (do-not-export ()
                      :report (lambda (stream)
@@ -85,7 +85,7 @@
 ;;; PACKAGE
 (defun detect-and-resolve-export-non-accessibility (client package symbol)
   (multiple-value-bind (putative-symbol status)
-      (find-symbol client package (symbol-name client symbol))
+      (low:symbol-entry client (low:symbol-name client symbol) package)
     (if (and (eq putative-symbol symbol)
              (not (null status)))
         nil ; Return NIL to indicate that there was no conflict
@@ -107,12 +107,12 @@
                    client package symbol)))
     (unless (eq action-1 :abort)
       (let ((action-2
-              (loop for using-package in (used-by-list client package)
+              (loop for using-package in (low:used-by-list client package)
                       thereis (detect-and-resolve-export-conflict-1
                                client symbol using-package))))
         (unless (eq action-2 :abort)
           (let ((action-3
-                  (loop for using-package in (used-by-list client package)
+                  (loop for using-package in (low:used-by-list client package)
                           thereis (detect-and-resolve-export-conflict-2
                                    client package symbol using-package))))
             (unless (eq action-3 :abort)
@@ -120,16 +120,16 @@
               (unless (null action-2) (funcall action-2))
               (unless (null action-3) (funcall action-3))
               (when (and (null action-1) (null action-2) (null action-3))
-                (let ((name (symbol-name client symbol)))
+                (let ((name (low:symbol-name client symbol)))
                   (multiple-value-bind (old-symbol old-status)
-                      (symbol-entry client name package)
+                      (low:symbol-entry client name package)
                     (declare (ignore old-symbol))
                     (case old-status
                       ((nil :internal)
-                       (setf (symbol-entry client name package)
+                       (setf (low:symbol-entry client name package)
                              (values symbol :external)))
                       (:internal-shadowing
-                       (setf (symbol-entry client name package)
+                       (setf (low:symbol-entry client name package)
                              (values symbol :external-shadowing))))))
                 #++ (ensure-present-symbol client package symbol :external))))))))
   ;; TODO: return value?

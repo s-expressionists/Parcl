@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 ;;; Currently, we do not offer any restarts.  The dictionary entry on
 ;;; USE-PACKAGE does not say that a correctable error has to be
@@ -11,7 +11,7 @@
 ;;; TODO: why does this low-level operator accept multiple packages at once? i guess it is more efficient this way
 (defmethod use-packages ((client t) (package t) (packages-to-use t))
   ;; TODO: return if packages-to-use is empty
-  (let* ((old-uses           (use-list client package))
+  (let* ((old-uses           (low:use-list client package))
          (added-uses         (set-difference packages-to-use old-uses
                                              :test #'eq))
          (new-uses           (append added-uses old-uses))
@@ -23,7 +23,7 @@
      client
      (lambda (other-package symbol status)
        (declare (ignore status))
-       (let* ((name      (symbol-name client symbol))
+       (let* ((name      (low:symbol-name client symbol))
               (info      (cons symbol other-package))
               (collision (find name accessible-symbols
                                :key #'car :test #'string=)))
@@ -43,9 +43,9 @@
                                     (loop for package in added-uses
                                           collect (cons package "new used")))))
     ;; Update use and used-by relations.
-    (setf (use-list client package) new-uses)
+    (setf (low:use-list client package) new-uses)
     (loop for used-package in added-uses
-          do (assert (not (member package (used-by-list client used-package)))) ; TODO: remove later
-             (push package (used-by-list client used-package))))
+          do (assert (not (member package (low:used-by-list client used-package)))) ; TODO: remove later
+             (push package (low:used-by-list client used-package))))
   ;; TODO: return value
   )

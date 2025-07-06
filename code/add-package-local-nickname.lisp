@@ -6,5 +6,5 @@
                                          (package        package-designator)
                                          (actual-package package-designator)
                                          (local-nickname string-designator))
-    (parcl-low:add-local-nickname
+    (parcl.middle:add-local-nickname
      client local-nickname actual-package package)))

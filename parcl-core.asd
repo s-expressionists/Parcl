@@ -32,7 +32,8 @@
                  :pathname    "code/middle"
                  :depends-on  ("common" "low")
                  :serial      t
-                 :components  ((:file "protocol")
+                 :components  ((:file "package")
+                               (:file "protocol")
                                (:file "utilities")
                                ;; Package-package relations
                                (:file "use-packages")
@@ -40,6 +41,7 @@
                                (:file "add-local-nickname")
                                (:file "remove-local-nickname")
                                ;; Package-symbol relations
+                               (:file "shadowing-symbols")
                                (:file "find-symbol")
                                (:file "intern")
                                (:file "unintern")
@@ -55,7 +57,7 @@
 
                 (:module     "high"
                  :pathname   "code"
-                 :depends-on ("common" "low")
+                 :depends-on ("common" "low" "middle")
                  :serial     t
                  :components ((:file "designator-utilities")
                               ;; Symbol functions
@@ -64,9 +66,10 @@
                               (:file "packagep")
                               (:file "package-name")
                               (:file "package-nicknames")
-                              (:file "package-shadowing-symbols")
                               (:file "package-use-list")
                               (:file "package-used-by-list")
+                              ;; TODO local-nicknames
+                              (:file "package-shadowing-symbols")
                               (:file "make-package") ; TODO: diagram has this in environment
                               ;; Package-package relation functions
                               (:file "use-package")
@@ -74,6 +77,7 @@
                               (:file "add-package-local-nickname")
                               (:file "remove-package-local-nickname")
                               ;; Package-symbol relation functions
+                              (:file "find-symbol")
                               (:file "intern")
                               (:file "import")
                               (:file "shadowing-import")
@@ -84,9 +88,7 @@
                               ;; Environment functions
                               (:file "find-package")
                               (:file "delete-package")
-                              (:file "rename-package")
-                              ;; ?
-                              (:file "find-symbol"))))
+                              (:file "rename-package"))))
   :in-order-to ((test-op (test-op "parcl-core/test"))))
 
 ;;; This system ensures, ideally before any other operations are

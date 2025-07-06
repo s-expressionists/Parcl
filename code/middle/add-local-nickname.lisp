@@ -1,10 +1,11 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
-(defmethod add-local-nickname (client nickname nicknamed-package package)
+(defmethod add-local-nickname
+    ((client t) (nickname t) (nicknamed-package t) (package t))
   (let* ((nickname-string (string nickname)) ; TODO: designator should already be handled
          (existing-nickname-pair
            (assoc nickname-string
-                  (local-nicknames client package)
+                  (low:local-nicknames client package)
                   :test #'string=)))
     (if (and (not (null existing-nickname-pair))
              (not (eq nicknamed-package (second existing-nickname-pair))))
@@ -14,6 +15,6 @@
                :nicknamed-package nicknamed-package
                :package package)
         (progn (push (list nickname-string nicknamed-package)
-                     (local-nicknames client package))
+                     (low:local-nicknames client package))
                (push package
-                     (locally-nicknamed-by client nicknamed-package))))))
+                     (low:locally-nicknamed-by client nicknamed-package))))))

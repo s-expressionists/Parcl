@@ -4,7 +4,7 @@
   (with-client-and-resolved-designators (client
                                          (package package-designator))
     (if (not (null package))
-        (parcl-low:delete-package client package)
+        (parcl.middle:delete-package client package)
         nil)))
 
 (setf (documentation 'delete-package 'function)

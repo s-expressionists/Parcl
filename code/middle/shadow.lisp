@@ -1,18 +1,18 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod shadow ((client t) (package t) (name t))
   ;; TODO: the method for low-class uses the status - :internal-shadowing or :external-shadowing
   (multiple-value-bind (present-symbol status)
-      (symbol-entry client name package)
+      (low:symbol-entry client name package)
     (let ((symbol (if (null status)
-                      (make-symbol client name package) ; sets home package
+                      (low:make-symbol client name package) ; sets home package
                       present-symbol))
           (new-status (case status
                         ((nil :internal :internal-shadowing)
                          :internal-shadowing)
                         (t
                          :external-shadowing))))
-      (setf (symbol-entry client name package) (values symbol new-status))
+      (setf (low:symbol-entry client name package) (values symbol new-status))
       symbol)))
 
 #++ (defmethod parcl-low:shadow ((client low-class::client) package name)

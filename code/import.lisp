@@ -5,7 +5,7 @@
                                          (package package-designator)
                                          (symbols symbol-list-designator))
     (loop for symbol in symbols
-          do (parcl-low:import client package symbol))))
+          do (parcl.middle:import client package symbol))))
 
 (setf (documentation 'import 'function)
       (format nil

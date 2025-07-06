@@ -5,7 +5,7 @@
                                          (symbols symbol-list-designator)
                                          (package package-designator))
     (loop for symbol in symbols
-          do (parcl-low:export client package symbol))))
+          do (parcl.middle:export client package symbol))))
 
 (setf (documentation 'export 'function)
       (format nil

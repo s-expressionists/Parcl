@@ -1,14 +1,15 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
-(defmethod remove-local-nickname (client nickname package)
-  (let* ((nickname-string (string nickname))
-         (existing-nickname-pair
-           (assoc nickname-string
-                  (local-nicknames client package)
-                  :test #'string=)))
-    (if (null existing-nickname-pair)
-        nil
-        (progn (setf (local-nicknames client package)
-                     (remove existing-nickname-pair
-                             (local-nicknames client package)))
-               t))))
+(defmethod remove-local-nickname ((client t) (nickname string) (package t))
+  (let* ((nickname-string        nickname)
+         (old-local-nicknames    (low:local-nicknames client package))
+         (existing-nickname-pair (assoc nickname-string old-local-nicknames
+                                        :test #'string=)))
+    (cond ((null existing-nickname-pair)
+           nil)
+          (t
+           (setf (low:local-nicknames client package)
+                 (remove existing-nickname-pair old-local-nicknames
+                         :test #'eq :count 1))
+           ;; TODO: update nicknamed-by
+           t))))

@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod intern ((client t) (package t) (name string))
   ;; TODO(jmoringe): same code for finding existing symbols in import
@@ -6,8 +6,8 @@
            (return-from intern
              (values symbol (if (eq other-package package) status :inherited)))))
     (map-accessible-entries-with-name client #'consider-symbol name package))
-  (let ((symbol (make-symbol client name package))) ; sets home package
-    (setf (symbol-entry client name package) (values symbol :internal))
+  (let ((symbol (low:make-symbol client name package))) ; sets home package
+    (setf (low:symbol-entry client name package) (values symbol :internal))
     (values symbol :internal))
 
   #++ (multiple-value-bind (present-symbol status)

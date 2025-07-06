@@ -6,7 +6,7 @@
                                          (new-name      string-designator)
                                          (new-nicknames string-designator-list))
     (if (not (null package))
-        (parcl-low:rename-package client package new-name new-nicknames)
+        (parcl.middle:rename-package client package new-name new-nicknames)
         nil)))
 
 (setf (documentation 'rename-package 'function)

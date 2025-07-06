@@ -5,4 +5,4 @@
   (with-client-and-resolved-designators (client
                                          (package      package-designator)
                                          (old-nickname string-designator))
-    (parcl-low:remove-local-nickname client old-nickname package)))
+    (parcl.middle:remove-local-nickname client old-nickname package))) ; TODO: argument order inconsistent with other operators

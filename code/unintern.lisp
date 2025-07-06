@@ -4,7 +4,7 @@
   (with-client-and-resolved-designators (client
                                          (package package-designator)
                                          (symbol  symbol))
-    (parcl-low:unintern client package symbol)))
+    (parcl.middle:unintern client package symbol)))
 
 (setf (documentation 'unintern 'function)
       (format nil

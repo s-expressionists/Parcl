@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low) ; TODO: middle
+(cl:in-package #:parcl.middle)
 
 ;;;; Package-package relation functions
 
@@ -40,48 +40,14 @@
 
 ;;;; Package-symbol relation functions
 
+(defgeneric shadowing-symbols (client package))
+
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two
 ;;; values.  The first value is either a symbol with the name NAME
 ;;; accessible in PACKAGE, or NIL if there is no such symbol.  The
 ;;; second value is either :INTERNAL, :EXTERNAL, :INHERITED, or NIL.
 (defgeneric find-symbol (client package name))
-
-;;; This function can be used to implement the standard function
-;;; IMPORT.  If, as a result of a call to this function, SYMBOL is
-;;; imported into PACKAGE, and SYMBOL has no home packge (as
-;;; determined by a call to SYMBOL-PACKAGE) then this function calls
-;;; (SETF SYMBOL-PACKAGE) with PACKAGE, CLIENT, and SYMBOL as
-;;; arguments.
-(defgeneric import (client package symbol))
-
-(defgeneric shadowing-import (client package symbol))
-
-;;; This function can be used to implement the standard function EXPORT.
-;;; It differs from the standard function in that it takes a single
-;;; symbol as opposed to a list of symbols. Client code for the standard
-;;; function must then call this function multiple times.
-(defgeneric export (client package symbol))
-
-;;; This function can be used to implement the standard function
-;;; UNEXPORT.  It differs from the standard function in that it takes
-;;; a single symbol as opposed to a list of symbols. Client code for
-;;; the standard function must then call this function multiple times.
-(defgeneric unexport (client package symbol))
-
-;;; This function can be used to implement the standard function
-;;; SHADOW.  It differs from the standard function in that it takes a
-;;; single string as opposed to a list of string designators. Client
-;;; code for the standard function must then call this function
-;;; multiple times.  This function calls FIND-SYMBOL to determine
-;;; whether a symbol with the name NAME is present (i.e., it is
-;;; directly accessible) in PACKAGE.  If that is the case, then that
-;;; existing symbol is added to the set of shadowing symbols of
-;;; PACKAGE.  If no such symbol is present in PACKAGE, this function
-;;; calls MAKE-SYMBOL, passing it CLIENT, NAME, and PACKAGE as
-;;; arguments.  The resulting symbol is then added to PACKAGE as an
-;;; internal symbol and as a shadowing symbol.
-(defgeneric shadow (client package name))
 
 ;;; This function can be used to implement the standard function
 ;;; INTERN.  Client code is responsible for making SYMBOL external if
@@ -96,6 +62,42 @@
 ;;; function calls (SETF SYMBOL-PACKAGE) with NIL, CLIENT, and SYMBOL
 ;;; as arguments.
 (defgeneric unintern (client package symbol))
+
+;;; This function can be used to implement the standard function EXPORT.
+;;; It differs from the standard function in that it takes a single
+;;; symbol as opposed to a list of symbols. Client code for the standard
+;;; function must then call this function multiple times.
+(defgeneric export (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; UNEXPORT.  It differs from the standard function in that it takes
+;;; a single symbol as opposed to a list of symbols. Client code for
+;;; the standard function must then call this function multiple times.
+(defgeneric unexport (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; IMPORT.  If, as a result of a call to this function, SYMBOL is
+;;; imported into PACKAGE, and SYMBOL has no home packge (as
+;;; determined by a call to SYMBOL-PACKAGE) then this function calls
+;;; (SETF SYMBOL-PACKAGE) with PACKAGE, CLIENT, and SYMBOL as
+;;; arguments.
+(defgeneric import (client package symbol))
+
+(defgeneric shadowing-import (client package symbol))
+
+;;; This function can be used to implement the standard function
+;;; SHADOW.  It differs from the standard function in that it takes a
+;;; single string as opposed to a list of string designators. Client
+;;; code for the standard function must then call this function
+;;; multiple times.  This function calls FIND-SYMBOL to determine
+;;; whether a symbol with the name NAME is present (i.e., it is
+;;; directly accessible) in PACKAGE.  If that is the case, then that
+;;; existing symbol is added to the set of shadowing symbols of
+;;; PACKAGE.  If no such symbol is present in PACKAGE, this function
+;;; calls MAKE-SYMBOL, passing it CLIENT, NAME, and PACKAGE as
+;;; arguments.  The resulting symbol is then added to PACKAGE as an
+;;; internal symbol and as a shadowing symbol.
+(defgeneric shadow (client package name))
 
 ;;;; Environment functions
 

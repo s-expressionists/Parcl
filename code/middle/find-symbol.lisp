@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.middle)
 
 (defmethod find-symbol ((client t) (package t) (name string))
   (flet ((found-one (containing-package symbol status)

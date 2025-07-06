@@ -1,48 +1,39 @@
 (cl:defpackage #:parcl-low
   (:use
    #:common-lisp)
+
+  ;; Symbol functions
   (:shadow
-   . #1=(#:package
-         #:packagep
-         #:find-package
-         #:make-symbol
-         #:make-package
-         #:delete-package
-         #:find-symbol
-         #:import
-         #:shadowing-import
-         #:use-package
-         #:unuse-package
-         #:rename-package
-         #:export
-         #:unexport
-         #:shadow
-         #:intern
-         #:unintern
-         #:symbolp
-         #:symbol-name
-         #:symbol-package))
-  ;; TODO: fix this in the package clean up commit
+   . #1=(#:symbolp
+         #:symbol-name    ; also `setf'
+         #:symbol-package ; also `setf'
+         #:make-symbol))
   (:export
-   #:name-to-entry
-   #:remove-entry
-   #:symbol-entries
+   . #1#)
+
+  ;; Package functions
+  (:shadow
+   . #2=(#:packagep))
+  (:export
+   #:name                 ; also `setf'
+   #:nicknames            ; also `setf'
+   #:use-list             ; also `setf'
+   #:used-by-list         ; also `setf'
+   #:local-nicknames      ; also `setf'
+   #:locally-nicknamed-by ; also `setf'
    #:make-package-object
-   #:name
-   #:nicknames
-   #:shadowing-symbols
-   #:use-list
-   #:used-by-list
-   #:make-table
-   #:find-present-symbol
-   #:ensure-present-symbol
-   #:remove-present-symbol
-   #:map-symbols
-   #:map-external-symbols
-   #:symbol-names-equal
-   #:use-packages
-   #:local-nicknames
-   #:locally-nicknamed-by
-   #:add-local-nickname
-   #:remove-local-nickname
-   . #1#))
+   . #2#)
+
+  ;; Package-symbol relation functions
+  (:export
+   #:map-symbol-entries
+   #:symbol-entries
+   #:symbol-entry
+   #:set-symbol-entries)
+
+  ;; Environment functions
+  (:shadow
+   . #3=(#:find-package)) ; also `setf'
+  (:export
+   ; TODO: #:list-all-packages
+   . #3#))

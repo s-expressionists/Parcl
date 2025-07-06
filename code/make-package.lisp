@@ -7,7 +7,7 @@
                                          (package-name string-designator)
                                          (nicknames    string-designator-list)
                                          (use          package-designator-list))
-    (parcl-low:make-package client package-name nicknames use)))
+    (parcl.middle:make-package client package-name nicknames use)))
 
 (setf (documentation 'make-package 'function)
       (format nil
