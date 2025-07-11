@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test unintern.smoke
+(high-test unintern.smoke
   ;; TODO: designators
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -13,7 +13,7 @@
 
 ;;; TODO: shadowing
 
-(test unintern.not-present
+(high-test unintern.not-present
   ;; TODO: designators
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")

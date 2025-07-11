@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test use-package.smoke
+(high-test use-package.smoke
   ;; TODO: designators
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -12,7 +12,7 @@
         (is (a:set-equal (list package1)
                          (parcl:package-used-by-list package2)))))))
 
-(test use-package.idempotent
+(high-test use-package.idempotent
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (with-mock-package (package2 "bar")
@@ -22,13 +22,13 @@
         (is (a:set-equal (list package1)
                          (parcl:package-used-by-list package2)))))))
 
-(test use-package.used-package-does-not-exist
+(high-test use-package.used-package-does-not-exist
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (signals parcl::package-does-not-exist-error
         (parcl:use-package "bar" package1)))))
 
-(test use-package.conflict-with-present
+(high-test use-package.conflict-with-present
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (with-mock-package (package2 "bar")
@@ -39,7 +39,7 @@
         (signals parcl::symbol-conflicts-error
           (parcl:use-package package2 package1))))))
 
-(test use-package.conflict-with-inherited/2-packages
+(high-test use-package.conflict-with-inherited/2-packages
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (with-mock-package (package2 "bar")
@@ -50,7 +50,7 @@
           (signals parcl::symbol-conflicts-error
            (parcl:use-package package3 package1)))))))
 
-(test use-package.conflict-with-inherited/3-packages
+(high-test use-package.conflict-with-inherited/3-packages
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (with-mock-package (package2 "bar")
@@ -67,7 +67,7 @@
             (signals parcl::symbol-conflicts-error
               (parcl:use-package package4 package1))))))))
 
-(test use-package.conflict-with-present-and-inherited
+(high-test use-package.conflict-with-present-and-inherited
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
       (with-mock-package (package2 "bar")

@@ -2,8 +2,11 @@
 
 ;;; Fixtures
 
+(defvar *client-maker*
+  (lambda () (make-instance 'mock-client)))
+
 (defun call-with-mock-package-system (continuation)
-  (let* ((client (make-instance 'mock-client))
+  (let* ((client (funcall *client-maker*))
          (parcl:*client* client))
     (funcall continuation client)))
 

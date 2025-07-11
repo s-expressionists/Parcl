@@ -25,3 +25,14 @@
 
 (defun run-tests ()
   (fiveam:run! :parcl))
+
+;;;
+
+(defvar *high-tests* (make-hash-table :test #'eq))
+
+(defun register-high-test (name body)
+  (setf (gethash name *high-tests*) body))
+
+(defmacro high-test (name &body body)
+  (register-high-test name body)
+  `(test ,name ,@body))

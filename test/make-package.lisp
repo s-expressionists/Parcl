@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test make-package.smoke
+(high-test make-package.smoke
   (with-mock-package-system ()
     (do-string-designators (name #1="foo")
       (with-fresh-package-system ()
@@ -14,7 +14,7 @@
           (do-string-designators (name2 #1#)
             (is-true (eq package (parcl:find-package name2)))))))))
 
-(test make-package.nicknames
+(high-test make-package.nicknames
   (with-mock-package-system ()
     (do-string-designators (nickname #1="foo")
       (with-fresh-package-system ()
@@ -28,7 +28,7 @@
           (do-string-designators (name #2#)
             (is-true (eq package (parcl:find-package name)))))))))
 
-(test make-package.already-exists
+(high-test make-package.already-exists
   (with-mock-package-system ()
     (do-string-designators (name1 #1="foo")
       (with-fresh-package-system ()
@@ -41,7 +41,7 @@
             (signals parcl::package-name-occupied-error
               (parcl:make-package name3 :nicknames (list name2)))))))))
 
-(test make-package.recover.return-existing
+(high-test make-package.recover.return-existing
   (with-mock-package-system ()
     (with-mock-package (package #1="foo")
       (handler-bind ((parcl::package-name-occupied-error

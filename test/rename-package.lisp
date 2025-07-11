@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test rename-package.smoke
+(high-test rename-package.smoke
   ;; TODO: designators
   (with-mock-package-system ()
     (let ((package (parcl:make-package #1="foo" :nicknames '(#2="bar"
@@ -18,14 +18,14 @@
       (is (eq package (parcl:find-package #4#)))
       (is (eq package (parcl:find-package #6#))))))
 
-(test rename-package.name-occupied
+(high-test rename-package.name-occupied
   (with-mock-package-system ()
     (with-mock-package (package1 #1="foo")
       (with-mock-package (nil #2="bar")
         (signals parcl::package-name-occupied-error
           (parcl:rename-package package1 #2#))))))
 
-(test rename-package.nickname-occupied
+(high-test rename-package.nickname-occupied
   (with-mock-package-system ()
     (with-mock-package (package1 #1="foo")
       (with-mock-package (nil #2="bar")

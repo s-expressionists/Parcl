@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test delete-package.smoke
+(high-test delete-package.smoke
   (with-mock-package-system ()
     (do-string-designators (name #1="foo")
       (with-fresh-package-system ()
@@ -16,14 +16,14 @@
         (is (null (parcl:package-name package)))
         (is (null (parcl:find-package #2#)))))))
 
-(test delete-package.nicknames
+(high-test delete-package.nicknames
   (with-mock-package-system ()
     (let ((package (parcl:make-package #1="foo" :nicknames '(#2="bar"))))
       (parcl:delete-package package))
     (is (null (parcl:find-package #1#)))
     (is (null (parcl:find-package #2#)))))
 
-(test delete-package.containing-symbol
+(high-test delete-package.containing-symbol
   (with-mock-package-system ()
     (with-mock-package (package "foo")
       (let ((symbol (parcl:intern "bar" package)))
@@ -31,14 +31,14 @@
         (parcl:delete-package package)
         (is (null (parcl:symbol-package symbol)))))))
 
-(test delete-package.non-existent
+(high-test delete-package.non-existent
   (with-mock-package-system ()
     (do-string-designators (name "does-not-exist")
       (with-fresh-package-system ()
         (signals parcl::package-does-not-exist-error
           (parcl:delete-package name))))))
 
-(test delete-package.already-deleted
+(high-test delete-package.already-deleted
   (with-mock-package-system ()
     (do-string-designators (name #1="foo")
       (with-fresh-package-system ()
@@ -47,7 +47,7 @@
           (signals parcl::package-has-been-deleted-error
             (parcl:delete-package package)))))))
 
-(test delete-package.still-in-use
+(high-test delete-package.still-in-use
   (with-mock-package-system ()
     (with-fresh-package-system ()
       (with-mock-package (package1 "foo")

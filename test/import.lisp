@@ -2,7 +2,7 @@
 
 (in-suite :parcl)
 
-(test import.smoke
+(high-test import.smoke
   ;; TODO: designators
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -11,7 +11,7 @@
         (is (eq symbol1 (parcl:find-symbol #1# package1)))
         (is (eq package1 (parcl:symbol-package symbol1)))))))
 
-(test import.different-home-package
+(high-test import.different-home-package
   "Ensure `import' does not change an existing home package."
   ;; TODO: designators
   (with-mock-package-system ()
