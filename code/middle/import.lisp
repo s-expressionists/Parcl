@@ -1,17 +1,17 @@
 (cl:in-package #:parcl.middle)
 
 (defmethod import ((client t) (package t) (symbol t))
-  (prog ((name       (low:symbol-name client symbol))
-         (new-status :internal))
-     (flet ((check-symbol (other-package other-symbol status)
+  (prog ((name              (low:symbol-name client symbol))
+         (new-export-status :internal)
+         (new-shadow-status nil))
+     (flet ((check-symbol (other-package other-symbol export-status shadow-status)
               ;; TODO(jmoringe): can't we stop checking if the symbol is already present?
               (if (eq other-symbol symbol) ; no conflict if same symbol
-                  (case status
-                    ((:internal-shadowing :external-shadowing)
-                     (setf new-status status)
-                     (go :check-done))
-                    (:external
-                     (setf new-status status)))
+                  (progn
+                    (setf new-export-status export-status
+                          new-shadow-status shadow-status)
+                    (when shadow-status
+                      (go :check-done)))
                   (restart-case
                       (parcl::symbol-conflict package symbol other-symbol)
                     (unintern-existing-symbol ()
@@ -21,14 +21,15 @@
                       )
                     (make-a-shadowing-symbol ()
                       :test (lambda () (not (eq other-package package)))
-                      (setf new-status :internal-shadowing)
+                      (setf new-shadow-status t)
                       (go :check-done))
                     (do-not-import ()
                       (return-from import t))))))
        (map-accessible-entries-with-name client #'check-symbol name package))
    :check-done
      ;;
-     (setf (low:symbol-entry client name package) (values symbol new-status))
+     (setf (low:symbol-entry client name package)
+           (values symbol new-export-status new-shadow-status))
      (when (null (low:symbol-package client symbol))
        (setf (low:symbol-package client symbol) package))
    t)) ; TODO: useful return value since this is our own protocol

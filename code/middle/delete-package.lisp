@@ -18,8 +18,8 @@
   ;; TODO: maps over wrong set of symbols
   (low:map-symbol-entries
    client
-   (lambda (symbol status)
-     (declare (ignore status))
+   (lambda (symbol export-status shadow-status)
+     (declare (ignore export-status shadow-status))
      (setf (low:symbol-package client symbol) nil))
    package)
   ;; Update environment

@@ -6,34 +6,32 @@
 ;;; in favor of SYMBOL by uninterning S in USING-PACKAGE, or by making
 ;;; S a shadowing symbol in USING-PACKAGE.
 (defun detect-and-resolve-export-conflict-1 (client symbol using-package)
-  (multiple-value-bind (conflicting-symbol status)
-      (low:symbol-entry client (low:symbol-name client symbol) using-package)
-    (when (and (or (eq status :internal) (eq status :external))
-               (not (member conflicting-symbol
-                            (shadowing-symbols client using-package) ; TODO: wrong?
-                            :test #'eq)))
-      (restart-case
-          (parcl::symbol-conflict using-package symbol conflicting-symbol)
-        (unintern ()
-          :report (lambda (stream)
-                    (parcl::report-restart
-                     'unintern stream conflicting-symbol using-package))
-          (return-from detect-and-resolve-export-conflict-1
-            (lambda ()
-              (unintern client using-package symbol))))
-        (shadow ()
-          :report (lambda (stream)
-                    (parcl::report-restart
-                     'shadow  stream conflicting-symbol using-package))
-          (return-from detect-and-resolve-export-conflict-1
-            (lambda ()
-              (push conflicting-symbol ; TODO: isn't this done via status?
-                    (shadowing-symbols client using-package)))))
-        (do-not-export ()
-          :report (lambda (stream)
-                    (parcl::report-restart 'do-not-export stream symbol stream))
-          (return-from detect-and-resolve-export-conflict-1
-            :abort)))))
+  (let ((name (low:symbol-name client symbol)))
+    (multiple-value-bind (conflicting-symbol export-status shadow-status)
+        (low:symbol-entry client name using-package)
+      (when (not shadow-status)
+        (restart-case
+            (parcl::symbol-conflict using-package symbol conflicting-symbol)
+          (unintern ()
+            :report (lambda (stream)
+                      (parcl::report-restart
+                       'unintern stream conflicting-symbol using-package))
+            (return-from detect-and-resolve-export-conflict-1
+              (lambda ()
+                (unintern client using-package symbol))))
+          (shadow ()
+            :report (lambda (stream)
+                      (parcl::report-restart
+                       'shadow  stream conflicting-symbol using-package))
+            (return-from detect-and-resolve-export-conflict-1
+              (lambda ()
+                (setf (low:symbol-entry client name using-package)
+                      (values conflicting-symbol export-status t)))))
+          (do-not-export ()
+            :report (lambda (stream)
+                      (parcl::report-restart 'do-not-export stream symbol stream))
+            (return-from detect-and-resolve-export-conflict-1
+              :abort))))))
   ;; Return NIL to indicate that there was no conflict
   nil)
 
@@ -44,12 +42,13 @@
 ;;; can be imported into USING-PACKAGE as a shadowing symbol.
 (defun detect-and-resolve-export-conflict-2
     (client package symbol using-package)
+  ;; TODO: can't we use one of the map- functions?
   (loop with name = (low:symbol-name client symbol)
         for used-package in (low:use-list client using-package)
         unless (eq used-package package)
-          do (multiple-value-bind (conflicting-symbol status)
+          do (multiple-value-bind (conflicting-symbol export-status)
                  (low:symbol-entry client name used-package)
-               (when (and (eq status :external)
+               (when (and (eq export-status :external)
                           (not (eq symbol conflicting-symbol)))
                  (restart-case
                      (parcl::symbol-conflict
@@ -62,16 +61,16 @@
                                                       using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
-                         (push conflicting-symbol ; TODO: via status?
-                               (shadowing-symbols client using-package)))))
+                         (setf (low:symbol-entry client name using-package)
+                               (values conflicting-symbol export-status t)))))
                    (make-new-shadowing ()
                      :report (lambda (stream)
                                (parcl::report-restart
                                 'make-new-shadowing stream symbol using-package))
                      (return-from detect-and-resolve-export-conflict-2
                        (lambda ()
-                         (push symbol ; TODO: via status?
-                               (shadowing-symbols client using-package)))))
+                         (setf (low:symbol-entry client name using-package)
+                               (values symbol :external t))))) ; TODO: not sure about the export-status
                    (do-not-export ()
                      :report (lambda (stream)
                                (parcl::report-restart
@@ -84,10 +83,10 @@
 ;;; This function handles the case where SYMBOL is not accessible in
 ;;; PACKAGE
 (defun detect-and-resolve-export-non-accessibility (client package symbol)
-  (multiple-value-bind (putative-symbol status)
+  (multiple-value-bind (putative-symbol export-status)
       (low:symbol-entry client (low:symbol-name client symbol) package)
     (if (and (eq putative-symbol symbol)
-             (not (null status)))
+             (not (null export-status)))
         nil ; Return NIL to indicate that there was no conflict
         (restart-case (error 'symbol-is-not-accessible
                              :package package

@@ -47,8 +47,9 @@
                                     &optional status)
   (maphash (lambda (name entry)
              (declare (ignore name))
-             (destructuring-bind (symbol . status) entry
-               (funcall function symbol status)))
+             (destructuring-bind (symbol . (export-status . shadow-status))
+                 entry
+               (funcall function symbol export-status shadow-status)))
            (%entries package)))
 
 (defmethod low::symbol-entry ((cilent  mock-client)
@@ -57,14 +58,16 @@
   (let ((entry (gethash name (%entries package))))
     (if (null entry)
         (values nil nil)
-        (values (car entry) (cdr entry)))))
+        (values (car entry) (cadr entry) (cddr entry)))))
 
-(defmethod low::set-symbol-entry ((new-symbol t)
-                                  (new-status t)
-                                  (client     mock-client)
-                                  (name       string)
-                                  (package    mock-package))
-  (setf (gethash name (%entries package)) (cons new-symbol new-status)))
+(defmethod low::set-symbol-entry ((new-symbol        t)
+                                  (new-export-status t)
+                                  (new-shadow-status t)
+                                  (client            mock-client)
+                                  (name              string)
+                                  (package           mock-package))
+  (setf (gethash name (%entries package))
+        (cons new-symbol (cons new-export-status new-shadow-status))))
 
 ;;;
 

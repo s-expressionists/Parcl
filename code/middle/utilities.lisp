@@ -5,30 +5,30 @@
                                           (low:use-list client package)))
   (low:map-symbol-entries
    client
-   (lambda (symbol status)
-     (funcall function package symbol status))
+   (lambda (symbol export-status shadow-status)
+     (funcall function package symbol export-status shadow-status))
    package)
   (loop for other-package in other-packages
         do (low:map-symbol-entries
             client
-            (lambda (symbol status) ; TODO: split status into export-status shadowing-status
-              (when (member status '(:external :external-shadowing))
-                (funcall function other-package symbol status)))
+            (lambda (symbol export-status shadow-status)
+              (when (eq export-status :external)
+                (funcall function other-package symbol export-status shadow-status)))
             other-package))
   nil)
 
 (defun map-accessible-entries-with-name (client function name package
                                          &optional (other-packages
                                                     (low:use-list client package)))
-  (multiple-value-bind (present-symbol status)
+  (multiple-value-bind (present-symbol export-status shadow-status)
       (low:symbol-entry client name package)
-    (unless (null status)
-      (funcall function package present-symbol status)))
+    (unless (null export-status)
+      (funcall function package present-symbol export-status shadow-status)))
   (loop for other-package in other-packages
-        do (multiple-value-bind (inherited-symbol status)
+        do (multiple-value-bind (inherited-symbol export-status shadow-status)
                (low:symbol-entry client name other-package)
-             (unless (or (null status) (eq status :external))
-               (funcall function package inherited-symbol status))))
+             (unless (or (null export-status) (eq export-status :internal))
+               (funcall function package inherited-symbol export-status shadow-status))))
   nil)
 
 (defmacro check-names-unoccupied (((name-var existing-package-var error-name)

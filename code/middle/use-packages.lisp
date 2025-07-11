@@ -21,8 +21,8 @@
     ;; symbols PACKAGE would inherit from all packages in NEW-USES.
     (map-accessible-entries
      client
-     (lambda (other-package symbol status)
-       (declare (ignore status))
+     (lambda (other-package symbol export-status shadow-status)
+       (declare (ignore export-status shadow-status))
        (let* ((name      (low:symbol-name client symbol))
               (info      (cons symbol other-package))
               (collision (find name accessible-symbols

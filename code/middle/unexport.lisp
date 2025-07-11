@@ -2,13 +2,12 @@
 
 (defmethod unexport ((client t) (package t) (symbol t))
   (let ((name (low:symbol-name client symbol)))
-    (multiple-value-bind (putative-symbol status)
+    (multiple-value-bind (putative-symbol export-status shadow-status)
         (low:symbol-entry client package name)
       (cond ((and (eq putative-symbol symbol)
-                  (or (eq status :external) (eq status :external-shadowing)))
-             (setf (low:symbol-entry client name package) (values symbol (case status
-                                                                           (:external :internal)
-                                                                           (:external-shadowing :internal-shadowing))))
+                  (or (eq export-status :external)))
+             (setf (low:symbol-entry client name package)
+                   (values symbol :internal shadow-status))
              t)
             (t
              (restart-case

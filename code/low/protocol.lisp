@@ -153,10 +153,12 @@
 
 (defgeneric symbol-entry (client name package))
 
-(defgeneric set-symbol-entry (symbol status client name package))
+(defgeneric set-symbol-entry
+    (symbol export-status shadow-status client name package))
 
-(defsetf symbol-entry (client name package) (symbol status)
-  `(set-symbol-entry ,symbol ,status ,client ,name ,package))
+(defsetf symbol-entry (client name package) (symbol export-status shadow-status)
+  `(set-symbol-entry
+     ,symbol ,export-status ,shadow-status ,client ,name ,package))
 
 ;;;; Environment functions
 

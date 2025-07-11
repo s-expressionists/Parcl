@@ -1,10 +1,12 @@
 (cl:in-package #:parcl.middle)
 
 (defmethod find-symbol ((client t) (package t) (name string))
-  (flet ((found-one (containing-package symbol status)
-           (return-from find-symbol (if (eq containing-package package)
-                                        (values symbol status)
-                                        (values symbol :inherited)))))
+  (flet ((found-one (containing-package symbol export-status shadow-status)
+           (return-from find-symbol
+             (if (eq containing-package package)
+                 (values symbol (low::symbol-presence-status
+                                 export-status shadow-status))
+                 (values symbol :inherited)))))
     (map-accessible-entries-with-name client #'found-one name package))
 
   #++ (multiple-value-bind (symbol status)

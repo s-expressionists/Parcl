@@ -2,9 +2,9 @@
 
 (defmethod shadowing-import ((client t) (package t) (symbol t))
   (let ((name (low:symbol-name client symbol)))
-    (multiple-value-bind (present-symbol status)
+    (multiple-value-bind (present-symbol export-status)
         (low:symbol-entry client name package)
-      (unless (or (null status) (eq symbol present-symbol))
+      (unless (or (null export-status) (eq symbol present-symbol))
         ;; We have a conflict.  We must first unintern the conflicting
         ;; symbol.
         (unintern client package present-symbol)))
