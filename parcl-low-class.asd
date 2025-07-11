@@ -14,4 +14,13 @@ with slots that holds all the information related to a package."
                              (:file "package-defclass")
                              (:file "methods")
                              (:file "map-symbols")
-                             (:file "map-external-symbols")))))
+                             (:file "map-external-symbols"))))
+  :in-order-to ((test-op (test-op "parcl-low-class/test"))))
+
+(defsystem "parcl-low-class/test"
+  :depends-on  ("fiveam"
+                "parcl-core/test")
+  :components  ((:file     "test"
+                :pathname "test/low/class/test"))
+  :perform     (test-op (operation component)
+                 (uiop:symbol-call '#:parcl-low-class.test '#:run-tests)))
