@@ -27,14 +27,18 @@ Copyright @copyright{} 2022 - 2025 s-expressionists
 @end ifnottex
 
 @menu
-* Purpose:: The reason for the existence of Parcl.
+* Introduction:: The reason for the existence of Parcl.
 * Implementations:: Several different implementations.
+* High Module:: Protocols for package system implementations.
+* Middle Module:: Protocols for package system implementations.
 * Low system:: Protocols for package system implementations.
 * Index:: Concept Index.
 @end menu
 
-@include chap-purpose.texi
+@include chapter-introduction.texi
 @include chap-implementations.texi
+@include chapter-high-module.texi
+@include chapter-middle-module.texi
 @include chap-low-system.texi
 
 @node Index

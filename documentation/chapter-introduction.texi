@@ -1,0 +1,71 @@
+@node Introduction
+@chapter Introduction
+
+@menu
+* Purpose::
+* Architecture::
+@end menu
+
+@node Purpose
+@section Purpose
+
+@cindex intrinsic
+@cindex extrinsic
+@sysname{} provides a complete implementation of the @commonlisp{}
+package system as well some parts of the Symbols dictionary.  It can be
+used as either an @dfn{extrinsic} system in a @commonlisp{}
+implementation that already has its own package system, or as an
+@dfn{intrinsic} system to provide a package system in a new
+@commonlisp{} implementation. @xref{Implementations}.
+
+@node Architecture
+@section Architecture
+
+As mentioned in TODO, users of @sysname{} may several different purposes
+each of which requires a different interaction between the user and
+@sysname{}.  To facilitate those different ways of using the system,
+@sysname{} provides multiple protocol which are tailored to specific
+purposes:
+
+@itemize
+
+@item
+The basic protocol consists of the @commonlisp{} package system variables,
+condition types and operators.  This protocol may be used in an intrisic
+or extrinsic (TODO reference or explain here?) context.  Users will use
+apply the ordinary @commonlisp{} package system operators and not care much
+about @sysname{}'s internals or even its existence.
+
+@item
+Some user may which too hook into package system functionality, for
+example to monitor or modify the respective behavior.  Since the @commonlisp{}
+package system operators are not customizable, @sysname{} provides a
+client parameter customizable generic functions which implement the
+behavior of package system operations.  Each @commonlisp{} package system
+operator provided by @sysname{} calls the corresponding generic function
+so that users can extend or change the behavior without any change to
+the interface provided to clients which just use the @commonlisp{} package
+system operators.
+
+@item
+The goal of the third group of users is implement symbols and packages
+with custom data structures without changing the behavior of the package
+system.  One such user could be a @commonlisp{} implementation that uses
+@sysname{} intrinsically as its implementation of the package system.
+Another user could need a simulated package system within an existing
+@commonlisp{} implementation, for example for the purpose of statically
+analyzing @commonlisp{} code or for sandboxing.
+
+@end itemize
+
+@float Figure,fig:architecture
+@center @image{architecture,12cm}
+@caption{TODO}
+@end float
+
+The way the standard function obtains the value to pass is specific to
+the client, which is why @sysname{} does not impose a particular
+technique.  One possibility for client code is to define the standard
+function as a @emph{closure}, closing over the @code{client} object.
+Another possibility is to keep the @code{client} object as the value of
+a special variable.

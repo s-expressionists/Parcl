@@ -1,0 +1,38 @@
+@node Middle Module
+@chapter Middle Module
+
+@menu
+* Middle Symbol Functions::
+* Middle Package Functions::
+* Middle Package-package Functions::
+* Middle Package-symbol Functions::
+* Middle Environment Functions::
+@end menu
+
+@node Middle Symbol Functions
+@section Middle Symbol Functions
+
+None
+
+@node Middle Package Functions
+@section Middle Package Functions
+
+None
+
+@node Middle Package-package Functions
+@section Middle Package-package Functions
+
+@node Middle Package-symbol Functions
+@section Middle Package-symbol Functions
+
+@node Middle Environment Functions
+@section Middle Environment Functions
+
+@defgena{make-package,@toppackage.middle} client name nicknames used-packages
+@end deffn
+
+@defgena{delete-package,@toppackage.middle} client package
+@end deffn
+
+@defgena{rename-package,@toppackage.middle} client name new-name new-nicknames
+@end deffn

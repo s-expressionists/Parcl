@@ -1,0 +1,25 @@
+@node High Module
+@chapter High Module
+
+@menu
+* High Symbol Functions::
+* High Package Functions::
+* High Package-package Functions::
+* High Package-symbol Functions::
+* High Environment Functions::
+@end menu
+
+@node High Symbol Functions
+@section High Symbol Functions
+
+@node High Package Functions
+@section High Package Functions
+
+@node High Package-package Functions
+@section High Package-package Functions
+
+@node High Package-symbol Functions
+@section High Package-symbol Functions
+
+@node High Environment Functions
+@section High Environment Functions
