@@ -122,7 +122,9 @@
                              ;; Utilities
                              (:file "utilities")
                              ;; Tests
-
+                             ;; Package functions
+                             (:file "package-local-nicknames")
+                             (:file "package-locally-nicknamed-by")
                              ;; Package-package relation functions
                              (:file "use-package")
                              (:file "unuse-package")
