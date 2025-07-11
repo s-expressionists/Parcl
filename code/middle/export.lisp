@@ -88,7 +88,7 @@
     (if (and (eq putative-symbol symbol)
              (not (null export-status)))
         nil ; Return NIL to indicate that there was no conflict
-        (restart-case (error 'symbol-is-not-accessible
+        (restart-case (error 'parcl::symbol-is-not-accessible
                              :package package
                              :symbol symbol)
           (import ()
