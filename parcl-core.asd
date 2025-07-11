@@ -115,9 +115,9 @@
                 :serial     t
                 :components ((:file "package")
                              ;; Mock package system
-                             (:file "mock-client")
                              (:file "mock-symbol")
                              (:file "mock-package")
+                             (:file "mock-client")
                              ;; Utilities
                              (:file "utilities")
                              ;; Tests

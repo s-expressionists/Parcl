@@ -1,5 +1,7 @@
 (cl:in-package #:parcl.test)
 
+;;;; `mock-package' class
+
 (defclass mock-package ()
   ((%name                 :initarg  :name
                           :accessor %name)
@@ -20,17 +22,21 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~S" (%name object))))
 
-(defmethod low:packagep ((client mock-client) (object mock-package))
+;;;; `mock-package-mixin' class and methods
+
+(defclass mock-package-mixin () ())
+
+(defmethod low:packagep ((client mock-package-mixin) (object mock-package))
   t)
 
 (macrolet ((define-accessor (protocol-name implementation-name)
              `(progn
-                (defmethod ,protocol-name ((client  mock-client)
+                (defmethod ,protocol-name ((client  mock-package-mixin)
                                            (package mock-package))
                   (,implementation-name package))
 
                 (defmethod (setf ,protocol-name) ((new-value t)
-                                                  (client    mock-client)
+                                                  (client    mock-package-mixin)
                                                   (package   mock-package))
                   (setf (,implementation-name package) new-value)))))
 
@@ -41,7 +47,7 @@
   (define-accessor low:use-list             %uses)
   (define-accessor low:used-by-list         %used-by))
 
-(defmethod low::map-symbol-entries ((client   mock-client)
+(defmethod low::map-symbol-entries ((client   mock-package-mixin)
                                     (function t)
                                     (package  mock-package)
                                     &optional status)
@@ -52,7 +58,7 @@
                (funcall function symbol export-status shadow-status)))
            (%entries package)))
 
-(defmethod low::symbol-entry ((cilent  mock-client)
+(defmethod low::symbol-entry ((cilent  mock-package-mixin)
                               (name    string)
                               (package mock-package))
   (let ((entry (gethash name (%entries package))))
@@ -63,7 +69,7 @@
 (defmethod low::set-symbol-entry ((new-symbol        t)
                                   (new-export-status t)
                                   (new-shadow-status t)
-                                  (client            mock-client)
+                                  (client            mock-package-mixin)
                                   (name              string)
                                   (package           mock-package))
   (setf (gethash name (%entries package))
@@ -71,5 +77,5 @@
 
 ;;;
 
-(defmethod low::make-package-object ((client mock-client) (name string))
+(defmethod low::make-package-object ((client mock-package-mixin) (name string))
   (make-instance 'mock-package :name name))

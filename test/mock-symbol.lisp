@@ -1,5 +1,7 @@
 (cl:in-package #:parcl.test)
 
+;;;; `mock-symbol' class
+
 (defclass mock-symbol ()
   ((%name    :initarg  :name
              :reader   %name)
@@ -8,37 +10,48 @@
              :initform nil)))
 
 (defmethod print-object ((object mock-symbol) stream)
-  (let* ((name         (%name object))
-         (package      (%package object))
-         (package-name (if (null package)
-                           nil
-                           (%name package)))
-         (status       (if (null package)
-                           :uninterned
-                           (cdr (gethash name (%entries package))))))
-    (format stream "~@[|~A|~]~A|~A|"
-            package-name
-            (ecase status
-              (:uninterned                     "#:")
-              ((:internal :internal-shadowing) "::")
-              ((:external :external-shadowing) ":"))
-            name))
-  #+no (print-unreadable-object (object stream :type t :identity t)
-         (format stream "~S" (%name object))))
+  (let* ((name    (%name object))
+         (package (%package object)))
+    (cond ((typep package 'mock-package)
+           (let ((package-name (if (null package)
+                                   nil
+                                   (%name package)))
+                 (status       (if (null package)
+                                   :uninterned
+                                   (cdr (gethash name (%entries package))))))
+             (format stream "~@[|~A|~]~A|~A|"
+                     package-name
+                     (ecase status
+                       (:uninterned                     "#:")
+                       ((:internal :internal-shadowing) "::")
+                       ((:external :external-shadowing) ":"))
+                     name)))
+          (t
+           (print-unreadable-object (object stream :type t :identity t)
+             (format stream "~S~@[ in ~A~]" name package))))))
 
-(defmethod low:symbolp ((client mock-client) (object mock-symbol))
+;;;; `mock-symbol-mixin' class and methods
+
+(defclass mock-symbol-mixin () ())
+
+(defmethod low:symbolp ((client mock-symbol-mixin)
+                        (object mock-symbol))
   t)
 
-(defmethod low:symbol-name ((client mock-client) (symbol mock-symbol))
+(defmethod low:symbol-name ((client mock-symbol-mixin)
+                            (symbol mock-symbol))
   (%name symbol))
 
-(defmethod low:symbol-package ((client mock-client) (symbol mock-symbol))
+(defmethod low:symbol-package ((client mock-symbol-mixin)
+                               (symbol mock-symbol))
   (%package symbol))
 
 (defmethod (setf low:symbol-package) ((new-value t)
-                                      (client    mock-client)
+                                      (client    mock-symbol-mixin)
                                       (symbol    mock-symbol))
   (setf (%package symbol) new-value))
 
-(defmethod low:make-symbol ((client mock-client) (name string) (package t))
+(defmethod low:make-symbol ((client  mock-symbol-mixin)
+                            (name    string)
+                            (package t))
   (make-instance 'mock-symbol :name name :package package))
