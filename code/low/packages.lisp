@@ -4,36 +4,46 @@
 
   ;; Symbol functions
   (:shadow
-   . #1=(#:symbolp
-         #:symbol-name    ; also `setf'
-         #:symbol-package ; also `setf'
-         #:make-symbol))
+   . #1= (:symbolp
+          #:symbol-name
+         #:symbol-package
+          #:make-symbol))
   (:export
    . #1#)
 
   ;; Package functions
   (:shadow
-   . #2=(#:packagep))
+   . #2=(#:package
+         #:packagep))
   (:export
-   #:name                 ; also `setf'
-   #:nicknames            ; also `setf'
-   #:use-list             ; also `setf'
-   #:used-by-list         ; also `setf'
-   #:local-nicknames      ; also `setf'
-   #:locally-nicknamed-by ; also `setf'
+   #:name
+   #:nicknames
+   #:use-list
+   #:used-by-list
+   #:local-nicknames
+   #:locally-nicknamed-by
    #:make-package-object
    . #2#)
 
   ;; Package-symbol relation functions
+  (:shadow
+   . #3=(#:find-symbol))
   (:export
+   #:name-to-entry                      ; TODO: remove
+   #:remove-entry
+   #:make-table
+   #:find-present-symbol
+   #:ensure-present-symbol
+   #:remove-present-symbol
+
    #:map-symbol-entries
    #:symbol-entries
-   #:symbol-entry
-   #:set-symbol-entries)
+   #:symbol-entry                       ; also `setf'
+   #:set-symbol-entry
+   . #3#)
 
   ;; Environment functions
   (:shadow
-   . #3=(#:find-package)) ; also `setf'
+   . #4=(#:find-package))
   (:export
-   ; TODO: #:list-all-packages
-   . #3#))
+   . #4#))
