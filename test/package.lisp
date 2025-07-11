@@ -12,6 +12,7 @@
    #:test
    #:is
    #:is-true
+   #:is-false
    #:signals
    #:finishes)
 

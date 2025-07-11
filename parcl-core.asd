@@ -125,6 +125,9 @@
                              ;; Package-package relation functions
                              (:file "use-package")
                              (:file "unuse-package")
+                             ;; Package-symbol relation functions
+                             (:file "import")
+                             (:file "unintern")
                              ;; Environment functions
                              ;; TODO (:file "find-package")
                              (:file "make-package")
