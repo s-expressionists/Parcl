@@ -1,6 +1,6 @@
 (cl:in-package #:parcl-low-class)
 
-(defmethod parcl-low:map-symbols (client package function)
+#++(defmethod parcl-low:map-symbols (client package function)
   (let ((visited (loop for entry in (symbol-entries package)
                        for symbol = (entry-symbol entry)
                        do (funcall function symbol)
