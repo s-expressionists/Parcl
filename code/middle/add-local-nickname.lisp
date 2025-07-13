@@ -1,20 +1,26 @@
 (cl:in-package #:parcl.middle)
 
 (defmethod add-local-nickname
-    ((client t) (nickname t) (nicknamed-package t) (package t))
-  (let* ((nickname-string (string nickname)) ; TODO: designator should already be handled
-         (existing-nickname-pair
-           (assoc nickname-string
-                  (low:local-nicknames client package)
-                  :test #'string=)))
-    (if (and (not (null existing-nickname-pair))
-             (not (eq nicknamed-package (second existing-nickname-pair))))
-        ;; FIXME: signal a continuable error.
-        (error 'nickname-refers-to-different-package
-               :nickname nickname-string
-               :nicknamed-package nicknamed-package
-               :package package)
-        (progn (push (list nickname-string nicknamed-package)
-                     (low:local-nicknames client package))
-               (push package
-                     (low:locally-nicknamed-by client nicknamed-package))))))
+    ((client t) (nickname string) (nicknamed-package t) (package t))
+  (let* ((old-local-nicknames (low:local-nicknames client package))
+         (existing-entry      (assoc nickname old-local-nicknames
+                                     :test #'string=)))
+    (cond ((null existing-entry)
+           (setf (low:local-nicknames client package)
+                 (list* (list nickname nicknamed-package) old-local-nicknames))
+           ;; Since PACKAGE may have multiple nicknames fro
+           ;; NICKNAMED-PACKAGE, only add PACKAGE if it is not already
+           ;; there.
+           (pushnew package (low:locally-nicknamed-by client nicknamed-package)
+                    :test #'eq)
+           t)
+          ((eq nicknamed-package (second existing-entry))
+           ;; existing pair with same name and same package => nothing to do
+           nil) ; TODO: does the protocol specify what to return here?
+          (t ; existing pair with same name but different package => error
+           ;; FIXME: signal a continuable error.
+           (error 'nickname-refers-to-different-package
+                  :package package
+                  :nickname nickname
+                  :nicknamed-package nicknamed-package)
+           nil))))
