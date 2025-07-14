@@ -10,9 +10,6 @@
                              (package-designator string))
   (gethash package-designator (%packages client)))
 
-(defmethod low:find-package ((client mock-environment-mixin) (package-designator t))
-  package-designator)
-
 (defmethod (setf low:find-package)
     ((new-value t) (client mock-environment-mixin) (name string))
   (setf (gethash name (%packages client)) new-value))

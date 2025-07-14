@@ -4,8 +4,8 @@
 
 (defun check-package-designator (client package-designator)
   (if (parcl-low:packagep client package-designator)
-      package-designator
-      (string<-designator client package-designator)))
+      (values package-designator                             t)
+      (values (string<-designator client package-designator) nil)))
 
 (defun find-package-or-error (client package-designator)
   (if (parcl-low:packagep client package-designator)

@@ -101,6 +101,8 @@
 
 ;;;; Environment functions
 
+(defgeneric find-package-using-package (client package name))
+
 (defgeneric make-package (client name nicknames used-packages))
 
 (defgeneric delete-package (client package))

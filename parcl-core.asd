@@ -51,6 +51,7 @@
                                (:file "export")
                                (:file "unexport")
                                ;; Environment functions
+                               (:file "find-package-using-package")
                                (:file "make-package")
                                (:file "delete-package")
                                (:file "rename-package")))

@@ -1,6 +1,15 @@
 (cl:in-package #:parcl)
 
 (defun find-package (name)
-  (with-client-and-resolved-designators (client
-                                         (name package-designator/check))
-    (parcl-low:find-package client name)))
+  (let ((client *client*))
+    (multiple-value-bind (package-or-name packagep)
+        (check-package-designator client name)
+      ;; TODO: retry restart
+      (cond (packagep
+             package-or-name)
+            ((boundp '*package*)
+             (parcl.middle:find-package-using-package
+              client *package* package-or-name))
+            (t
+             (parcl.middle:find-package-using-package
+              client nil package-or-name))))))
