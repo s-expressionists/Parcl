@@ -11,9 +11,13 @@
   (if (parcl-low:packagep client package-designator)
       package-designator
       (let* ((name    (string<-designator client package-designator))
-             (package (parcl-low:find-package client name)))
-        (when (null package) ; TODO(jmoringe): should this be recoverable?
-          (error 'package-does-not-exist-error :package package-designator))
+             (package (parcl.middle:find-package-using-package
+                       client (if (boundp '*package*) *package* nil) name)))
+        (when (null package)
+          (restart-case
+              (error 'package-does-not-exist-error :package package-designator)
+            (continue ()
+              :report "Do not perform the operation"))) ; TODO: report; should this mention the operation?
         package)))
 
 (defun find-undeleted-package-or-error (client package-designator)
@@ -25,7 +29,9 @@
 ;;; Designators
 
 (defun string<-designator (client string-designator)
-  (cond ((stringp string-designator)
+  (cond ((characterp string-designator)
+         (string string-designator))
+        ((stringp string-designator)
          string-designator)
         ((parcl-low:symbolp client string-designator)
          (parcl-low:symbol-name client string-designator))
@@ -82,18 +88,18 @@
            (destructuring-bind (names designator-type) binding
              (let ((resolver
                      (ecase designator-type
-                       (string-designator       'string<-designator)
-                       (string-designator-list  'string-list<-designator-list)
-                       (string-list-designator  'string-list<-designator)
-                       (symbol                  'check-symbol)
-                       (symbol-designator       (error "todo"))
-                       (symbol-designator-list  'symbol-list<-designator-list)
-                       (symbol-list-designator  'symbol-list<-designator)
-                       (package-designator      'find-undeleted-package-or-error)
-                       (package-designator/weak 'find-package-or-error)
+                       (string-designator        'string<-designator)
+                       (string-designator-list   'string-list<-designator-list)
+                       (string-list-designator   'string-list<-designator)
+                       (symbol                   'check-symbol)
+                       (symbol-designator        (error "todo"))
+                       (symbol-designator-list   'symbol-list<-designator-list)
+                       (symbol-list-designator   'symbol-list<-designator)
+                       (package-designator       'find-undeleted-package-or-error)
+                       (package-designator/weak  'find-package-or-error)
                        (package-designator/check 'check-package-designator)
-                       (package-designator-list 'package-list<-designator-list)
-                       (package-list-designator 'package-list<-designator))))
+                       (package-designator-list  'package-list<-designator-list)
+                       (package-list-designator  'package-list<-designator))))
                (if (consp names)
                    (destructuring-bind (variable-name parameter-name) names
                      `(,variable-name (,resolver ,client-var ,parameter-name)))

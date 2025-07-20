@@ -80,8 +80,11 @@
                                  (client            mock-package-mixin)
                                  (name              string)
                                  (package           mock-package))
-  (setf (gethash name (%entries package))
-        (cons new-symbol (cons new-export-status new-shadow-status))))
+  (let ((entries (%entries package)))
+    (if (null new-export-status)
+        (remhash name entries)
+        (setf (gethash name entries)
+              (cons new-symbol (cons new-export-status new-shadow-status))))))
 
 ;;;
 

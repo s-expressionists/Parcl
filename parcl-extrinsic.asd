@@ -13,3 +13,17 @@
   :description "Internal helper system for extrinsic variant"
   :components ((:file "packages-extrinsic"
                 :pathname "code/packages-extrinsic")))
+
+(defsystem "parcl-extrinsic/ansi-test"
+  :depends-on ("ansi-test-harness"
+
+               "parcl-extrinsic"
+               "parcl-core/test")
+
+  :components ((:module     "test"
+                :pathname   "test/ansi-test/"
+                :components ((:file        "package")
+                             (:static-file "expected-failures.sexp"))))
+
+  :perform    (test-op (operation component)
+                (uiop:symbol-call '#:parcl.ansi-test '#:test)))

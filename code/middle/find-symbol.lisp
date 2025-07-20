@@ -2,20 +2,10 @@
 
 (defmethod find-symbol ((client t) (package t) (name string))
   (flet ((found-one (containing-package symbol export-status shadow-status)
+           (declare (ignore shadow-status))
            (return-from find-symbol
-             (if (eq containing-package package)
-                 (values symbol (low::symbol-presence-status
-                                 export-status shadow-status))
-                 (values symbol :inherited)))))
-    (map-accessible-entries-with-name client #'found-one name package))
-
-  #++ (multiple-value-bind (symbol status)
-          (find-present-symbol client package name)
-        (if (not (null status))
-            (values symbol status)
-            (loop for used-package in (use-list client package)
-                  do (multiple-value-bind (symbol status)
-                         (find-present-symbol client used-package name)
-                       (unless (null status)
-                         (return (values symbol :inherited))))
-                  finally (return (values nil nil))))))
+             (values symbol (if (eq containing-package package)
+                                export-status
+                                :inherited)))))
+    (map-accessible-entries-with-name client #'found-one name package)
+    (values nil nil)))

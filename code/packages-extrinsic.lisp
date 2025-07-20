@@ -11,6 +11,7 @@
          #:package-error-package
          ;; Symbol functions
          #:symbolp
+         #:keywordp
          #:symbol-name
          #:symbol-package
          #:make-symbol
@@ -21,11 +22,12 @@
          #:package-shadowing-symbols
          #:package-use-list
          #:package-used-by-list
-         #:make-package ; TODO: diagram has this as environment function
          ;; Package-package relation functions
          #:unuse-package
          #:use-package
          ;; Package-symbol relation functions
+         #:find-symbol
+         #:find-all-symbols
          #:import
          #:intern
          #:unintern
@@ -33,19 +35,19 @@
          #:unexport
          #:shadow
          #:shadowing-import
-         ;; ?
-         #:find-symbol
-         #:find-all-symbols ; TODO: not implemented
          ;; Environment functions
          #:list-all-packages
          #:find-package
+         #:make-package
          #:delete-package
          #:rename-package
          ;; Macros
          #:defpackage
+         #:in-package
          #:with-package-iterator
          #:do-symbols
-         #:do-external-symbols))
+         #:do-external-symbols
+         #:do-all-symbols))
   ;; Export names of the replacements for the shadowed Common Lisp
   ;; variables, condition types and operators.
   (:export . #1#)

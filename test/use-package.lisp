@@ -58,13 +58,13 @@
           (with-mock-package (package4 "fez")
             (parcl:export (parcl:intern "whoop" package2) package2)
             (parcl:export (parcl:intern "whoop" package4) package4)
-            (parcl:export (parcl:intern "di" package2) package2)
+            (parcl:export (parcl:intern "di" package3) package3)
             (parcl:export (parcl:intern "di" package4) package4)
-            (parcl:export (parcl:intern "doo" package3) package3)
-            (parcl:export (parcl:intern "doo" package4) package4)
+            ; (parcl:export (parcl:intern "doo" package3) package3)
+            ; (parcl:export (parcl:intern "doo" package4) package4)
             (parcl:use-package package2 package1)
             (parcl:use-package package3 package1)
-            (signals parcl::symbol-conflicts-error
+            (signals parcl::symbol-conflicts-error ; TODO: check condition slots
               (parcl:use-package package4 package1))))))))
 
 (high-test use-package.conflict-with-present-and-inherited

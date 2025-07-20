@@ -1,5 +1,9 @@
 (cl:in-package #:parcl.middle)
 
+;;;; Package functions
+
+(defgeneric shadowing-symbols (client package))
+
 ;;;; Package-package relation functions
 
 ;;; This function can be used to implement the standard function
@@ -44,8 +48,6 @@
     (error "~@<Local nicknames are not supported by this package system.~@:>")))
 
 ;;;; Package-symbol relation functions
-
-(defgeneric shadowing-symbols (client package))
 
 ;;; This function can be used to implement the standard function
 ;;; FIND-SYMBOL.  Just like the standard function, it returns two

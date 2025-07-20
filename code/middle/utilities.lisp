@@ -13,7 +13,13 @@
             client
             (lambda (symbol export-status shadow-status)
               (when (eq export-status :external)
-                (funcall function other-package symbol export-status shadow-status)))
+                ;; TODO: shadowing is not covered by unit tests
+                (let* ((name (low:symbol-name client symbol))
+                       ;; TODO: remember in iteration above whether there is any shadowing at all
+                       (present-shadow-status (nth-value
+                                               2 (low:symbol-entry client name package))))
+                  (unless present-shadow-status
+                    (funcall function other-package symbol export-status shadow-status)))))
             other-package))
   nil)
 
@@ -22,13 +28,14 @@
                                                     (low:use-list client package)))
   (multiple-value-bind (present-symbol export-status shadow-status)
       (low:symbol-entry client name package)
-    (unless (null export-status)
-      (funcall function package present-symbol export-status shadow-status)))
-  (loop for other-package in other-packages
-        do (multiple-value-bind (inherited-symbol export-status shadow-status)
-               (low:symbol-entry client name other-package)
-             (unless (or (null export-status) (eq export-status :internal))
-               (funcall function package inherited-symbol export-status shadow-status))))
+    ;; TODO: test this
+    (if (not (null export-status))
+        (funcall function package present-symbol export-status shadow-status)
+        (loop for other-package in other-packages
+              do (multiple-value-bind (inherited-symbol export-status shadow-status)
+                     (low:symbol-entry client name other-package)
+                   (unless (or (null export-status) (eq export-status :internal))
+                     (funcall function other-package inherited-symbol export-status shadow-status))))))
   nil)
 
 (defmacro check-names-unoccupied (((name-var existing-package-var error-name)

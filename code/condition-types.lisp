@@ -67,6 +67,7 @@
 
 ;;; Conditions related to package-symbol relations
 
+;;; TODO: delete one of the two
 (define-condition symbol-conflict (package-error)
   ((%conflicting-symbols :initarg :conflicting-symbols
                          :reader  conflicting-symbols)))

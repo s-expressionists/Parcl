@@ -9,7 +9,11 @@
   :components ((:module     "macros"
                 :pathname   "code/macros"
                 :serial     t
-                :components ((:file "with-package-iterator")
+                :components ((:file "condition-types")
+                             (:file "utilities")
+                             (:file "in-package")
+                             (:file "defpackage")
+                             (:file "with-package-iterator")
                              (:file "do-symbols")
                              (:file "do-external-symbols")
-                             #+(or)(:file "defpackage")))))
+                             (:file "do-all-symbols")))))

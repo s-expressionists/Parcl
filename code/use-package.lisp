@@ -5,7 +5,8 @@
       (client
        (package         package-designator)
        (packages-to-use package-list-designator))
-    (parcl.middle:use-packages client package packages-to-use)))
+    (parcl.middle:use-packages client package packages-to-use)
+    t))
 
 (setf (documentation 'use-package 'function)
       (format nil

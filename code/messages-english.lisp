@@ -73,8 +73,15 @@
                     package ~S.~@:>"
             (new-name condition) (existing-package condition)))
 
+  (define-reporter ((condition new-name-occupied-error) stream)
+    (format stream "~@<The new name ~S for package ~S is already occupied by ~
+                    the package ~S.~@:>"
+            (new-name condition)
+            (package-error-package condition)
+            (existing-package condition)))
+
   (define-reporter ((condition package-does-not-exist-error) stream)
-    (format stream "~@<~S does designate a package.~@:>"
+    (format stream "~@<~S does not designate a package.~@:>"
             (package-error-package condition)))
 
   (define-reporter ((condition package-has-been-deleted-error) stream)

@@ -5,7 +5,8 @@
                                          (package package-designator)
                                          (names   string-list-designator))
     (loop for name in names
-          do (parcl.middle:shadow client package name))))
+          do (parcl.middle:shadow client package name))
+    t))
 
 (setf (documentation 'shadow 'function)
       (format nil

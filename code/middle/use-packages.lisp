@@ -30,8 +30,9 @@
          (cond ((null collision)
                 (push (cons name (list info)) accessible-symbols))
                (t
-                (push info (cdr collision))
-                (pushnew collision conflicts :test #'eq)))))
+                (unless (find symbol (cdr collision) :key #'car :test #'eq)
+                  (push info (cdr collision))
+                  (pushnew collision conflicts :test #'eq))))))
      package new-uses)
     (unless (null conflicts)
       (error 'parcl::symbol-conflicts-error

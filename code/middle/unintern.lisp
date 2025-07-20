@@ -12,7 +12,7 @@
 (defmethod unintern ((client t) (package t) (symbol t))
   (let ((name (low:symbol-name client symbol)))
     ;; TODO: use (map-accessible-entries-with-name)
-    (multiple-value-bind (present-symbol export-status)
+    (multiple-value-bind (present-symbol export-status shadow-status)
         (low:symbol-entry client name package)
       (flet ((remove-symbol ()
                (setf (low:symbol-entry client name package) nil)
@@ -22,12 +22,12 @@
                  (setf (low:symbol-package client symbol) nil))))
         (cond ((or (null export-status) (not (eq present-symbol symbol)))
                nil)
-              ((member symbol (shadowing-symbols client package)) ; TODO: can't we tell from STATUS?
+              (shadow-status
                (let* ((used-packages (low:use-list client package))
                       (symbols       (find-exported-symbols-in-packages
                                       client used-packages name)))
                  (when (> (length symbols) 1)
-                   ;; We have a conflict.  For now just signal an error.
+                   ;; We have a conflict.  TODO: For now just signal an error.
                    (error "Symbol conflict, not uninterning ~s" symbol)))
                (remove-symbol)
                t)

@@ -6,7 +6,7 @@
   (:shadow
    . #1= (:symbolp
           #:symbol-name
-         #:symbol-package
+          #:symbol-package
           #:make-symbol))
   (:export
    . #1#)
