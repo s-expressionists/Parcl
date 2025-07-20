@@ -129,6 +129,8 @@
                              ;; Package-package relation functions
                              (:file "use-package")
                              (:file "unuse-package")
+                             (:file "add-package-local-nickname")
+                             (:file "remove-package-local-nickname")
                              ;; Package-symbol relation functions
                              (:file "import")
                              (:file "unintern")

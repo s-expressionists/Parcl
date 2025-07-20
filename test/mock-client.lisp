@@ -23,3 +23,31 @@
                        mock-package-mixin
                        mock-environment-mixin)
   ())
+
+;;; `mock-client-with-local-nicknames' class
+
+(defclass mock-client-with-local-nicknames (parcl.middle::local-nicknames-mixin
+                                            mock-symbol-mixin
+                                            mock-package-mixin
+                                            mock-environment-mixin)
+  ())
+
+(defmethod low:make-package-object ((client mock-client-with-local-nicknames)
+                                    (name   string))
+  (make-instance 'mock-package-with-local-nicknames :name name))
+
+(macrolet ((define-accessor (protocol-name implementation-name)
+             `(progn
+                (defmethod ,protocol-name
+                    ((client  mock-client-with-local-nicknames)
+                     (package mock-package))
+                  (,implementation-name package))
+
+                (defmethod (setf ,protocol-name)
+                    ((new-value t)
+                     (client    mock-client-with-local-nicknames)
+                     (package   mock-package)) ; TODO: mock-package-with-local-nicknames?
+                  (setf (,implementation-name package) new-value)))))
+
+  (define-accessor low:local-nicknames      %local-nicknames)
+  (define-accessor low:locally-nicknamed-by %locally-nicknamed-by))

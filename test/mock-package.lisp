@@ -2,25 +2,33 @@
 
 ;;;; `mock-package' class
 
-(defclass mock-package ()
-  ((%name                 :initarg  :name
-                          :accessor %name)
-   (%nicknames            :accessor %nicknames
-                          :initform '())
-   (%local-nicknames      :accessor %local-nicknames
-                          :initform '())
-   (%locally-nicknamed-by :accessor %locally-nicknamed-by
-                          :initform '())
-   (%uses                 :accessor %uses
-                          :initform '())
-   (%used-by              :accessor %used-by
-                          :initform '())
-   (%entries              :reader   %entries
-                          :initform (make-hash-table :test #'equal))))
+(defclass mock-package (parcl-low:package)
+  ((%name          :initarg  :name
+                   :accessor %name)
+   (%nicknames     :accessor %nicknames
+                   :initform '())
+   (%uses          :accessor %uses
+                   :initform '())
+   (%used-by       :accessor %used-by
+                   :initform '())
+   (%documentation :accessor %documentation
+                   :type     (or null string)
+                   :initform nil)
+   ;;
+   (%entries       :reader   %entries
+                   :initform (make-hash-table :test #'equal))))
 
 (defmethod print-object ((object mock-package) stream)
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~S" (%name object))))
+
+;;; `mock-package-with-local-nicknames'
+
+(defclass mock-package-with-local-nicknames (mock-package)
+  ((%local-nicknames      :accessor %local-nicknames
+                          :initform '())
+   (%locally-nicknamed-by :accessor %locally-nicknamed-by
+                          :initform '())))
 
 ;;;; `mock-package-mixin' class and methods
 
@@ -40,17 +48,16 @@
                                                   (package   mock-package))
                   (setf (,implementation-name package) new-value)))))
 
-  (define-accessor low:name                 %name)
-  (define-accessor low:nicknames            %nicknames)
-  (define-accessor low:local-nicknames      %local-nicknames)
-  (define-accessor low:locally-nicknamed-by %locally-nicknamed-by)
-  (define-accessor low:use-list             %uses)
-  (define-accessor low:used-by-list         %used-by))
+  (define-accessor low:name          %name)
+  (define-accessor low:nicknames     %nicknames)
+  (define-accessor low:use-list      %uses)
+  (define-accessor low:used-by-list  %used-by)
+  (define-accessor low:documentation %documentation))
 
-(defmethod low::map-symbol-entries ((client   mock-package-mixin)
-                                    (function t)
-                                    (package  mock-package)
-                                    &optional status)
+(defmethod low:map-symbol-entries ((client   mock-package-mixin)
+                                   (function t)
+                                   (package  mock-package)
+                                   &optional status)
   (maphash (lambda (name entry)
              (declare (ignore name))
              (destructuring-bind (symbol . (export-status . shadow-status))

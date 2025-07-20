@@ -2,7 +2,8 @@
 
 (in-suite :parcl)
 
-(high-test remove-package-local-nickname.smoke
+(high-test (remove-package-local-nickname.smoke
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -12,7 +13,8 @@
         (is (equal '() (parcl:package-local-nicknames package1)))
         (is (equal '() (parcl:package-locally-nicknamed-by package2)))))))
 
-(high-test remove-package-local-nickname.twice
+(high-test (remove-package-local-nickname.twice
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -23,7 +25,8 @@
         (is (equal '() (parcl:package-local-nicknames package1)))
         (is (equal '() (parcl:package-locally-nicknamed-by package2)))))))
 
-(high-test remove-package-local-nickname.non-existent
+(high-test (remove-package-local-nickname.non-existent
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
@@ -35,7 +38,8 @@
         (is (a:set-equal (list package1)
                          (parcl:package-locally-nicknamed-by package2)))))))
 
-(high-test add-package-local-nickname.multiple-names
+(high-test (add-package-local-nickname.multiple-names
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")

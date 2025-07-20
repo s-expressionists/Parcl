@@ -2,7 +2,8 @@
 
 (in-suite :parcl)
 
-(high-test package-locally-nicknamed-by.smoke
+(high-test (package-locally-nicknamed-by.smoke
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")

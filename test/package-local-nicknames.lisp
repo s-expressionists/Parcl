@@ -2,8 +2,12 @@
 
 (in-suite :parcl)
 
-(high-test package-local-nickname.smoke
+(test package-local-nickname.not-implemented
+  "Ensure that an error is signaled if the package system does not
+support local nicknames."
   ;; TODO: designators?
   (with-mock-package-system ()
     (with-mock-package (package1 "foo")
-      (is (equal '() (parcl:package-local-nicknames package1))))))
+      (signals error ; TODO: specific error
+        (parcl:package-local-nicknames package1)))))
+
