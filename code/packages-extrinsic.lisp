@@ -59,5 +59,4 @@
   ;; Export the names of additional variables and functions that
   ;; clients can use to customize the package system.
   (:export
-   #:*client*
-   #:store-package))
+   #:*client*))

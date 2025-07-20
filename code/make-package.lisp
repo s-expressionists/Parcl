@@ -1,7 +1,5 @@
 (cl:in-package #:parcl)
 
-(defgeneric store-package (package name nicknames))
-
 (defun make-package (package-name &key nicknames use)
   (with-client-and-resolved-designators (client
                                          (package-name string-designator)
