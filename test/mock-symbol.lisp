@@ -12,19 +12,18 @@
 (defmethod print-object ((object mock-symbol) stream)
   (let* ((name    (%name object))
          (package (%package object)))
-    (cond ((typep package 'mock-package)
-           (let ((package-name (if (null package)
-                                   nil
-                                   (%name package)))
-                 (status       (if (null package)
-                                   :uninterned
-                                   (cdr (gethash name (%entries package))))))
+    (cond ((typep package '(or null mock-package))
+           (let ((package-name  (if (null package)
+                                    nil
+                                    (%name package)))
+                 (export-status (if (null package)
+                                    :uninterned
+                                    (cadr (gethash name (%entries package))))))
              (format stream "~@[|~A|~]~A|~A|"
-                     package-name
-                     (ecase status
-                       (:uninterned                     "#:")
-                       ((:internal :internal-shadowing) "::")
-                       ((:external :external-shadowing) ":"))
+                     package-name (ecase export-status
+                                    (:uninterned "#:")
+                                    (:internal   "::")
+                                    (:external   ":"))
                      name)))
           (t
            (print-unreadable-object (object stream :type t :identity t)
