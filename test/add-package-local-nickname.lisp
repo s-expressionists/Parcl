@@ -2,13 +2,6 @@
 
 (in-suite :parcl)
 
-(defun set-equal (left right &key (test #'eql))
-  (and (= (length left) (length right))
-       (a:set-equal left right :test test)))
-
-(defun set-equal/equal (left right)
-  (set-equal left right :test #'equal))
-
 (high-test add-package-local-nickname.smoke
   ;; TODO: designators?
   (with-mock-package-system ()

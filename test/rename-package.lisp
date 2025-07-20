@@ -10,7 +10,7 @@
       (parcl:rename-package package #4="fez" #5='(#6="whoop"))
       ;; New names
       (is (equal #4# (parcl:package-name package))) ; TODO: make a thing for checking all names at once
-      (is (a:set-equal #5# (parcl:package-nicknames package)))
+      (is (set-equal/equal #5# (parcl:package-nicknames package)))
       ;; New environment state
       (is (null (parcl:find-package #1#)))
       (is (null (parcl:find-package #2#)))

@@ -2,9 +2,6 @@
 
 (in-suite :parcl)
 
-(defun set-equal/equal (left right)
-  (a:set-equal left right :test #'equal))
-
 (high-test remove-package-local-nickname.smoke
   ;; TODO: designators?
   (with-mock-package-system ()

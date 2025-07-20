@@ -1,5 +1,14 @@
 (cl:in-package #:parcl.test)
 
+;;; Predicates
+
+(defun set-equal (left right &key (test #'eql))
+  (and (= (length left) (length right))
+       (a:set-equal left right :test test)))
+
+(defun set-equal/equal (left right)
+  (set-equal left right :test #'equal))
+
 ;;; Fixtures
 
 (defvar *client-maker*
