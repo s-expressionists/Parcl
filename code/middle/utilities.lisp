@@ -32,16 +32,20 @@
   nil)
 
 (defmacro check-names-unoccupied (((name-var existing-package-var error-name)
-                                   client names)
+                                   client names
+                                   &optional (new-package nil new-package-supplied-p))
                                   &body body)
   `(loop for ,name-var in ,names
          for ,existing-package-var = (low:find-package ,client ,name-var)
          when (not (null ,existing-package-var))
            do (flet ((,error-name ()
-                       (error 'parcl::package-name-occupied-error
-                              ;; TODO: when used from rename-package it would be good to include this:
-                              ;; :package          ,package
-                              ;; TODO: maybe include the operation in all package-system-conditions? like :operation `(make-package ,name ...)
-                              :new-name         ,name-var
-                              :existing-package ,existing-package-var)))
+                       ;; TODO: maybe include the operation in all package-system-conditions? like :operation `(make-package ,name ...)
+                       ,(if new-package-supplied-p
+                            `(error 'parcl::new-name-occupied-error
+                                    :package          ,new-package
+                                    :new-name         ,name-var
+                                    :existing-package ,existing-package-var)
+                            `(error 'parcl::package-name-occupied-error
+                                    :new-name         ,name-var
+                                    :existing-package ,existing-package-var))))
                 ,@body)))

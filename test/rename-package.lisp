@@ -22,12 +22,12 @@
   (with-mock-package-system ()
     (with-mock-package (package1 #1="foo")
       (with-mock-package (nil #2="bar")
-        (signals parcl::package-name-occupied-error
+        (signals parcl::new-name-occupied-error
           (parcl:rename-package package1 #2#))))))
 
 (high-test rename-package.nickname-occupied
   (with-mock-package-system ()
     (with-mock-package (package1 #1="foo")
       (with-mock-package (nil #2="bar")
-        (signals parcl::package-name-occupied-error
+        (signals parcl::new-name-occupied-error
           (parcl:rename-package package1 #1# '(#2#)))))))

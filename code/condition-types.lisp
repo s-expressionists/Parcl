@@ -19,11 +19,15 @@
 ;;; Package related conditions
 
 ;;; TODO package-name-condition?
-(define-condition package-name-occupied-error (error package-system-condition)
+(define-condition package-name-occupied-condition (package-system-condition)
   ((%new-name         :initarg :new-name
                       :reader  new-name)
    (%existing-package :initarg :existing-package
                       :reader  existing-package)))
+
+(define-condition package-name-occupied-error (error
+                                               package-name-occupied-condition)
+  ())
 
 (define-condition package-error (error package-system-condition)
   ((%package :initarg #1=:package
@@ -31,13 +35,15 @@
   (:default-initargs
    #1# (error "Required argument ~s" #1#)))
 
+(define-condition new-name-occupied-error (package-error
+                                           package-name-occupied-condition)
+  ())
+
 (define-condition package-does-not-exist-error (package-error)
   ())
 
 (define-condition package-has-been-deleted-error (package-error)
   ())
-
-
 
 ;;; Conditions related to package-package relations
 
