@@ -54,6 +54,7 @@
                                (:file "make-package")
                                (:file "delete-package")
                                (:file "rename-package")
+                               (:file "find-symbols")
                                ;; Extension
                                (:file "local-nicknames")))
 
@@ -92,7 +93,8 @@
                               (:file "list-all-packages")
                               (:file "find-package")
                               (:file "delete-package")
-                              (:file "rename-package"))))
+                              (:file "rename-package")
+                              (:file "find-all-symbols"))))
   :in-order-to ((test-op (test-op "parcl-core/test"))))
 
 ;;; This system ensures, ideally before any other operations are

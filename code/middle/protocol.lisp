@@ -115,3 +115,5 @@
 (defgeneric delete-package (client package))
 
 (defgeneric rename-package (client package new-name new-nicknames))
+
+(defgeneric find-symbols (client name))

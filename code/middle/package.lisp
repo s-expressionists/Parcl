@@ -36,4 +36,5 @@
   (:export
    #:packages
    #:find-package-using-package
+   #:find-symbols
    . #3#))
