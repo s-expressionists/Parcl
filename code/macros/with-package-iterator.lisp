@@ -1,127 +1,71 @@
 (cl:in-package #:parcl)
 
-;; For :INHERITED, we start with REMAINING-PACKAGES being the list of
-;; all packages to process, with REMAINING-USED-PACKAGES being the
-;; used packages of the first package of REMAINING-PACKAGES, and with
-;; REMAINING-SYMBOL-ENTRIES being the empty list.
-
-;; For :EXTERNAL or :INTERNAL we start with REMAINING-PACKAGES being
-;; the list of all packages to process, and REMAINING-SYMBOL-ENTRIES
-;; being the list of entries of the present symbols of the first
-;; package of REMAINING-PACKAGES.
-
-(defun symbol-is-external/internal (entry status)
-  (ecase status
-    (:external
-     (member (cdr entry) '(:external :external-shadowing)))
-    (:internal
-     (member (cdr entry) '(:internal :internal-shadowing)))))
-
-(defun symbol-is-shadowed (symbol package)
-  (let* ((symbol-entries
-           (parcl-low:symbol-entries parcl:*client* package))
-         (present-symbol-entry
-           (find symbol symbol-entries
-                 :key #'car
-                 :test (lambda (s1 s2)
-                         (parcl-low:symbol-names-equal
-                          parcl:*client* s1 s2)))))
-    (not (eq symbol (car present-symbol-entry)))))
-
+;;; TODO: should this be a middle generic function?
 (defun make-closure (package-list symbol-types)
   (when (or (null package-list) (null symbol-types))
     (return-from make-closure (lambda () nil)))
-  (let ((remaining-symbol-types symbol-types)
+  (let ((client             *client*)
+        (internal?          (member :internal symbol-types))
+        (external?          (member :external symbol-types))
+        (inherited?         (member :inherited symbol-types))
         (remaining-packages package-list)
-        (remaining-used-packages
-          (if (eq (first symbol-types) :inherited)
-              (package-used-by-list (first package-list))
-              '()))
-        (remaining-symbol-entries
-          (if (eq (first symbol-types) :inherited)
-              '()
-              (parcl-low:symbol-entries
-               parcl:*client* (first package-list)))))
-    (labels
-        ((result ()
-           (case (first remaining-symbol-types)
-             (:inherited
-              (tagbody 
-               maybe-more-symbols
-                 (if (null remaining-symbol-entries)
-                     (go no-more-symbols-but-maybe-more-used-packages)
-                     (let ((entry (pop remaining-symbol-entries)))
-                       (if (and (symbol-is-external/internal entry :external)
-                                (not (symbol-is-shadowed
-                                      (car entry) (first remaining-packages))))
-                           (return-from result
-                             (values t
-                                     (car entry)
-                                     :inherited
-                                     (first remaining-packages)))
-                           (go maybe-more-symbols))))
-               no-more-symbols-but-maybe-more-used-packages
-                 (if (null remaining-used-packages)
-                     (progn
-                       (pop remaining-packages)
-                       (if (null remaining-packages)
-                           (if (null (rest remaining-symbol-types))
-                               (return-from result nil)
-                               (progn (pop remaining-symbol-types)
-                                      (setf remaining-packages
-                                            package-list)
-                                      (setf remaining-used-packages
-                                            (if (eq (first symbol-types) :inherited)
-                                                (package-used-by-list (first package-list))
-                                                '()))
-                                      (setf remaining-symbol-entries
-                                            (if (eq (first symbol-types) :inherited)
-                                                '()
-                                                (parcl-low:symbol-entries
-                                                 parcl:*client* (first package-list))))
-                                      (result)))
-                           (progn
-                             (setf remaining-used-packages
-                                   (parcl-low:use-list
-                                    parcl:*client* (first remaining-packages)))
-                             (go no-more-symbols-but-maybe-more-used-packages))))
-                     (let ((used-package (pop remaining-used-packages)))
-                       (setf remaining-symbol-entries
-                             (parcl-low:symbol-entries
-                              parcl:*client* used-package))
-                       (go maybe-more-symbols)))))
-             ((:external :internal)
-              (tagbody
-               maybe-more-symbols
-                 (if (null remaining-symbol-entries)
-                     (progn
-                       (pop remaining-packages)
-                       (if (null remaining-packages)
-                           (if (null (rest remaining-symbol-types))
-                               (return-from result nil)
-                               (progn (pop remaining-symbol-types)
-                                      (setf remaining-packages
-                                            package-list)
-                                      (setf remaining-used-packages
-                                            (if (eq (first symbol-types) :inherited)
-                                                (package-used-by-list (first package-list))
-                                                '()))
-                                      (setf remaining-symbol-entries
-                                            (if (eq (first symbol-types) :inherited)
-                                                '()
-                                                (parcl-low:symbol-entries
-                                                 parcl:*client* (first package-list))))
-                                      (result)))
-                           (progn
-                             (setf remaining-symbol-entries
-                                   (symbols
-                                    (first remaining-packages)))
-                             (go maybe-more-symbols))))
-                     (let ((entry (pop remaining-symbol-entries)))
-                       (if (symbol-is-external/internal entry (first remaining-symbol-types))
-                           (return-from result
-                             (values t
-                                     (car entry)
-                                     (first remaining-symbol-types)
-                                     (first remaining-packages)))
-                           (go maybe-more-symbols))))))))))))
+        (symbol-entries     (make-array 0 :adjustable t :fill-pointer 0))
+        (current-package    nil))
+    (labels ((maybe-push-entry (symbol status)
+               (when (ecase status
+                       (:internal  internal?)
+                       (:external  external?)
+                       (:inherited inherited?))
+                 (vector-push-extend status symbol-entries 2)
+                 (vector-push        symbol symbol-entries)))
+             (next-package ()
+               (setf current-package (pop remaining-packages))
+               (unless (null current-package)
+                 (if inherited?
+                     (parcl.middle::map-accessible-entries
+                      client
+                      (lambda (containing-package symbol export-status shadow-status)
+                        (declare (ignore shadow-status))
+                        (if (eq containing-package current-package)
+                            (maybe-push-entry symbol export-status)
+                            (maybe-push-entry symbol :inherited)))
+                      current-package)
+                     (parcl-low:map-symbol-entries
+                      client (lambda (symbol export-status shadow-status)
+                               (declare (ignore shadow-status))
+                               (maybe-push-entry symbol export-status))
+                      current-package))
+                 t))
+             (next-symbol ()
+               (when (plusp (length symbol-entries))
+                 (values (vector-pop symbol-entries)
+                         (vector-pop symbol-entries))))
+             (return-one ()
+               (tagbody
+                try-next-symbol
+                  (multiple-value-bind (symbol status) (next-symbol)
+                    (when (not (null status))
+                      (return-from return-one
+                        (values t symbol status current-package))))
+                try-next-package
+                  (when (next-package)
+                    (go try-next-symbol)))))
+      (next-package)
+      #'return-one)))
+
+(defmacro with-package-iterator ((name package-list-form &rest symbol-types)
+                                 &body body)
+  ;; TODO: better errors. maybe via s-expression-syntax?
+  (when (null symbol-types)
+    (error 'macro-syntax-error :format-control "~@<At least one symbol-type must be supplied.~@:>"))
+  (loop for object in symbol-types
+        when (not (member object '(:internal :external :inherited)))
+          do (error 'macro-syntax-error :format-control   "~@<~S is not a valid symbol type.~@:>"
+                                        :format-arguments (list object)))
+  (multiple-value-bind (declarations tags-and-statements)
+      (ecclesia:separate-ordinary-body body)
+   `(let ((closure (make-closure (package-list<-designator *client* ,package-list-form) ; TODO: make a runtime function for doing the coercion
+                                 '(,@symbol-types))))
+      ,@declarations
+      (flet ((,name () (funcall closure)))
+        ,@body))))
