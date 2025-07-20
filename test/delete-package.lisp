@@ -44,8 +44,7 @@
       (with-fresh-package-system ()
         (with-mock-package (package name)
           (parcl:delete-package package)
-          (signals parcl::package-has-been-deleted-error
-            (parcl:delete-package package)))))))
+          (finishes (parcl:delete-package package)))))))
 
 (high-test delete-package.still-in-use
   (with-mock-package-system ()

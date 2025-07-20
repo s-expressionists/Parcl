@@ -19,6 +19,10 @@
     ((new-value t) (client mock-environment-mixin) (name string))
   (setf (gethash name (%packages client)) new-value))
 
+(defmethod (setf low:find-package)
+    ((new-value null) (client mock-environment-mixin) (name string))
+  (remhash name (%packages client)))
+
 (defmethod reset ((client mock-environment-mixin)) ; for testing
   (clrhash (%packages client)))
 
