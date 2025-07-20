@@ -1,6 +1,6 @@
 (cl:in-package #:parcl.test)
 
-;;;; `mock-environment-mixin' class and methods
+;;; `mock-environment-mixin' class and methods
 
 (defclass mock-environment-mixin ()
   ((%packages :reader   %packages
@@ -26,7 +26,7 @@
 (defmethod reset ((client mock-environment-mixin)) ; for testing
   (clrhash (%packages client)))
 
-;;;; `mock-client' class
+;;; `mock-client' class
 
 (defclass mock-client (mock-symbol-mixin
                        mock-package-mixin
