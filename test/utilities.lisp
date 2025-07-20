@@ -11,28 +11,29 @@
 
 ;;; Fixtures
 
+(defun call-with-fresh-package-system (continuation)
+  (reset parcl:*client*) ; TODO: export `reset'
+  (funcall continuation))
+
+(defmacro with-fresh-package-system (() &body body)
+  `(call-with-fresh-package-system (lambda () ,@body)))
+
 (defvar *client-maker*
   (lambda () (make-instance 'mock-client)))
 
 (defun call-with-mock-package-system (continuation)
   (let* ((client (funcall *client-maker*))
          (parcl:*client* client))
-    (funcall continuation client)))
+    (with-fresh-package-system ()
+      (funcall continuation client))))
 
 (defmacro with-mock-package-system
-    ((&optional (client-var (gensym "CLIENT") client-var-supplied-p)) &body body)
+    ((&optional (client-var (gensym "CLIENT") client-var-supplied-p))
+     &body body)
   `(call-with-mock-package-system
     (lambda (,client-var)
       ,@(unless client-var-supplied-p `((declare (ignore ,client-var))))
       ,@body)))
-
-(defun call-with-fresh-package-system (continuation)
-  (unwind-protect
-       (funcall continuation)
-    (clear parcl:*client*)))
-
-(defmacro with-fresh-package-system (() &body body)
-  `(call-with-fresh-package-system (lambda () ,@body)))
 
 (defun call-with-mock-package (continuation name)
   (let ((package (parcl:make-package name)))

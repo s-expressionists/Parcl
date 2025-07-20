@@ -14,7 +14,7 @@
     ((new-value t) (client mock-environment-mixin) (name string))
   (setf (gethash name (%packages client)) new-value))
 
-(defmethod clear ((client mock-environment-mixin)) ; for testing
+(defmethod reset ((client mock-environment-mixin)) ; for testing
   (clrhash (%packages client)))
 
 ;;;; `mock-client' class
