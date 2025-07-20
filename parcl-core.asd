@@ -139,7 +139,7 @@
                              (:file "import")
                              (:file "unintern")
                              ;; Environment functions
-                             ;; TODO (:file "find-package")
+                             (:file "find-package")
                              (:file "make-package")
                              (:file "delete-package")
                              (:file "rename-package"))))
