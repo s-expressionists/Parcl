@@ -46,4 +46,5 @@
   (:shadow
    . #4=(#:find-package))
   (:export
+   #:packages
    . #4#))

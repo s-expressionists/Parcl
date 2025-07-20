@@ -49,6 +49,7 @@
                                (:file "export")
                                (:file "unexport")
                                ;; Environment functions
+                               (:file "packages")
                                (:file "find-package-using-package")
                                (:file "make-package")
                                (:file "delete-package")
@@ -88,6 +89,7 @@
                               (:file "shadow")
                               (:file "unintern")
                               ;; Environment functions
+                              (:file "list-all-packages")
                               (:file "find-package")
                               (:file "delete-package")
                               (:file "rename-package"))))

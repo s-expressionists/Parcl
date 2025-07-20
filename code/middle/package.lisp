@@ -34,5 +34,6 @@
          #:delete-package
          #:rename-package))
   (:export
+   #:packages
    #:find-package-using-package
    . #3#))

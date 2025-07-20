@@ -6,6 +6,11 @@
   ((%packages :reader   %packages
               :initform (make-hash-table :test #'equal))))
 
+(defmethod low:packages ((client mock-environment-mixin))
+  (loop for name being the hash-keys of (%packages client) using (hash-value package)
+        when (equal name (low:name client package))
+          collect package))
+
 (defmethod low:find-package ((client             mock-environment-mixin)
                              (package-designator string))
   (gethash package-designator (%packages client)))

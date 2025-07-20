@@ -37,7 +37,7 @@
          #:find-symbol
          #:find-all-symbols ; TODO: not implemented
          ;; Environment functions
-         #:list-all-packages ; TODO: not implemented
+         #:list-all-packages
          #:find-package
          #:delete-package
          #:rename-package

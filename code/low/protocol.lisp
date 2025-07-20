@@ -166,6 +166,8 @@
 
 ;;;; Environment functions
 
+(defgeneric packages (client))
+
 (defgeneric find-package (client name))
 
 (defgeneric (setf find-package) (new-value client name))
