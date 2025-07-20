@@ -1,4 +1,6 @@
 (cl:in-package #:parcl)
 
-(defun package-locally-nicknamed-by (package) ; TODO: designator?
-  (parcl-low:locally-nicknamed-by *client* package))
+(defun package-locally-nicknamed-by (package)
+  (with-client-and-resolved-designators (client
+                                         (package package-designator))
+    (parcl-low:locally-nicknamed-by client package)))

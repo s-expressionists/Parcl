@@ -26,7 +26,10 @@
 ;;; is added to PACKAGE using the accessor LOCAL-NICKNAMES, and
 ;;; PACKAGE is added to NICKNAMED-PACKAGE using the accessor
 ;;; LOCALLY-NICKNAMED-BY.
-(defgeneric add-local-nickname (client nickname nicknamed-package package))
+(defgeneric add-local-nickname (client package nickname nicknamed-package)
+  (:method ((client t) (package t) (nickname t) (nicknamed-package t))
+    ;; TODO: make a condition type for unsupported operations
+    (error "~@<Local nicknames are not supported by this package system.~@:>")))
 
 ;;; This function can be used to implement the semi-standard function
 ;;; REMOVE-PACKAGE-LOCAL-NICKNAME.  NICKNAME is a string that
@@ -36,7 +39,9 @@
 ;;; is removed, and this function returns true.  If NICKNAME is not
 ;;; the local nickname of any package in PACKAGE, then this function
 ;;; has no effect, and returns NIL.
-(defgeneric remove-local-nickname (client nickname package))
+(defgeneric remove-local-nickname (client package nickname)
+  (:method ((client t) (package t) (nickname t))
+    (error "~@<Local nicknames are not supported by this package system.~@:>")))
 
 ;;;; Package-symbol relation functions
 

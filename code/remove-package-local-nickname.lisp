@@ -5,4 +5,4 @@
   (with-client-and-resolved-designators (client
                                          (package      package-designator)
                                          (old-nickname string-designator))
-    (parcl.middle:remove-local-nickname *client* old-nickname package)))
+    (parcl.middle:remove-local-nickname client package old-nickname)))

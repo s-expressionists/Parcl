@@ -80,14 +80,18 @@
 ;;; This function is used to implement the semi-standard function
 ;;; PACKAGE-LOCAL-NICKNAMES.  The PACKAGE argument of this function
 ;;; must be a package object.
-(defgeneric local-nicknames (client package))
+(defgeneric local-nicknames (client package)
+  (:method ((client t) (package t))
+    (error "~@<Local nicknames are not supported by this package system.@~:>")))
 
 (defgeneric (setf local-nicknames) (new-value client package))
 
 ;;; This function is used to implement the semi-standard function
 ;;; PACKAGE-LOCALLY-NICKNAMED-BY-LIST.  The PACKAGE argument of this
 ;;; function must be a package object.
-(defgeneric locally-nicknamed-by (client package))
+(defgeneric locally-nicknamed-by (client package)
+  (:method ((client t) (package t))
+    (error "~@<Local nicknames are not supported by this package system.@~:>")))
 
 (defgeneric (setf locally-nicknamed-by) (new-value client package))
 

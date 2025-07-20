@@ -38,8 +38,6 @@
                                ;; Package-package relations
                                (:file "use-packages")
                                (:file "unuse-package")
-                               (:file "add-local-nickname")
-                               (:file "remove-local-nickname")
                                ;; Package-symbol relations
                                (:file "shadowing-symbols")
                                (:file "find-symbol")
@@ -54,7 +52,9 @@
                                (:file "find-package-using-package")
                                (:file "make-package")
                                (:file "delete-package")
-                               (:file "rename-package")))
+                               (:file "rename-package")
+                               ;; Extension
+                               (:file "local-nicknames")))
 
                 (:module     "high"
                  :pathname   "code"
