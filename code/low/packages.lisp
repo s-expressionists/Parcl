@@ -14,7 +14,8 @@
   ;; Package functions
   (:shadow
    . #2=(#:package
-         #:packagep))
+         #:packagep
+         #:documentation))
   (:export
    #:name
    #:nicknames

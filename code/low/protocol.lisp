@@ -134,6 +134,10 @@
 ;;; function is NEW-PACKAGES as required by the Common Lisp standard.
 (defgeneric (setf used-by-list) (new-packages client package))
 
+(defgeneric documentation (client package))
+
+(defgeneric (setf documentation) (new-value client package))
+
 ;;; This function can be used to implement the standard function
 ;;; MAKE-PACKAGE.  As opposed to the standard function, NAME must be a
 ;;; string.
