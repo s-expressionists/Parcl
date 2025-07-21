@@ -50,15 +50,8 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~S" (name object))))
 
-(declaim (notinline make-entry entry-symbol entry-status))
 (defun make-entry (symbol export-status shadow-status)
   (cons symbol (cons export-status shadow-status)))
 
 (defun entry-values (entry)
   (values (car entry) (cadr entry) (cddr entry)))
-
-(defsetf entry-values (entry) (symbol export-status shadow-status)
-  ;; TODO: entry could be a place
-  `(setf (car  ,entry) ,symbol
-         (cadr ,entry) ,export-status
-         (cddr ,entry) ,shadow-status))
