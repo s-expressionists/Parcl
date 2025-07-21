@@ -3,7 +3,8 @@
 (defsystem "parcl-core"
   :description "Protocols and shared code for package system implementations."
   :license "BSD" ; see LICENSE file
-  :author "Robert Strandh"
+  :author ("Robert Strandh"
+           "Jan Moringen")
   :depends-on  ("parcl-core/sentinel"
                 "ecclesia"
                 "acclimation")
