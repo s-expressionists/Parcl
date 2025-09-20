@@ -73,7 +73,7 @@
                               (:file "package-use-list")
                               (:file "package-used-by-list")
                               (:file "package-local-nicknames")
-                              (:file "package-locally-nicknamed-by")
+                              (:file "package-locally-nicknamed-by-list")
                               (:file "package-shadowing-symbols")
                               (:file "make-package") ; TODO: diagram has this in environment
                               ;; Package-package relation functions
@@ -130,7 +130,7 @@
                              ;; Tests
                              ;; Package functions
                              (:file "package-local-nicknames")
-                             (:file "package-locally-nicknamed-by")
+                             (:file "package-locally-nicknamed-by-list")
                              ;; Package-package relation functions
                              (:file "use-package")
                              (:file "unuse-package")
