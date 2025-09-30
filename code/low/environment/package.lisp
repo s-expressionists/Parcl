@@ -179,28 +179,7 @@
                                                     nil
                                                     (cons symbol status)))))
 
-(defmethod low:find-present-symbol ((client   client)
-                                    (package  package)
-                                    (name     t))
-  (let* ((environment (environment client))
-         #++ (name        (%name package))
-         (entry       (env:lookup name package environment
-                                  :if-does-not-exist nil)))
-    (if (null entry)
-        (values nil nil)
-        (destructuring-bind (symbol . status) entry
-          (values symbol status)))))
-
-(defmethod low:ensure-present-symbol ((client   client)
-                                      (package  package)
-                                      (symbol   t)
-                                      &optional status)
-  ;; TODO(jmoringe): very simplified
-  (let* ((environment (environment client))
-         (name        (low:symbol-name client symbol)))
     (setf (env:lookup name package environment)
-          (cons symbol status))))
-
 
 
 #+no (defmethod low:nicknames ((client client) (package package))
