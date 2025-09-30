@@ -1,0 +1,205 @@
+#+SEQ_TODO: TODO STARTED | DONE NOTPROVIDED
+
+* STARTED Features [0/9]
+
+** STARTED Entries in the Packages dictionary [1/8]
+
+*** DONE Conditions [2/2]
+
+**** DONE Condition Type ~package-error~
+
+**** DONE Function ~package-error-package~
+
+*** TODO Symbol functions [0/6]
+
+**** STARTED Function ~symbolp~
+
+**** STARTED Function ~symbol-name~
+
+**** STARTED Function ~symbol-package~
+
+**** STARTED Function ~make-symbol~
+
+**** STARTED Function ~keywordp~
+
+**** TODO Type ~keyword~
+
+*** STARTED Package functions [3/7]
+
+**** DONE System Class ~package~
+
+**** STARTED Function ~packagep~
+
+**** DONE Function ~package-name~
+**** DONE Function ~package-nicknames~
+**** STARTED Function ~package-shadowing-symbols~
+**** STARTED Function ~package-use-list~
+**** STARTED Function ~package-used-by-list~
+
+*** STARTED Package-package relation functions [2/2]
+
+**** DONE Function ~use-package~
+
+**** DONE Function ~unuse-package~
+
+*** STARTED Package-symbol relation functions [4/8]
+
+**** DONE Function ~find-symbol~
+
+**** STARTED Function ~intern~
+
+**** STARTED Function ~unintern~
+
+    This function just removes the symbol from the package so that it
+    is no longer present.  Client code must alter the package of the
+    symbol.
+
+**** DONE Function ~import~
+
+**** STARTED Function ~shadowing-import~
+
+**** STARTED Function ~shadow~
+
+**** DONE Function ~export~
+
+**** DONE Function ~unexport~
+
+*** STARTED Environment functions [1/7]
+
+**** TODO Variable ~*package*~
+
+    This variable is part of the environment.
+
+**** STARTED Function ~list-all-packages~
+
+**** DONE Function ~find-package~
+
+**** STARTED Function ~make-package~
+
+**** STARTED Function ~delete-package~
+
+**** STARTED Function ~rename-package~
+
+**** STARTED Function ~find-all-symbols~
+
+*** STARTED Macros [0/6]
+
+**** STARTED Macro ~with-package-iterator~
+
+**** TODO Macro ~in-package~
+
+**** STARTED Macro ~defpackage~
+
+     Error reporting should be improved.
+
+**** TODO Macro ~do-symbols~
+
+**** TODO Macro ~do-external-symbols~
+
+**** TODO Macro ~do-all-symbols~
+
+** STARTED Package-local nicknames [0/5]
+
+*** STARTED Function ~package-local-nicknames~
+
+*** STARTED Function ~package-locally-nicknamed-by~ -list?
+
+*** STARTED Function ~add-package-local-nickname~
+
+*** STARTED Function ~remove-package-local-nickname~
+
+*** TODO Additional ~defpackage~ options
+
+** TODO Package variance
+** TODO Package Locks
+** TODO Some form of transactions
+
+   + Clients, especially when using parcl intrinsically, may wish to
+     hook into the transaction functionality to lock the package
+     system around operations (for concurrent operations).
+
+   + We could execution transactions in a way that accumulates changes
+     to the package graph as a preview of the operation result. The
+     accumulated changes would consist of the primary effect of the
+     operation but also any further changes due to recovering from
+     errors. The goal would of course be to either commit or abort the
+     transaction wholesale.
+
+** TODO It should be possible to give ~make-package~ a hint regarding the expected number of symbols
+
+** STARTED Deleted packages
+
+   + ~package-name~ has to return ~nil~
+
+   + Checks in other functions; probably need something like
+     ~find-undeleted-package-or-error~
+
+** STARTED Print-object
+
+   For which objects?
+   For the ~package~ protocol class?
+   Should there be a symbol protocol class?
+
+** TODO Optional function types
+
+   It would be good to have a way of declaiming function types for the
+   functions in the high module.  Those function type declamations
+   should help "end users" catching some programming errors at compile
+   time.
+
+* TODO Restarts
+
+  | Operator + Problem            | SBCL                          | CCL                            | ECL             |
+  |-------------------------------+-------------------------------+--------------------------------+-----------------|
+  | ~package-name~ non-existent   | retry, use-current, use-value | retry, use-value, add-nickname |                 |
+  | ~make-package~ already-exists | return-existing               | use-value (new name)           | return-existing |
+  | ...                           |                               |                                |                 |
+
+  Whenever operators accept a list of symbols, a ~continue~ restart
+  could skip the operation for individual list elements
+
+* Refactoring [2/7]
+
+** TODO Move implementations out of ~low~ module and into ~implementation~ module
+
+** TODO Package names: ~parcl.middle~ vs. ~parcl-low~
+
+   Rename ~parcl-low~ to ~parcl.low~
+
+** TODO Rename ~use-list~ to ~uses~ and ~used-by-list~ to ~used-by~ in internal protocols
+
+** STARTED Reorganize ~defpackage~ options in file:code/packages-extrinsic.lisp
+
+** STARTED Package-local nicknames as client mixin
+
+   Possibly separate system as well?
+
+   Could make a sub-directory for extensions like in Eclector
+
+** DONE Status
+
+   Separate status into two Booleans: external? and shadowing?
+
+   ~symbol-entry~ will then return three values: symbol, external? and shadowing?
+
+   Correspondingly for ~(setf symbol-entry)~.
+
+
+** DONE Add a ~middle~ module and package
+
+* Tests [0/5]
+
+** TODO Make sure return values are checked
+
+** TODO Add tests that checks the package system consistency rules
+
+** TODO Figure out a way to use tests from https://github.com/phoe/trivial-package-local-nickname
+
+** STARTED Compare to host
+
+   Maybe add a test that performs the same operations in parcl and the
+   host package system and compares the results?
+
+   The ~implementation.native~ module should help with that.
+
+** STARTED Hook up ANSI tests
