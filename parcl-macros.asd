@@ -1,7 +1,8 @@
 (defsystem "parcl-macros"
   :description "Definitions of macros related to the package system."
   :license "BSD" ; see LICENSE file
-  :author "Robert Strandh"
+  :author ("Robert Strandh"
+           "Jan Moringen")
   :version (:read-file-form "data/version-string.sexp")
   :depends-on ("ecclesia"
                "iconoclast"

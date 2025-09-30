@@ -1,7 +1,8 @@
 (defsystem "parcl-extrinsic"
   :description "Portable Package System, extrinsic system"
   :license "BSD" ; see LICENSE file
-  :author "Robert Strandh"
+  :author ("Robert Strandh"
+           "Jan Moringen")
   :version (:read-file-form "data/version-string.sexp")
   :depends-on ("parcl-extrinsic/packages"
                "parcl-core")
