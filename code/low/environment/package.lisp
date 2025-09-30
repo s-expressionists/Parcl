@@ -20,36 +20,7 @@
 
 (defclass package (low:package env::equal-namespace)
   ((%name :accessor %name
-          :initform nil)
-   ;; (%nicknames
-   ;;  :initarg :nicknames
-   ;;  :initform '()
-   ;;  :accessor nicknames)
-   ;; ;; See the definition of the accessor above.
-   ;; (%local-nicknames
-   ;;  :initarg :local-nicknames
-   ;;  :initform '()
-   ;;  :accessor local-nicknames)
-   ;; ;; See the definition of the accessor above.
-   ;; (%locally-nicknamed-by
-   ;;  :initarg :locally-nicknamed-by
-   ;;  :initform '()
-   ;;  :accessor locally-nicknamed-by)
-   ;; (%use-list
-   ;;  :initarg :use-list
-   ;;  :initform '()
-   ;;  :accessor use-list)
-   ;; (%used-by-list
-   ;;  :initarg :used-by-list
-   ;;  :initform '()
-   ;;  :accessor used-by-list)
-   ;; (%symbol-table
-   ;;  :initarg :symbol-table
-   ;;  :reader symbol-table)
-   ;; (%symbol-entries
-   ;;  :initform '()
-   ;;  :accessor symbol-entries)
-   ))
+          :initform nil)))
 
 (defmethod print-object ((object package) stream)
   (print-unreadable-object (object stream :type t :identity t)
@@ -125,7 +96,7 @@
   (define low:local-nicknames      :local-nicknames)
   (define low:locally-nicknamed-by :locally-nicknamed-by))
 
-(defmethod low::map-symbol-entries
+(defmethod low:map-symbol-entries
     ((client client) (function t) (package package) &optional status)
   (let ((environment (environment client))
         ;; TODO: is this worth the effort? could just do the cases in the local function
@@ -169,18 +140,17 @@
         (destructuring-bind (symbol . status) entry
           (values symbol status)))))
 
-(defmethod low::set-symbol-entry ((symbol  t)
-                                  (status  t)
-                                  (client  client)
-                                  (name    string)
-                                  (package package))
+(defmethod low:set-symbol-entry ((symbol        t)
+                                 (export-status t)
+                                 (shadow-status t)
+                                 (client        client)
+                                 (name          string)
+                                 (package       package))
   (let ((environment (environment client)))
-    (setf (env:lookup name package environment) (if (null status)
-                                                    nil
-                                                    (cons symbol status)))))
-
     (setf (env:lookup name package environment)
-
+          (if (null export-status)
+              nil
+              (cons symbol (cons export-status shadow-status))))))
 
 #+no (defmethod low:nicknames ((client client) (package package))
        )

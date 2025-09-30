@@ -48,11 +48,11 @@
            do (flet ((,error-name ()
                        ;; TODO: maybe include the operation in all package-system-conditions? like :operation `(make-package ,name ...)
                        ,(if new-package-supplied-p
-                            `(error 'parcl::new-name-occupied-error
+                            `(error 'parcl:new-name-occupied-error
                                     :package          ,new-package
                                     :new-name         ,name-var
                                     :existing-package ,existing-package-var)
-                            `(error 'parcl::package-name-occupied-error
+                            `(error 'parcl:package-name-occupied-error
                                     :new-name         ,name-var
                                     :existing-package ,existing-package-var))))
                 ,@body)))

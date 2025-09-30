@@ -37,9 +37,8 @@
          (parcl-low:symbol-name client string-designator))
         (t
          ;; TODO: dedicated error?
-         (error 'type-error :datum         string-designator
-                            :expected-type 'string) ; TODO: expected type
-         )))
+         ;; TODO: expected type
+         (error 'type-error :datum string-designator :expected-type 'string))))
 
 ;; TODO: what should we do about repeated entries?
 (defun string-list<-designator-list (client string-designator-list)

@@ -10,7 +10,7 @@
            ;; cannot complete.
            (loop for using-package in (low:used-by-list client package)
                  do (restart-case
-                        (error 'parcl::package-in-use-error
+                        (error 'parcl:package-in-use-error
                                :package package
                                :used-by using-package)
                       (unuse-package ()

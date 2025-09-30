@@ -1,7 +1,6 @@
 (cl:in-package #:parcl)
 
-(defun unuse-package
-    (packages-to-unuse &optional (package *package*))
+(defun unuse-package (packages-to-unuse &optional (package *package*))
   (with-client-and-resolved-designators
       (client
        (packages-to-unuse package-list-designator)

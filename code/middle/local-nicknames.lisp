@@ -51,10 +51,9 @@
                                      :test #'string=)))
     (if (null existing-entry)
         nil
-        (let* ((new-local-nicknames      (remove existing-entry
-                                                 old-local-nicknames
-                                                 :test #'eq :count 1))
-               (nicknamed-package        (cdr existing-entry)))
+        (let* ((new-local-nicknames (remove existing-entry old-local-nicknames
+                                            :test #'eq :count 1))
+               (nicknamed-package   (cdr existing-entry)))
           (setf (low:local-nicknames client package) new-local-nicknames)
           ;; In theory, PACKAGE could have had multiple local
           ;; nicknames for NICKNAMED-PACKAGE so that even after
@@ -68,9 +67,13 @@
                             :test #'eq :count 1))))
           t))))
 
-(defmethod delete-package :after ((client  local-nicknames-mixin) (package t))
+(defmethod delete-package :after ((client local-nicknames-mixin) (package t))
+  ;; Remove nicknames so that PACKAGE is removed from locally
+  ;; nicknamed-by lists of other packages.
   (loop for (nickname) in (low:local-nicknames client package)
         do (remove-local-nickname client package nickname))
+  ;; Remove all local nicknames that other packages may have defined
+  ;; for PACKAGE.
   (loop for naming-package in (low:locally-nicknamed-by client package)
         do (loop for (nickname . named-package) in (low:local-nicknames
                                                     client naming-package)

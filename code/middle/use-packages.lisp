@@ -34,6 +34,7 @@
                   (push info (cdr collision))
                   (pushnew collision conflicts :test #'eq))))))
      package new-uses)
+    ;; Signal conflicts.
     (unless (null conflicts)
       (error 'parcl::symbol-conflicts-error
              :package        package

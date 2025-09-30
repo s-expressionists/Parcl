@@ -10,4 +10,4 @@
       (unless (and (eq new-export-status export-status) shadow-status)
         (setf (low:symbol-entry client name package)
               (values symbol new-export-status t)))
-      symbol))) ; TODO: what would be a good return value?
+      symbol)))

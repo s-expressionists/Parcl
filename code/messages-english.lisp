@@ -19,7 +19,7 @@
     (format stream "~@<Return the existing package ~S~@:>" existing-package))
 
   (define-restart-reporter (unintern stream conflicting-symbol using-package)
-    (format stream "~@<Unintern ~s from ~s~@:>"
+    (format stream "~@<Unintern ~S from ~S~@:>"
             conflicting-symbol using-package))
 
   (define-restart-reporter (shadow stream conflicting-symbol using-package)
@@ -30,7 +30,7 @@
     (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
 
   (define-restart-reporter (make-old-shadowing stream conflicting-symbol using-package)
-    (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
+    (format stream "~@<Make ~S a shadowing symbol in ~S~@:>"
             conflicting-symbol using-package))
 
   (define-restart-reporter (make-new-shadowings stream symbol using-package)
@@ -41,7 +41,7 @@
     (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
 
   (define-restart-reporter (import stream symbol package)
-    (format stream "~@<Import ~s into ~s~@:>" symbol package)))
+    (format stream "~@<Import ~S into ~S~@:>" symbol package)))
 
 (macrolet ((define-reporter (((condition-var condition-specializer) stream-var
                               &optional (language-var 'language))

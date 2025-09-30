@@ -7,8 +7,9 @@
       (cond ((or (not (eq putative-symbol symbol))
                  (null export-status))
              (restart-case
-                 (error 'parcl::symbol-is-not-accessible :package package
-                                                         :symbol  symbol)
+                 (error 'parcl:symbol-is-not-accessible-error
+                        :package              package
+                        :inaccessible-symbol  symbol)
                (continue ()
                  :report
                  (lambda (stream)
