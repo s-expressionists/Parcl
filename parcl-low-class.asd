@@ -12,9 +12,7 @@ with slots that holds all the information related to a package."
                 :components ((:file "packages")
                              (:file "client")
                              (:file "package-defclass")
-                             (:file "methods")
-                             (:file "map-symbols")
-                             (:file "map-external-symbols"))))
+                             (:file "methods"))))
   :in-order-to ((test-op (test-op "parcl-low-class/test"))))
 
 (defsystem "parcl-low-class/test"
