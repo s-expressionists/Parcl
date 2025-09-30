@@ -4,7 +4,7 @@
 
   ;; Symbol functions
   (:shadow
-   . #1= (:symbolp
+   . #1= (#:symbolp
           #:symbol-name
           #:symbol-package
           #:make-symbol))
