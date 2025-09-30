@@ -27,25 +27,14 @@
    . #2#)
 
   ;; Package-symbol relation functions
-  (:shadow
-   . #3=(#:find-symbol))
   (:export
-   #:name-to-entry                      ; TODO: remove
-   #:remove-entry
-   #:make-table
-   #:find-present-symbol
-   #:ensure-present-symbol
-   #:remove-present-symbol
-
    #:map-symbol-entries
-   #:symbol-entries
-   #:symbol-entry                       ; also `setf'
-   #:set-symbol-entry
-   . #3#)
+   #:symbol-entry ; also `setf'
+   #:set-symbol-entry)
 
   ;; Environment functions
   (:shadow
-   . #4=(#:find-package))
+   . #3=(#:find-package)) ; also `setf'
   (:export
    #:packages
-   . #4#))
+   . #3#))

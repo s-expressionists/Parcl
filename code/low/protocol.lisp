@@ -60,12 +60,6 @@
 
 (defgeneric map-symbol-entries (client function package &optional status))
 
-;;; This function returns the symbol entries of a package.
-(defgeneric symbol-entries (client package &optional status))
-
-;;; This function sets the symbol entries of a package.
-#++ (defgeneric (setf symbol-entries) (symbol-entries client package))
-
 (defgeneric symbol-entry (client name package))
 
 (defgeneric set-symbol-entry
