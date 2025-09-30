@@ -137,8 +137,10 @@
                              (:file "add-package-local-nickname")
                              (:file "remove-package-local-nickname")
                              ;; Package-symbol relation functions
-                             (:file "import")
                              (:file "unintern")
+                             (:file "export")
+                             (:file "unexport")
+                             (:file "import")
                              ;; Environment functions
                              (:file "find-package")
                              (:file "make-package")
