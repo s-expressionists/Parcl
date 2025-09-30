@@ -32,13 +32,13 @@
 
 (defgeneric local-nicknames (client package)
   (:method ((client t) (package t))
-    (error "~@<Local nicknames are not supported by this package system.@~:>")))
+    (error "~@<Local nicknames are not supported by this package system.~@:>")))
 
 (defgeneric (setf local-nicknames) (new-value client package))
 
 (defgeneric locally-nicknamed-by (client package)
   (:method ((client t) (package t))
-    (error "~@<Local nicknames are not supported by this package system.@~:>")))
+    (error "~@<Local nicknames are not supported by this package system.~@:>")))
 
 (defgeneric (setf locally-nicknamed-by) (new-value client package))
 
