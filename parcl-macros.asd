@@ -15,6 +15,4 @@
                              (:file "in-package")
                              (:file "defpackage")
                              (:file "with-package-iterator")
-                             (:file "do-symbols")
-                             (:file "do-external-symbols")
-                             (:file "do-all-symbols")))))
+                             (:file "do-symbols-macros"))))
