@@ -16,3 +16,18 @@
                              (:file "defpackage")
                              (:file "with-package-iterator")
                              (:file "do-symbols-macros"))))
+  :in-order-to ((test-op (test-op "parcl-macros/test"))))
+
+(defsystem "parcl-macros/test"
+  :depends-on ("fiveam"
+               "parcl-macros")
+
+  :components ((:module     "test"
+                :pathname   "test/macros"
+                :serial     t
+                :components ((:file "package")
+                             (:file "in-package")
+                             (:file "defpackage")
+                             (:file "do-symbols-macros"))))
+  :perform (test-op (operation component)
+             (uiop:symbol-call '#:parcl.macros.test '#:run-tests)))
