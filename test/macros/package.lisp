@@ -12,6 +12,7 @@
 
   (:import-from #:parcl.test
    #:set-equal
+   #:set-equal/equal
 
    #:with-mock-package-system
    #:with-mock-package-constellation)

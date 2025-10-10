@@ -1,68 +1,92 @@
-(cl:in-package #:parcl.test)
+(cl:in-package #:parcl.macros.test)
 
-(let* ((parcl:*client* (make-instance 'parcl.implementation.native:client))
-       (thunk          (make-closure (list (parcl:find-package "CL-USER"))
-                                     '(:internal :external :inherited))))
-  (let ((cl:*package* (find-package '#:keyword)))
-    (loop :for (ok? symbol status package) = (multiple-value-list (funcall thunk))
-          :while ok?
-          :count 1 :into count
-          :do (format *trace-output* "~64S ~32A ~A~%"
-                      symbol (package-name package) status)
-          :finally (format *trace-output* "~:D symbol~:P~%" count))))
+(in-suite :parcl.macros)
 
-(cl:with-package-iterator (thunk (list (cl:find-package "CL-USER"))
-                                 :internal :external :inherited)
-  (let ((cl:*package* (cl:find-package '#:keyword)))
-    (loop :for (ok? symbol status package) = (multiple-value-list (thunk))
-          :while ok?
-          :count 1 :into count
-          :do (format *trace-output* "~64S ~32A ~A~%"
-                      symbol (cl:package-name package) status)
-          :finally (format *trace-output* "~:D symbol~:P~%" count))))
+(test with-package-iterator.smoke
+  "Smoke test for the `with-package-iterator' macro."
+  (mapc
+   (lambda (arguments-and-expected)
+     (destructuring-bind (packages symbol-types expected)
+         arguments-and-expected
+       (with-mock-package-constellation ((package1 "P1") (package2 "P2"))
+         (parcl:intern "BAR" package1)
+         (parcl:export (parcl:intern "BAZ" package1) package1)
+         (parcl:intern "FEZ" package2)
+         (parcl:export (parcl:intern "WOO" package2) package2)
+         (parcl:use-package package1 package2)
+         (let ((result
+                 (eval
+                  `(parcl:with-package-iterator (i '(,@packages) ,@symbol-types)
+                     (loop :for values = (multiple-value-list (i))
+                           :for (more? symbol status) = values
+                           :if more?
+                             :collect (cons symbol status)
+                           :else
+                             ;; The final call is specified to return
+                             ;; a single value.
+                             :do (is (= 1 (length values)))
+                                 (loop-finish)))))
+               (expected
+                 (loop :for (package-name symbol-name status)
+                         :in expected
+                       :for package = (parcl:find-package package-name)
+                       :for symbol = (parcl:find-symbol symbol-name package)
+                       :do (assert (eq (parcl:symbol-package symbol) package))
+                       :collect (cons symbol status))))
+           (is (set-equal/equal expected result))))))
+   `((()
+      (:internal)
+      ())
+     ;; Package without inheritance
+     (("P1")
+      (:internal)
+      (("P1" "BAR" :internal)))
+     (("P1")
+      (:external)
+      (("P1" "BAZ" :external)))
+     (("P1")
+      (:internal :external)
+      (("P1" "BAR" :internal) ("P1" "BAZ" :external)))
+     (("P1")
+      (:internal :external :inherited)
+      (("P1" "BAR" :internal) ("P1" "BAZ" :external)))
+     ;; Package with inheritance
+     (("P2")
+      (:internal)
+      (("P2" "FEZ" :internal)))
+     (("P2")
+      (:external)
+      (("P2" "WOO" :external)))
+     (("P2")
+      (:internal :external)
+      (("P2" "FEZ" :internal) ("P2" "WOO" :external)))
+     (("P2")
+      (:internal :external :inherited)
+      (("P2" "FEZ" :internal) ("P2" "WOO" :external) ("P1" "BAZ" :inherited)))
+     ;; Two packages
+     (("P1" "P2")
+      (:internal)
+      (("P1" "BAR" :internal) ("P2" "FEZ" :internal)))
+     (("P1" "P2")
+      (:external)
+      (("P1" "BAZ" :external) ("P2" "WOO" :external)))
+     (("P1" "P2")
+      (:internal :external)
+      (("P1" "BAR" :internal) ("P1" "BAZ" :external)
+       ("P2" "FEZ" :internal) ("P2" "WOO" :external)))
+     (("P1" "P2")
+      (:internal :external :inherited)
+      (("P1" "BAR" :internal) ("P1" "BAZ" :external)
+       ("P2" "FEZ" :internal) ("P2" "WOO" :external) ("P1" "BAZ" :inherited))))))
 
-#++ (clouseau:inspect (cl:find-package "CL-USER"))
+(test with-package-iterator.expansion-error.no-symbol-types
+  "Ensure that `with-package-iterator' signals a syntax error if no
+symbol types are supplied."
+  (signals parcl::macro-syntax-error
+    (macroexpand '(parcl:with-package-iterator (i '())))))
 
-
-(let ((*client* (make-instance 'parcl.test::mock-client)))
-  (let* ((p1 (make-package "P1"))
-         (p2 (make-package "P2"))
-         (s  (intern "S" p1)))
-    (export s p1)
-    (use-package p1 p2)
-    (with-package-iterator (iterator (list p2) :internal :external :inherited)
-      (loop :do (multiple-value-bind (more? symbol status containing-package)
-                    (iterator)
-                  (if more?
-                      (format *trace-output* "~&~A ~A ~A~%" symbol status containing-package)
-                      (loop-finish)))))
-    (import s p2)
-    (export s p2)
-    (format *trace-output* "~&----~%")
-    (with-package-iterator (iterator (list p2) :internal :external :inherited)
-      (loop :do (multiple-value-bind (more? symbol status containing-package)
-                    (iterator)
-                  (if more?
-                      (format *trace-output* "~&~A ~A ~A~%" symbol status containing-package)
-                      (loop-finish)))))))
-
-(let* ((p1 (cl:make-package "P1"))
-       (p2 (cl:make-package "P2"))
-       (s  (cl:intern "S" p1)))
-  (cl:export s p1)
-  (cl:use-package p1 p2)
-  (cl:with-package-iterator (iterator (list p2) :internal :external :inherited)
-    (loop :do (multiple-value-bind (more? symbol status containing-package)
-                  (iterator)
-                (if more?
-                    (format *trace-output* "~&~A ~A ~A~%" symbol status containing-package)
-                    (loop-finish)))))
-  (cl:import s p2)
-  (cl:export s p2)
-  (format *trace-output* "~&----~%")
-  (cl:with-package-iterator (iterator (list p2) :internal :external :inherited)
-    (loop :do (multiple-value-bind (more? symbol status containing-package)
-                  (iterator)
-                (if more?
-                    (format *trace-output* "~&~A ~A ~A~%" symbol status containing-package)
-                    (loop-finish))))))
+(test with-package-iterator.expansion-error.invalid-symbol-type
+  "Ensure that `with-package-iterator' signals a syntax error if an
+invalid symbol type is supplied."
+  (signals parcl::macro-syntax-error
+    (macroexpand '(parcl:with-package-iterator (i '() :invalid)))))
