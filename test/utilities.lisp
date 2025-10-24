@@ -31,8 +31,9 @@
   (lambda () (make-instance 'mock-client)))
 
 (defun call-with-mock-package-system (continuation)
-  (let* ((client (funcall *client-maker*))
-         (parcl:*client* client))
+  (let* ((client          (funcall *client-maker*))
+         (parcl:*client*  client)
+         (parcl:*package* nil))
     (with-fresh-package-system ()
       (funcall continuation client))))
 
