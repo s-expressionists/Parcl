@@ -50,6 +50,16 @@
         ,@body)
       ,name)))
 
+(defmacro with-mock-package-constellation ((&rest bindings) &body body)
+  (labels ((binding (remaining)
+             (destructuring-bind (&optional first &rest rest) remaining
+               (if (null first)
+                   `(progn ,@body)
+                   `(with-mock-package (,@first)
+                      ,(binding rest))))))
+   `(with-mock-package-system ()
+      ,(binding bindings))))
+
 ;;;
 
 (defmacro do-string-designators ((variable string) &body body)
