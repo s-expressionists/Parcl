@@ -3,12 +3,12 @@
 ;;; Convenience functions
 
 (defun check-package-designator (client package-designator)
-  (if (parcl-low:packagep client package-designator)
+  (if (parcl.low:packagep client package-designator)
       (values package-designator                             t)
       (values (string<-designator client package-designator) nil)))
 
 (defun find-package-or-error (client package-designator)
-  (if (parcl-low:packagep client package-designator)
+  (if (parcl.low:packagep client package-designator)
       package-designator
       (let* ((name    (string<-designator client package-designator))
              (package (parcl.middle:find-package-using-package
@@ -22,7 +22,7 @@
 
 (defun find-undeleted-package-or-error (client package-designator)
   (let ((package (find-package-or-error client package-designator)))
-    (when (null (parcl-low:name client package))
+    (when (null (parcl.low:name client package))
       (error 'package-has-been-deleted-error :package package))
     package))
 
@@ -33,8 +33,8 @@
          (string string-designator))
         ((stringp string-designator)
          string-designator)
-        ((parcl-low:symbolp client string-designator)
-         (parcl-low:symbol-name client string-designator))
+        ((parcl.low:symbolp client string-designator)
+         (parcl.low:symbol-name client string-designator))
         (t
          ;; TODO: dedicated error?
          ;; TODO: expected type
@@ -52,14 +52,14 @@
       (list (string string-list-designator))))
 
 (defun check-symbol (client symbol)
-  (unless (parcl-low:symbolp client symbol)
+  (unless (parcl.low:symbolp client symbol)
     (error 'type-error :datum symbol :expected-type 'symbol)) ; TODO: this is not the correct type
   symbol)
 
 (defun symbol-list<-designator-list (client symbol-designator-list)
-  ;; TODO(jmoringe): (every (lambda (symbol-designator) (or (stringp symbol-designator) (parcl-low:symbolp symbol-designator))
+  ;; TODO(jmoringe): (every (lambda (symbol-designator) (or (stringp symbol-designator) (parcl.low:symbolp symbol-designator))
   (unless (and (ecclesia:proper-list-p symbol-designator-list)
-               (every (lambda (object) (parcl-low:symbolp client object)) ; TODO: `check-symbol' individually?
+               (every (lambda (object) (parcl.low:symbolp client object)) ; TODO: `check-symbol' individually?
                       symbol-designator-list))
     (error 'symbols-must-be-designator-for-list-of-symbols ; TODO: type-error?
            :symbols symbol-designator-list))
