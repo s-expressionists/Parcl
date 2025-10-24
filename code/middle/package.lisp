@@ -5,6 +5,12 @@
   (:local-nicknames
    (#:low #:parcl.low))
 
+  ;; Symbol functions
+  (:shadow
+   . #1=(#:keywordp))
+  (:export
+   . #1#)
+
   ;; Package-package relation functions
   (:shadow
    . #1= (#:use-packages

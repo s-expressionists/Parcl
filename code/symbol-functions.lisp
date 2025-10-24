@@ -3,12 +3,6 @@
 (defun symbolp (object)
   (parcl.low:symbolp *client* object))
 
-(defun keywordp (object)
-  (let ((client *client*))
-    (and (parcl.low:symbolp client object)
-         (eq (parcl.low:symbol-package client object)
-             (parcl.low:find-package client "KEYWORD")))))
-
 (defun symbol-name (symbol)
   ;; TODO: type check?
   (parcl.low:symbol-name *client* symbol))
@@ -21,3 +15,6 @@
   (with-client-and-resolved-designators (client
                                          (name string-designator))
     (parcl.low:make-symbol client name nil)))
+
+(defun keywordp (object)
+  (parcl.middle:keywordp *client* object))

@@ -36,6 +36,8 @@
                  :components  ((:file "package")
                                (:file "protocol")
                                (:file "utilities")
+                               ;; Symbol functions
+                               (:file "symbol-functions")
                                ;; Package-package relations
                                (:file "use-packages")
                                (:file "unuse-package")

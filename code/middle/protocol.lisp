@@ -1,5 +1,9 @@
 (cl:in-package #:parcl.middle)
 
+;;;; Symbol functions
+
+(defgeneric keywordp (client object))
+
 ;;;; Package functions
 
 (defgeneric shadowing-symbols (client package))
