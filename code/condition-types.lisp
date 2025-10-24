@@ -73,12 +73,6 @@ operator that requires an undeleted package object."))
    "This error is signaled when an attempt is made to delete a package
 that is in use by a different package."))
 
-;;; This condition is signaled by UNUSE-PACKAGE when the package is
-;;; not used, so that it can't be unused.
-(define-condition package-is-not-used (package-error) ; TODO: is this used?
-  ((%package-to-unuse :initarg :package-to-unuse
-                      :reader  package-to-unuse)))
-
 ;; TODO: is this used?
 (define-condition nickname-refers-to-different-package (package-error)
   ((%nickname          :initarg :nickname
