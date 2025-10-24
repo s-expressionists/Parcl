@@ -1,4 +1,4 @@
-(cl:defpackage #:parcl-low
+(cl:defpackage #:parcl.low
   (:use
    #:common-lisp)
 

@@ -6,7 +6,7 @@
    #:package)
 
   (:local-nicknames
-   (#:low #:parcl-low)
+   (#:low #:parcl.low)
    (#:env #:computation.environment))
 
   (:export

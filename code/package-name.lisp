@@ -3,7 +3,7 @@
 (defun package-name (package)
   (with-client-and-resolved-designators (client
                                          (package package-designator/weak))
-    (parcl-low:name client package)))
+    (parcl.low:name client package)))
 
 (setf (documentation 'package-name 'function)
       (format nil

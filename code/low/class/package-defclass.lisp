@@ -1,6 +1,6 @@
 (cl:in-package #:parcl-low-class)
 
-(defclass package (parcl-low:package)
+(defclass package (parcl.low:package)
   ((%name                 :initarg  #1=:name
                           :accessor name)
    (%nicknames            :initarg  :nicknames

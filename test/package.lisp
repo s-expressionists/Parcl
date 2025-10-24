@@ -4,7 +4,7 @@
 
   (:local-nicknames
    (#:a   #:alexandria)
-   (#:low #:parcl-low))
+   (#:low #:parcl.low))
 
   (:import-from #:fiveam
    #:def-suite

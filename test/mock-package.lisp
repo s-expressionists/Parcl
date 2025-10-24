@@ -2,7 +2,7 @@
 
 ;;; `mock-package' class
 
-(defclass mock-package (parcl-low:package)
+(defclass mock-package (parcl.low:package)
   ((%name          :initarg  :name
                    :accessor %name)
    (%nicknames     :accessor %nicknames

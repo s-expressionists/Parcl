@@ -3,7 +3,7 @@
 (defun package-nicknames (package)
   (with-client-and-resolved-designators (client
                                          (package package-designator))
-    (parcl-low:nicknames client package)))
+    (parcl.low:nicknames client package)))
 
 (setf (documentation 'package-nicknames 'function)
       (format nil

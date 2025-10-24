@@ -1,6 +1,6 @@
 (cl:in-package #:parcl-low-class)
 
-(defmethod parcl-low:packagep ((client client) (package package))
+(defmethod parcl.low:packagep ((client client) (package package))
   t)
 
 (defmethod parcl-low:name ((client client) package)

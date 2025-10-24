@@ -3,7 +3,7 @@
    #:cl)
 
   (:local-nicknames
-   (#:low #:parcl-low))
+   (#:low #:parcl.low))
 
   ;; Package-package relation functions
   (:shadow

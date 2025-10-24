@@ -1,4 +1,4 @@
-(cl:in-package #:parcl-low)
+(cl:in-package #:parcl.low)
 
 (deftype symbol-export-status ()
   '(member nil :internal :external)) ; TODO: maybe without nil?

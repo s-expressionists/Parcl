@@ -32,18 +32,18 @@
    (print-unreadable-object (object stream :type t :identity t)
      (format stream "~@[~A:~]~A" package-name name))))
 
-(defmethod parcl-low:symbol-name ((client parcl-client) (symbol my-symbol))
+(defmethod parcl.low:symbol-name ((client parcl-client) (symbol my-symbol))
   (%name symbol))
 
-(defmethod parcl-low:symbol-package ((client parcl-client) (symbol my-symbol))
+(defmethod parcl.low:symbol-package ((client parcl-client) (symbol my-symbol))
   (%package symbol))
 
-(defmethod (setf parcl-low:symbol-package) ((new-value t)
+(defmethod (setf parcl.low:symbol-package) ((new-value t)
                                             (client    parcl-client)
                                             (symbol    my-symbol))
   (setf (%package symbol) new-value))
 
-(defmethod parcl-low:make-symbol ((client parcl-client) (name t) (package t))
+(defmethod parcl.low:make-symbol ((client parcl-client) (name t) (package t))
   (make-instance 'my-symbol :name name :package package))
 
 ;;;

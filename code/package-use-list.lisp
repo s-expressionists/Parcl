@@ -3,7 +3,7 @@
 (defun package-use-list (package)
   (with-client-and-resolved-designators (client
                                          (package package-designator))
-    (parcl-low:use-list client package)))
+    (parcl.low:use-list client package)))
 
 (setf (documentation 'package-use-list 'function)
       (format nil
