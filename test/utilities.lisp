@@ -11,9 +11,18 @@
 
 ;;; Fixtures
 
+(defgeneric setup (client)
+  (:method ((client t))))
+
+(defgeneric reset (client)
+  (:method ((client t))))
+
 (defun call-with-fresh-package-system (continuation)
-  (reset parcl:*client*) ; TODO: export `reset'
-  (funcall continuation))
+  (let ((client parcl:*client*))
+    (setup client)
+    (unwind-protect
+         (funcall continuation)
+      (reset client))))
 
 (defmacro with-fresh-package-system (() &body body)
   `(call-with-fresh-package-system (lambda () ,@body)))
