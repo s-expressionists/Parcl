@@ -16,15 +16,19 @@
                 :pathname "code/packages-extrinsic")))
 
 (defsystem "parcl-extrinsic/ansi-test"
-  :depends-on ("ansi-test-harness"
+  :description "Run ANSI tests on the extrinsic version of parcl"
+  :author      "Jan Moringen"
 
-               "parcl-extrinsic"
-               "parcl-core/test")
+  :depends-on  ("ansi-test-harness"
 
-  :components ((:module     "test"
-                :pathname   "test/ansi-test/"
-                :components ((:file        "package")
-                             (:static-file "expected-failures.sexp"))))
+                "parcl-extrinsic"
+                "parcl-macros"
+                "parcl-core/test")
 
-  :perform    (test-op (operation component)
-                (uiop:symbol-call '#:parcl.ansi-test '#:test)))
+  :components  ((:module     "test"
+                 :pathname   "test/ansi-test/"
+                 :components ((:file        "package")
+                              (:static-file "expected-failures.sexp"))))
+
+  :perform     (test-op (operation component)
+                 (uiop:symbol-call '#:parcl.ansi-test '#:test)))
