@@ -1,0 +1,85 @@
+@node Extensions
+@chapter Extensions
+
+@menu
+* Package-local Nicknames::
+* Package Locks::
+* Package Variance::
+@end menu
+
+@node Package-local Nicknames
+@section Package-local Nicknames
+
+@cindex package-local nicknames
+@sysname{} provides support for @termrefl{package-local
+nickname,package-local nicknames} which are not part of the
+@commonlisp{} standard but are supported in many of the free and
+proprietary @commonlisp{} environments (See the
+@uref{https://www.sbcl.org/manual/#Package_002dLocal-Nicknames, SBCL
+Manual} for an example).
+
+A @term{package-local nickname} is defined within a package @var{C}
+where it associates a nickname @var{N} with a different package @var{T}.
+The effect of this association is that @var{N} refers to @var{T} in
+certain situations, for example when @t{(@speclink{f,find-package}
+"@var{N}")} is called or @t{@var{N}:@dots{}} is read @emph{while
+@speclinkl{v,package,*package*} is bound to @var{C}}.
+
+The @termrefl{high module,high-level} protocol for this extension
+consists of the following functions:
+
+@itemize
+
+@item
+@funref{package-local-nicknames,@toppackage{}}
+
+@item
+@funref{package-locally-nicknamed-by-list,@toppackage{}}
+
+@item
+@funref{add-package-local-nickname,@toppackage{}}
+
+@item
+@funref{remove-package-local-nickname,@toppackage{}}
+
+@end itemize
+
+as well as the @code{:local-nicknames} option for @macref{defpackage,@toppackage{}}.
+
+The @termref{middle module} has matching functions and also the generic
+function @genref{find-package-using-package,@middlepackage{}} which can
+take into account the current package when looking up a package by name.
+
+Clients can select this extension by including the class
+@classref{local-nicknames-mixin,@middlepackage{}}.
+
+@node Package Locks
+@section Package Locks
+
+Package locks are an extension of the package system (and other parts of
+a @commonlisp{} implementation) which prevents the modification of
+bindings whose names are contained in locked packages (See the
+@uref{https://www.sbcl.org/manual/#Package-Locks,SBCL Manual} for an
+example).
+
+@sysname{} does not support a package lock extension at the moment.
+
+@node Package Variance
+@section Package Variance
+
+The @speclink{f,defpackage} entry in the @commonlisp{} specification states
+
+@quotation
+If @var{defined-package-name} already refers to an existing package, the
+name-to-package mapping for that name is not changed.  If the new
+definition is at variance with the current state of that package, the
+consequences are undefined; an implementation might choose to modify the
+existing package to reflect the new definition.
+@end quotation
+
+Since the consequences are undefined, a possible extension of the
+package system is to give clients control over the consequences (See the
+@uref{https://www.sbcl.org/manual/#Package-Variance,SBCL Manual} for an
+example).
+
+@sysname{} does not support a package variance extension at the moment.
