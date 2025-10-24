@@ -92,15 +92,6 @@ different package."))
 
 ;;; Conditions related to package-symbol relations
 
-;;; TODO: delete one of the two
-(define-condition symbol-conflict (package-error)
-  ((%conflicting-symbols :initarg :conflicting-symbols
-                         :reader  conflicting-symbols)))
-
-(defun symbol-conflict (package &rest conflicting-symbols)
-  (error 'symbol-conflict :package             package
-                          :conflicting-symbols conflicting-symbols))
-
 (define-condition symbol-conflicts-error (package-error)
   ((%conflicts      :initarg  :conflicts
                     :reader   conflicts)
