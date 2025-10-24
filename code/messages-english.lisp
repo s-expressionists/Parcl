@@ -95,7 +95,7 @@
                     the symbols ~{~S~^ and ~} in package ~S.~@:>"
             (conflicting-symbols condition) (package-error-package condition)))
 
-  (define-reporter ((condition symbol-is-not-accessible) stream)
+  (define-reporter ((condition symbol-is-not-accessible-error) stream)
     (format stream "~@<The symbol ~S is not accessible in package ~S.~@:>"
             (inaccessible-symbol condition) (package-error-package condition)))
 
@@ -104,7 +104,7 @@
                     but the package ~S is not used by the package ~S.~@:>"
             (package-to-unuse condition) (package-error-package condition)))
 
-  (define-reporter ((condition nickname-refers-to-different-package) stream)
+  (define-reporter ((condition nickname-refers-to-different-package-error) stream)
     (format stream "~@<Attempt to add the package-local nickname:~@
                     ~s~@
                     to refer to the package:~@

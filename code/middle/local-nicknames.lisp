@@ -37,7 +37,7 @@
            nil) ; TODO: does the protocol specify what to return here?
           (t ; existing pair with same name but different package => error
            ;; FIXME: signal a continuable error.
-           (error 'nickname-refers-to-different-package
+           (error 'nickname-refers-to-different-package-error
                   :package           package
                   :nickname          nickname
                   :nicknamed-package nicknamed-package)

@@ -73,8 +73,8 @@ operator that requires an undeleted package object."))
    "This error is signaled when an attempt is made to delete a package
 that is in use by a different package."))
 
-;; TODO: is this used?
-(define-condition nickname-refers-to-different-package (package-error)
+;;; Signaled from `add-package-local-nickname'
+(define-condition nickname-refers-to-different-package-error (package-error)
   ((%nickname          :initarg :nickname
                        :reader  nickname)
    (%nicknamed-package :initarg :nicknamed-package
@@ -93,6 +93,6 @@ different package."))
                     :reader   package-labels
                     :initform '())))
 
-(define-condition symbol-is-not-accessible (package-error)
+(define-condition symbol-is-not-accessible-error (package-error)
   ((%symbol :initarg :symbol
             :reader  inaccessible-symbol)))
