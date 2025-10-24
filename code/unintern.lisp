@@ -5,9 +5,3 @@
                                          (package package-designator)
                                          (symbol  symbol))
     (parcl.middle:unintern client package symbol)))
-
-(setf (documentation 'unintern 'function)
-      (format nil
-              "Syntax: unintern string &optional package-designator~@
-               ~@
-               This function returns a generalized Boolean. TODO"))

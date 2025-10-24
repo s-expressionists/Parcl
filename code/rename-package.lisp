@@ -8,9 +8,3 @@
     (if (not (null package))
         (parcl.middle:rename-package client package new-name new-nicknames)
         nil)))
-
-(setf (documentation 'rename-package 'function)
-      (format nil
-              "Syntax: rename-package TODO~@
-               ~@
-               TODO"))
