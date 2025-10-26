@@ -54,3 +54,17 @@
 (defgeneric rename-package (client package new-name new-nicknames))
 
 (defgeneric find-symbols (client name))
+
+;;;; Package updating functions
+
+(defgeneric ensure-package (client name &rest args &key &allow-other-keys))
+
+;;; Symbol designators and package designators passed to this function
+;;; have to be strings.
+(defgeneric ensure-package-using-package
+    (client existing-package name &rest args &key &allow-other-keys))
+
+(defgeneric note-variance (client package aspect event value)
+  (:method ((client t) (package t) (aspect t) (event t) (value t))))
+
+(defgeneric update-package (client package &key &allow-other-keys))

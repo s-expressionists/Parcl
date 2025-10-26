@@ -58,6 +58,8 @@
                                (:file "delete-package")
                                (:file "rename-package")
                                (:file "find-symbols")
+                               ;; Package update functions
+                               (:file "package-update-functions")
                                ;; Extension
                                (:file "local-nicknames")))
 
