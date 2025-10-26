@@ -35,8 +35,10 @@
   ;; TODO: what if NAME matches a local nickname within the current package?
   (let ((existing-package (find-package-using-package
                            client parcl:*package* name))
-        (new-args         (alexandria:remove-from-plist
-                           args :use :shadowing-import-from :import-from)))
+        ;; TODO: this would be `alexandria:remove-from-plist' not sure whether we are going to use that
+        (new-args         (copy-list args)))
+    (loop :for keyword :in '(:use :shadowing-import-from :import-from)
+          :do (remf new-args keyword))
     ;; Resolve string designators to symbol objects and package
     ;; objects for options that effectively operate on those
     ;; objects.
@@ -145,10 +147,12 @@
         (setf shadowing-import-actions shadowing-import)
         (loop :for symbol :in shadowing-import
               :do (remhash (parcl.low:symbol-name client symbol) old-shadowed)))
-      (alexandria:maphash-values
-       (lambda (symbol)
+      ;; TODO: could be `alexandria:maphash-values'
+      (maphash
+       (lambda (ignored symbol)
+         (declare (ignore ignored))
          (ecase (note-variance client existing-package :shadow :remove symbol)
-           (:old) ; keep shadowing
+           (:old)                       ; keep shadowing
            (:new (push symbol unintern-actions))))
        old-shadowed)
 
@@ -173,10 +177,12 @@
                        (push symbol-name export-actions)))))
         ;; The remaining entries correspond to removed exports.
         ;; Report those as variance.
-        (alexandria:maphash-values
-         (lambda (symbol)
+        ;; TODO: could be `alexandria:maphash-values'
+        (maphash
+         (lambda (ignored symbol)
+           (declare (ignore ignored))
            (ecase (note-variance client existing-package :export :remove symbol)
-             (:old) ; keep exporting
+             (:old)                     ; keep exporting
              (:new (push symbol unexport-actions))))
          old-external)))
     ;; Call `update-package' to perform the queued actions.

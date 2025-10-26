@@ -2,6 +2,7 @@
 
 (defclass local-nicknames-mixin () ())
 
+;;; TODO: explain when this method is used
 (defmethod find-package-using-package ((client  local-nicknames-mixin)
                                        (package null)
                                        (name    string))
@@ -13,12 +14,12 @@
   (let ((nickname-entry (find name (low:local-nicknames client package)
                               :key #'first :test #'string=)))
     (if (not (null nickname-entry))
-        (second nickname-entry)
+        (cdr nickname-entry)
         (find-package-using-package client nil name))))
 
 (defmethod add-local-nickname ((client            local-nicknames-mixin)
                                (package           t)
-                               (nickname          string)
+                               (nickname          string) ; TODO rename to local-nickname? change in documentation
                                (nicknamed-package t))
   (let* ((old-local-nicknames (low:local-nicknames client package))
          (existing-entry      (assoc nickname old-local-nicknames
@@ -45,7 +46,7 @@
 
 (defmethod remove-local-nickname ((client   local-nicknames-mixin)
                                   (package  t)
-                                  (nickname string))
+                                  (nickname string)) ; TODO rename to local-nickname? change in documentation
   (let* ((old-local-nicknames (low:local-nicknames client package))
          (existing-entry      (assoc nickname old-local-nicknames
                                      :test #'string=)))

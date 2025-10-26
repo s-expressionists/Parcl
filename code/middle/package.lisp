@@ -13,16 +13,16 @@
 
   ;; Package-package relation functions
   (:shadow
-   . #1= (#:use-packages
-          #:unuse-package))
+   . #2=(#:use-packages
+         #:unuse-package))
   (:export
    #:add-local-nickname
    #:remove-local-nickname
-   . #1#)
+   . #2#)
 
   ;; Package-symbol relation functions
   (:shadow
-   . #2=(#:find-symbol
+   . #3=(#:find-symbol
          #:intern
          #:unintern
          #:export
@@ -32,15 +32,26 @@
          #:shadow))
   (:export
    #:shadowing-symbols
-   . #2#)
+   . #3#)
 
   ;; Environment functions
   (:shadow
-   . #3=(#:make-package
+   . #4=(#:make-package
          #:delete-package
          #:rename-package))
   (:export
    #:packages
    #:find-package-using-package
    #:find-symbols
-   . #3#))
+   . #4#)
+
+  ;; Package updating functions
+  (:export
+   #:ensure-package
+   #:ensure-package-using-package
+   #:note-variance
+   #:update-package)
+
+  ;; Mixin classes
+  (:export
+   #:local-nicknames-mixin))

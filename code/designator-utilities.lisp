@@ -26,7 +26,9 @@
       (error 'package-has-been-deleted-error :package package))
     package))
 
-;;; Designators
+;;;; Designators
+
+;;; String
 
 (defun string<-designator (client string-designator)
   (cond ((characterp string-designator)
@@ -51,6 +53,8 @@
       (string-list<-designator-list client string-list-designator)
       (list (string string-list-designator))))
 
+;;; Symbol
+
 (defun check-symbol (client symbol)
   (unless (parcl.low:symbolp client symbol)
     (error 'type-error :datum symbol :expected-type 'symbol)) ; TODO: this is not the correct type
@@ -70,6 +74,13 @@
       (symbol-list<-designator-list client symbol-list-designator)
       (list (check-symbol client symbol-list-designator))))
 
+;;; Package
+
+(defun package-name<-designator (client package-designator)
+  (if (parcl.low:packagep client package-designator)
+      (parcl.low:name client package-designator)
+      (string<-designator client package-designator)))
+
 (defun package-list<-designator-list (client package-designator-list)
   (mapcar (lambda (designator)
             (find-undeleted-package-or-error client designator))
@@ -87,17 +98,21 @@
            (destructuring-bind (names designator-type) binding
              (let ((resolver
                      (ecase designator-type
+                       ;; String
                        (string-designator        'string<-designator)
                        (string-designator-list   'string-list<-designator-list)
                        (string-list-designator   'string-list<-designator)
+                       ;; Symbol
                        (symbol                   'check-symbol)
                        (symbol-designator        (error "todo"))
                        (symbol-designator-list   'symbol-list<-designator-list)
                        (symbol-list-designator   'symbol-list<-designator)
+                       ;; Package
+                       (package-name-designator  'package-name<-designator)
                        (package-designator       'find-undeleted-package-or-error)
                        (package-designator/weak  'find-package-or-error)
                        (package-designator/check 'check-package-designator)
-                       (package-designator-list  'package-list<-designator-list)
+                       (package-designator-list  'package-list<-designator-list) ; TODO: are these all used?
                        (package-list-designator  'package-list<-designator))))
                (if (consp names)
                    (destructuring-bind (variable-name parameter-name) names

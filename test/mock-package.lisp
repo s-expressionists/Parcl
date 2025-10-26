@@ -71,7 +71,7 @@
                              (package mock-package))
   (let ((entry (gethash name (%entries package))))
     (if (null entry)
-        (values nil nil)
+        (values nil nil nil)
         (values (car entry) (cadr entry) (cddr entry)))))
 
 (defmethod low:set-symbol-entry ((new-symbol        t)
@@ -80,6 +80,8 @@
                                  (client            mock-package-mixin)
                                  (name              string)
                                  (package           mock-package))
+  ;; TODO: remove later
+  (when (null new-export-status) (assert (null new-shadow-status)))
   (let ((entries (%entries package)))
     (if (null new-export-status)
         (remhash name entries)

@@ -1,6 +1,6 @@
 #+SEQ_TODO: TODO STARTED | DONE NOTPROVIDED
 
-* STARTED Features [0/9]
+* STARTED Features [0/10]
 
 ** STARTED Entries in the Packages dictionary [1/8]
 
@@ -127,6 +127,9 @@
 
 ** TODO It should be possible to give ~make-package~ a hint regarding the expected number of symbols
 
+** TODO ~describe-object~ methods, maybe
+   + [ ] for symbols
+   + [ ] for packages
 ** STARTED Deleted packages
 
    + ~package-name~ has to return ~nil~

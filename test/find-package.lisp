@@ -29,7 +29,8 @@
 
 ;;;; Local nicknames
 
-(high-test find-package.local-nicknames
+(high-test (find-package.local-nicknames
+            :client-class mock-client-with-local-nicknames)
   ;; TODO: use specific client
   (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
     (parcl:add-package-local-nickname #3="b" package2 package1)

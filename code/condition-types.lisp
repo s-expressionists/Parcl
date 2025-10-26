@@ -87,12 +87,32 @@ different package."))
 ;;; Conditions related to package-symbol relations
 
 (define-condition symbol-conflicts-error (package-error)
-  ((%conflicts      :initarg  :conflicts
+  (;; A list of conflicts with elements of the form
+   ;;   (NAME . ((SYMBOL1 . PACKAGE1) (SYMBOL2 . PACKAGE2) ...))
+   (%conflicts      :initarg  #1=:conflicts
                     :reader   conflicts)
+   ;; A list of package objects and labels with elements of the form
+   ;;   (PACKAGE . LABEL)
    (%package-labels :initarg  :package-labels
                     :reader   package-labels
-                    :initform '())))
+                    :initform '()))
+  (:default-initargs
+   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#))
+  (:documentation
+   "This error is signaled when an operation would introduce one or more
+conflicts between different symbols with the same symbol-name in a
+particular package."))
 
 (define-condition symbol-is-not-accessible-error (package-error)
-  ((%symbol :initarg :symbol
-            :reader  inaccessible-symbol)))
+  ((%inaccessible-symbol :initarg :inaccessible-symbol
+                         :reader  inaccessible-symbol))
+  (:documentation
+   "This error is signaled when an attempt is made to export or unexport a
+symbol from a package in which the symbol is not accessible."))
+
+(define-condition unexport-forbidden-for-system-package-error (package-error)
+  ((%symbol-to-unexport :initarg :symbol-to-unexport
+                        :reader  symbol-to-unexport))
+  (:documentation
+   "This error is signaled when an attempt is made to unexport a symbol
+from one of the packages COMMON-LISP and KEYWORD."))

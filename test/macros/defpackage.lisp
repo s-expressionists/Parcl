@@ -39,3 +39,61 @@
               (:intern "A" :b) (:intern #:c #\d)
               (:shadow #:hi :yo)
               (:shadowing-import-from #:bar #:x "Y"))))
+
+
+;;;
+
+(when nil
+  (export (mapcar (alexandria:rcurry #'intern "CL") '("FLOOR" "ABS")) "CL")
+  #++(defpackage "bar"
+    (:nicknames "bar-nick")
+    (:nicknames "bar-nick2")
+
+    (:import-from #:cl #:floor #:abs)
+
+    (:use "COMMON-LISP")
+
+    (:intern "hi" #:what)
+    (:export "hihi")
+    )
+
+  (progn
+    (defpackage "foo"
+                                        ; (:nicknames "foo-nick")
+                                        ; (:nicknames "foo-nick2")
+      (:nicknames )
+
+      ; (:import-from #:cl #:hi #:hihi)
+
+                                        ; (:use "COMMON-LISP")
+      (:use )
+
+      (:intern "hi" #:what)
+      (:export "hihi")
+      )
+    (use-package '() "foo")
+    (print (package-nicknames "foo"))
+    (describe (find-package "foo")))
+
+  (progn
+    (cl:defpackage "foo"
+      (:nicknames "foo-nick")
+      (:nicknames "foo-nick2")
+                                        ; (:nicknames )
+
+                                        ; (:use "CL")
+                                        ; (:use )
+
+                                        ; (:intern "S")
+      (:intern)
+      (:export "hi")
+      )
+    (cl:use-package '() "foo")
+    (print (cl:package-nicknames "foo"))
+    (describe (cl:find-package "foo"))))
+
+(describe (cl:defpackage "test-package"
+            ; (:use "CL-USER" "PARCL")
+            ;; (:shadow "A" "B" "C")
+            ;; (:export "D" "E" "F")
+            ))

@@ -1,5 +1,8 @@
 (cl:in-package #:parcl)
 
+;; HACK
+(sb-ext:add-package-local-nickname "ICO" "ICONOCLAST" "PARCL")
+
 (#+sbcl sb-ext:defglobal #-sbcl defvar **builder**
   (make-instance 'iconoclast-builder:builder))
 

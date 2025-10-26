@@ -15,6 +15,9 @@
                      `(lambda (,stream-var ,@parameters)
                         ,@body)))))
 
+  (define-restart-reporter (abort-operation stream operation)
+    (format stream "~@<Abort the ~A operation~@:>" operation))
+
   (define-restart-reporter (return-existing stream existing-package)
     (format stream "~@<Return the existing package ~S~@:>" existing-package))
 
@@ -26,15 +29,12 @@
     (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
             conflicting-symbol using-package))
 
-  (define-restart-reporter (do-not-export stream symbol)
-    (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
-
   (define-restart-reporter (make-old-shadowing stream conflicting-symbol using-package)
     (format stream "~@<Make ~S a shadowing symbol in ~S~@:>"
             conflicting-symbol using-package))
 
-  (define-restart-reporter (make-new-shadowings stream symbol using-package)
-    (format stream "~@<Make ~s a shadowing symbol in ~s~@:>"
+  (define-restart-reporter (make-new-shadowing stream symbol using-package)
+    (format stream "~@<Make ~S a shadowing symbol in ~S~@:>"
             symbol using-package))
 
   (define-restart-reporter (do-not-export stream symbol)
@@ -88,21 +88,10 @@
     (format stream "~@<The package ~S has been deleted and cannot be operated on.~@:>"
             (package-error-package condition)))
 
-  (define-reporter ((condition symbol-conflict) stream)
-    ;; TODO: the condition should probably contain information about
-    ;; the attempted operation
-    (format stream "~@<The requested operation leads to a conflict between ~
-                    the symbols ~{~S~^ and ~} in package ~S.~@:>"
-            (conflicting-symbols condition) (package-error-package condition)))
-
-  (define-reporter ((condition symbol-is-not-accessible-error) stream)
-    (format stream "~@<The symbol ~S is not accessible in package ~S.~@:>"
-            (inaccessible-symbol condition) (package-error-package condition)))
-
-  (define-reporter ((condition package-is-not-used) stream)
-    (format stream "~@<A package to be unused must be a used package, ~
-                    but the package ~S is not used by the package ~S.~@:>"
-            (package-to-unuse condition) (package-error-package condition)))
+  (define-reporter ((condition package-in-use-error) stream)
+    (format stream "~@<The package ~A is used by package ~A.~@:>"
+            (package-error-package condition)
+            (used-by condition)))
 
   (define-reporter ((condition nickname-refers-to-different-package-error) stream)
     (format stream "~@<Attempt to add the package-local nickname:~@
@@ -120,27 +109,33 @@
   ;; Conditions related to package-symbol relations
 
   (define-reporter ((condition symbol-conflicts-error) stream)
+    ;; TODO: the condition should probably contain information about
+    ;; the attempted operation
     (let ((package   (package-error-package condition))
           (conflicts (conflicts condition))
           (labels    (package-labels condition)))
       (pprint-logical-block (stream '())
-        ;; TODO mention the operation
-        (format stream "~@<The operation would introduce the following conflicts ~
-                        in package ~A:~@:>~@:_~@:_"
+        (format stream "~@<The operation on package ~A would introduce the ~
+                        following conflicts:~@:>~@:_~@:_"
                 package)
-        (report-conflicts stream conflicts package :labels labels)
-        #++ (loop for (name . infos) in conflicts
-              do (format stream "~@:_Symbol named ~S from packages ~{~A~^, ~}"
-                         name (mapcar #'cdr infos)))))))
+        (report-conflicts stream conflicts package :labels labels))))
 
+  (define-reporter ((condition symbol-is-not-accessible-error) stream)
+    (format stream "~@<The symbol ~S is not accessible in package ~S.~@:>"
+            (inaccessible-symbol condition) (package-error-package condition)))
+
+  (define-reporter ((condition unexport-forbidden-for-system-package-error) stream)
+    (format stream "~@<Attempt to unexport symbol ~A from the system package ~
+                    ~A.~@:>"
+            (symbol-to-unexport condition) (package-error-package condition))))
 
 (defun report-conflicts (stream conflicts package &key labels)
   (let ((clusters (make-hash-table :test #'equal))
         (first?   t))
     (flet ((add-conflict (conflict)
              (let* ((infos    (cdr conflict))
-                    (packages (mapcar #'cdr infos))
-                    (sorted   (sort packages  #'string< :key (lambda (p) (package-name p)))) ; TODO: capture *client* or something
+                    (packages (remove-duplicates (mapcar #'cdr infos) :test #'eq))
+                    (sorted   (sort packages #'string< :key (lambda (p) (package-name p)))) ; TODO: capture *client* or something
                     (key      (if (find package sorted :test #'eq)
                                   (list* package (remove package packages :test #'eq :count 1))
                                   sorted)))
@@ -159,22 +154,15 @@
                                            packages))
                      (loop for (name . infos) in conflicts
                            for symbols = (loop for package in packages
-                                               for (symbol . nil) = (rassoc package infos
-                                                                          :test #'eq)
-                                               collect (prin1-to-string symbol))
-                           collect (list* (prin1-to-string name) symbols))))
-             #++ (destructuring-bind (name-length . conflicts) cluster
-                   (setf conflicts (sort conflicts #'string< :key #'car)) ; TODO: properly
-                   (format stream "~V<Name~> ~{~{~V@<Package ~S~>~}~^ ~}~%"
-                           name-length (loop for package in packages
-                                             collect (list 20 (package-name package))))
-                   (loop for (name . infos) in conflicts
-                         for symbols = (loop for package in packages
-                                             for (name . nil) = (rassoc package infos
-                                                                        :test #'eq)
-                                             collect (list 20 name))
-                         do (format stream "~V@<~S~> ~{~{~VS~}~^ ~}~%"
-                                    name-length name symbols)))))
+                                               collect (with-output-to-string (stream)
+                                                         (loop with first? = t
+                                                               for (symbol . info-package) in infos
+                                                               when (eq info-package package)
+                                                                 do (if first?
+                                                                        (setf first? nil)
+                                                                        (write-string ", " stream))
+                                                                    (prin1 symbol stream))))
+                           collect (list* (prin1-to-string name) symbols))))))
       (mapc #'add-conflict conflicts)
       (maphash #'report-cluster clusters))))
 

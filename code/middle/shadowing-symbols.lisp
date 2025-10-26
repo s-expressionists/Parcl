@@ -6,5 +6,5 @@
              (declare (ignore export-status))
              (when shadow-status
                (push symbol result))))
-      (parcl-low:map-symbol-entries client #'consider-symbol package)) ; TODO: use status filter argument
+      (parcl.low:map-symbol-entries client #'consider-symbol package)) ; TODO: use status filter argument
     result))

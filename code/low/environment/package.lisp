@@ -27,7 +27,7 @@
     ;; TODO(jmoringe): number of symbols etc., deletion status
     (format stream "~A" (%name object))))
 
-;; TODO(jmoringe): should not be needed; better parcl-low:packagep client maybe-package
+;; TODO(jmoringe): should not be needed; better parcl.low:packagep client maybe-package
 (defmethod low:find-package ((client client) (package-designator package))
   package-designator)
 
@@ -43,9 +43,7 @@
 (defmethod low:name ((client client) (package package))
   (%name package))
 
-(defmethod (setf low:name) ((new-value t)
-                            (client    client)
-                            (package   package))
+(defmethod (setf low:name) ((new-value t) (client client) (package package))
   (setf (%name package) new-value))
 
 (defmethod (setf low:name) :around ((new-value t)
@@ -88,8 +86,7 @@
                          (assert (eq package* package))
                          (let ((new-data (list* ,key new-value
                                                 (alexandria:remove-from-plist data ,key))))
-                           (values (cons package* new-data) t)))))))))
-           )
+                           (values (cons package* new-data) t))))))))))
   (define low:nicknames            :nicknames)
   (define low:use-list             :use-list)
   (define low:used-by-list         :used-by-list)
@@ -128,9 +125,7 @@
                        (funcall function (car entry)))
                      package environment)))
 
-(defmethod low::symbol-entry ((client  client)
-                              (name    string)
-                              (package package))
+(defmethod low:symbol-entry ((client client) (name string) (package package))
   (let* ((environment (environment client))
          #++ (name        (%name package))
          (entry       (env:lookup name package environment

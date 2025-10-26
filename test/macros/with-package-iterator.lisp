@@ -4,16 +4,16 @@
 
 (test with-package-iterator.smoke
   "Smoke test for the `with-package-iterator' macro."
-  (mapc
-   (lambda (arguments-and-expected)
-     (destructuring-bind (packages symbol-types expected)
-         arguments-and-expected
-       (with-mock-package-constellation ((package1 "P1") (package2 "P2"))
-         (parcl:intern "BAR" package1)
-         (parcl:export (parcl:intern "BAZ" package1) package1)
-         (parcl:intern "FEZ" package2)
-         (parcl:export (parcl:intern "WOO" package2) package2)
-         (parcl:use-package package1 package2)
+  (with-mock-package-constellation ((package1 "P1") (package2 "P2"))
+    (parcl:intern "BAR" package1)
+    (parcl:export (parcl:intern "BAZ" package1) package1)
+    (parcl:intern "FEZ" package2)
+    (parcl:export (parcl:intern "WOO" package2) package2)
+    (parcl:use-package package1 package2)
+    (mapc
+     (lambda (arguments-and-expected)
+       (destructuring-bind (packages symbol-types expected)
+           arguments-and-expected
          (let ((result
                  (eval
                   `(parcl:with-package-iterator (i '(,@packages) ,@symbol-types)

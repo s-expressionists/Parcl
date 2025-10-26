@@ -1,5 +1,6 @@
 #++ (ql:quickload '("computation.environment"
-                "parcl-low-environment"))
+                "parcl-low-environment"
+                    "parcl-macros"))
 
 (cl:defpackage #:parcl.examples.environment
   (:use

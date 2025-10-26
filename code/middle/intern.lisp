@@ -12,7 +12,7 @@
                                 :inherited)))))
     (map-accessible-entries-with-name client #'consider-symbol name package))
   (let ((symbol            (low:make-symbol client name package)) ; sets home package
-        (new-export-status (if (string= (parcl-low:name client package) "KEYWORD") ; TODO: better way
+        (new-export-status (if (string= (parcl.low:name client package) "KEYWORD") ; TODO: better way
                                :external
                                :internal)))
     (setf (low:symbol-entry client name package)

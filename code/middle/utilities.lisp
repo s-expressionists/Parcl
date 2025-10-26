@@ -1,5 +1,15 @@
 (cl:in-package #:parcl.middle)
 
+(defun map-inheritable-entries-with-name (client function name package
+                                          &optional (other-packages
+                                                     (low:use-list client package)))
+  (loop for other-package in other-packages
+        do (multiple-value-bind (inherited-symbol export-status shadow-status)
+               (low:symbol-entry client name other-package)
+             ;; TODO: either (when (eq export-status :external)) or explain why not
+             (unless (or (null export-status) (eq export-status :internal))
+               (funcall function other-package inherited-symbol export-status shadow-status)))))
+
 (defun map-accessible-entries (client function package
                                &optional (other-packages
                                           (low:use-list client package)))
@@ -31,13 +41,10 @@
     ;; TODO: test this
     (if (not (null export-status))
         (funcall function package present-symbol export-status shadow-status)
-        (loop for other-package in other-packages
-              do (multiple-value-bind (inherited-symbol export-status shadow-status)
-                     (low:symbol-entry client name other-package)
-                   (unless (or (null export-status) (eq export-status :internal))
-                     (funcall function other-package inherited-symbol export-status shadow-status))))))
+        (map-inheritable-entries-with-name client function name package other-packages)))
   nil)
 
+;;; TODO: call a function
 (defmacro check-names-unoccupied (((name-var existing-package-var error-name)
                                    client names
                                    &optional (new-package nil new-package-supplied-p))

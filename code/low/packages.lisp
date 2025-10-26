@@ -13,7 +13,7 @@
 
   ;; Package functions
   (:shadow
-   . #2=(#:package
+   . #2=(#:package ; TODO: protocol class is wrong here, I think
          #:packagep
          #:documentation))
   (:export

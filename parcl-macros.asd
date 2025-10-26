@@ -28,6 +28,7 @@
                 :components ((:file "package")
                              (:file "in-package")
                              (:file "defpackage")
+                             (:file "with-package-iterator")
                              (:file "do-symbols-macros"))))
   :perform (test-op (operation component)
              (uiop:symbol-call '#:parcl.macros.test '#:run-tests)))

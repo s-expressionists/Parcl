@@ -5,7 +5,7 @@
   (:local-nicknames
    (#:a      #:alexandria)
    (#:middle #:parcl.middle)
-   (#:low    #:parcl-low))
+   (#:low    #:parcl.low))
 
   (:export
    #:client))
@@ -18,6 +18,14 @@
 
 ;;;; Middle
 
+(defun translate-package-name-occupied (condition)
+  (let* ((name             (first (simple-condition-format-arguments
+                                   condition)))
+         (existing-package (find-package name)))
+   (error 'parcl:package-name-occupied-error
+          :new-name         name
+          :existing-package existing-package )))
+
 (defun translate-name-conflict (condition)
   (let ((conflicts '()))
     (loop :for symbol        :in (sb-ext:name-conflict-symbols condition)
@@ -29,7 +37,7 @@
                                        (push conflict conflicts)
                                        conflict))
           :do (push (cons symbol other-package) (cdr conflict)))
-    (error 'parcl::symbol-conflicts-error ; TODO: rename to name conflict
+    (error 'parcl:symbol-conflicts-error ; TODO: rename to name conflict
            :package   (package-error-package condition)
            :conflicts conflicts)))
 
@@ -69,16 +77,20 @@
   (intern name package))
 
 (defmethod middle:unintern ((client client) (package package) (symbol t))
-  (unintern symbol package))
+  (with-translated-name-conflict ()
+    (unintern symbol package)))
 
 (defmethod middle:export ((client client) (package package) (symbol t))
-  (export symbol package))
+  (with-translated-name-conflict ()
+    (export symbol package)))
 
 (defmethod middle:unexport ((client client) (package package) (symbol t))
-  (unexport symbol package))
+  (with-translated-name-conflict ()
+    (unexport symbol package)))
 
 (defmethod middle:import ((client client) (package package) (symbol t))
-  (import symbol package))
+  (with-translated-name-conflict ()
+    (import symbol package)))
 
 (defmethod middle:shadowing-import
     ((client client) (package package) (symbol t))
@@ -98,7 +110,9 @@
 
 (defmethod middle:make-package
     ((client client) (name t) (nicknames t) (used-packages t))
-  (make-package name :nicknames nicknames :use used-packages))
+  ;; TODO: could be problem with used packages as well
+  (handler-bind ((package-error #'translate-package-name-occupied))
+    (make-package name :nicknames nicknames :use used-packages)))
 
 (defmethod middle:delete-package ((client client) (package package))
   (delete-package package))
@@ -175,5 +189,5 @@
 
 ;;;
 
-#++(defmethod low:find-package ((client client) (name name))
-     (find-package name))
+#++ (defmethod low:find-package ((client client) (name string))
+  (find-package name))

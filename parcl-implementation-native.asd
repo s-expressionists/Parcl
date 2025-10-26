@@ -1,4 +1,5 @@
 (defsystem "parcl-implementation-native"
+  :depends-on ("parcl-extrinsic")
   :components ((:module     "native"
                 :pathname   "code/implementation/native"
                 :components ((:file "package"))))

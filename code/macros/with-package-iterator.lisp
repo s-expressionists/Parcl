@@ -1,16 +1,15 @@
 (cl:in-package #:parcl)
 
 ;;; TODO: should this be a middle generic function?
-(defun make-closure (package-list symbol-types)
+(defun %make-symbol-iterator (client package-list symbol-types)
   (when (or (null package-list) (null symbol-types))
-    (return-from make-closure (lambda () nil)))
-  (let ((client             *client*)
-        (internal?          (member :internal symbol-types))
+    (return-from %make-symbol-iterator (lambda () nil)))
+  (let ((internal?          (member :internal symbol-types))
         (external?          (member :external symbol-types))
         (inherited?         (member :inherited symbol-types))
         (remaining-packages package-list)
-        (symbol-entries     (make-array 0 :adjustable t :fill-pointer 0))
-        (current-package    nil))
+        (current-package    nil)
+        (symbol-entries     (make-array 0 :adjustable t :fill-pointer 0)))
     (labels ((maybe-push-entry (symbol status)
                (when (ecase status
                        (:internal  internal?)
@@ -30,51 +29,41 @@
                             (maybe-push-entry symbol export-status)
                             (maybe-push-entry symbol :inherited)))
                       current-package)
-                     (parcl-low:map-symbol-entries
+                     (parcl.low:map-symbol-entries
                       client (lambda (symbol export-status shadow-status)
                                (declare (ignore shadow-status))
                                (maybe-push-entry symbol export-status))
                       current-package))
                  t))
              (next-symbol ()
-               (when (plusp (length symbol-entries))
-                 (values (vector-pop symbol-entries)
-                         (vector-pop symbol-entries))))
-             (return-one ()
                (tagbody
                 try-next-symbol
-                  (multiple-value-bind (symbol status) (next-symbol)
-                    (when (not (null status))
-                      (return-from return-one
-                        (values t symbol status current-package))))
+                  (when (plusp (length symbol-entries))
+                    (return-from next-symbol
+                      (values t
+                              (vector-pop symbol-entries)
+                              (vector-pop symbol-entries)
+                              current-package)))
                 try-next-package
                   (when (next-package)
-                    (go try-next-symbol)))))
+                    (go try-next-symbol))
+                  nil)))
       (next-package)
-      #'return-one)))
+      #'next-symbol)))
 
-(let* ((parcl:*client* (make-instance 'parcl.implementation.native:client))
-       (thunk          (make-closure (list (parcl:find-package "CL-USER"))
-                                     '(:internal :external :inherited))))
-  (let ((cl:*package* (find-package '#:keyword)))
-    (loop :for (ok? symbol status package) = (multiple-value-list (funcall thunk))
-          :while ok?
-          :count 1 :into count
-          :do (format *trace-output* "~64S ~32A ~A~%"
-                      symbol (package-name package) status)
-          :finally (format *trace-output* "~:D symbol~:P~%" count))))
+(defun make-symbol-iterator (package-designators symbol-types)
+  (let* ((client   *client*)
+         (packages (package-list<-designator client package-designators)))
+    (%make-symbol-iterator client packages symbol-types)))
 
-(cl:with-package-iterator (thunk (list (cl:find-package "CL-USER"))
-                                 :internal :external :inherited)
-  (let ((cl:*package* (cl:find-package '#:keyword)))
-    (loop :for (ok? symbol status package) = (multiple-value-list (thunk))
-          :while ok?
-          :count 1 :into count
-          :do (format *trace-output* "~64S ~32A ~A~%"
-                      symbol (cl:package-name package) status)
-          :finally (format *trace-output* "~:D symbol~:P~%" count))))
-
-#++ (clouseau:inspect (cl:find-package "CL-USER"))
+(defun expand-with-package-iterator
+    (name package-list-form symbol-types declarations tags-and-statements)
+  (let ((iterator (gensym "ITERATOR")))
+    `(let ((,iterator (make-symbol-iterator ,package-list-form
+                                            '(,@symbol-types))))
+       (macrolet ((,name () `(funcall ,',iterator)))
+         ,@declarations
+         ,@tags-and-statements))))
 
 (defmacro with-package-iterator ((name package-list-form &rest symbol-types)
                                  &body body)
@@ -87,8 +76,17 @@
                                         :format-arguments (list object)))
   (multiple-value-bind (declarations tags-and-statements)
       (ecclesia:separate-ordinary-body body)
-   `(let ((closure (make-closure (package-list<-designator *client* ,package-list-form) ; TODO: make a runtime function for doing the coercion
-                                 '(,@symbol-types))))
-      ,@declarations
-      (flet ((,name () (funcall closure)))
-        ,@body))))
+    (expand-with-package-iterator
+     name package-list-form symbol-types declarations tags-and-statements)))
+
+#+TODO (define-macro with-package-iterator ((name package-list-form &rest symbol-types)
+                                     &body body)
+    ast
+  (let ((name                (ico:name-ast ast))
+        (package-list        (ico:package-list-ast ast))
+        (symbol-types        (ico:symbol-types-ast ast))
+        (declarations        (ico:declaration-asts ast))
+        (tags-and-statements (ico:tagbody-segment-ast ast)))
+    (break "~S" name)
+    (expand-with-package-iterator
+     name package-list-form symbol-types declarations tags-and-statements)))

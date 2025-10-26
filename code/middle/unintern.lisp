@@ -1,14 +1,5 @@
 (cl:in-package #:parcl.middle)
 
-(defun find-exported-symbols-in-packages (client packages name)
-  (let ((result '()))
-    (loop for package in packages
-          do (multiple-value-bind (symbol export-status)
-                 (low:symbol-entry client name package)
-               (when (eq export-status :external)
-                 (pushnew symbol result :test #'eq))))
-    result))
-
 (defmethod unintern ((client t) (package t) (symbol t))
   (let ((name (low:symbol-name client symbol)))
     ;; TODO: use (map-accessible-entries-with-name)
@@ -21,16 +12,42 @@
                (when (eq (low:symbol-package client symbol) package)
                  (setf (low:symbol-package client symbol) nil))))
         (cond ((or (null export-status) (not (eq present-symbol symbol)))
+               ;; not present or a different symbol altogether
                nil)
-              (shadow-status
-               (let* ((used-packages (low:use-list client package))
-                      (symbols       (find-exported-symbols-in-packages
-                                      client used-packages name)))
-                 (when (> (length symbols) 1)
-                   ;; We have a conflict.  TODO: For now just signal an error.
-                   (error "Symbol conflict, not uninterning ~s" symbol)))
-               (remove-symbol)
-               t)
-              (t
+              (shadow-status ; present and shadowing
+               (let ((unique    '())
+                     (conflicts '()))
+                 ;; TODO: use status argument
+                 (map-inheritable-entries-with-name
+                  client
+                  (lambda (conflict-package conflict-symbol export-status shadow-status)
+                    (declare (ignore export-status shadow-status))
+                    (pushnew conflict-symbol unique :test #'eq)
+                    (push (cons conflict-symbol conflict-package) conflicts))
+                  name package)
+                 (cond ((null (cdr unique))
+                        ;; no conflict between multiple inherited symbols
+                        (remove-symbol)
+                        t)
+                       (t ; conflict between multiple inherited symbols
+                        (restart-case
+                            (error 'parcl:symbol-conflicts-error
+                                   :package        package
+                                   :conflicts      `((,name . ((,symbol . ,package)
+                                                               ,@conflicts)))
+                                   :package-labels `((,package . "using package")
+                                                     ,@(loop :for (nil . package) :in conflicts
+                                                             :collect `(,package . "exporting package")))
+                                   "Symbol conflict, not uninterning ~s" symbol)
+                          (#1=parcl::abort-operation ()
+                            :report (lambda (stream)
+                                      (parcl::report-restart '#1# stream 'unintern))
+                            nil)
+                          #+TODO-choose-which-symbol-to-inherit
+                          (parcl:
+                              (remove-symbol)
+                            shadowing-import the chosen one
+                            t))))))
+              (t ; present and not shadowing
                (remove-symbol)
                t))))))

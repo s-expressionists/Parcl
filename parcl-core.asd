@@ -46,11 +46,11 @@
                                (:file "find-symbol")
                                (:file "intern")
                                (:file "unintern")
-                               (:file "import")
-                               (:file "shadowing-import")
-                               (:file "shadow")
                                (:file "export")
                                (:file "unexport")
+                               (:file "import")
+                               (:file "shadow")
+                               (:file "shadowing-import")
                                ;; Environment functions
                                (:file "packages")
                                (:file "find-package-using-package")
@@ -125,12 +125,12 @@
   :components ((:module     "test"
                 :serial     t
                 :components ((:file "package")
+                             ;; Utilities
+                             (:file "utilities")
                              ;; Mock package system
                              (:file "mock-symbol")
                              (:file "mock-package")
                              (:file "mock-client")
-                             ;; Utilities
-                             (:file "utilities")
                              ;; Tests
                              ;; Package functions
                              (:file "package-local-nicknames")
