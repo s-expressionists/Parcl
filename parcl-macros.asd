@@ -20,6 +20,9 @@
 
 (defsystem "parcl-macros/test"
   :depends-on ("fiveam"
+
+               "parcl-core/test"  ; TODO: explain why
+
                "parcl-macros")
 
   :components ((:module     "test"
