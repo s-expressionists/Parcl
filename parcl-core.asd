@@ -6,7 +6,7 @@
   :author ("Robert Strandh"
            "Jan Moringen")
   :depends-on  ("parcl-core/sentinel"
-                "ecclesia"
+                "ecclesia" ; TODO: used for proper-list-p and in some macros
                 "acclimation")
   :components  (;; Code that can be shared between the low and high
                 ;; modules as well as different package system

@@ -1,10 +1,8 @@
 (cl:in-package #:parcl)
 
-;; HACK
-(sb-ext:add-package-local-nickname "ICO" "ICONOCLAST" "PARCL")
+;;;
 
-(#+sbcl sb-ext:defglobal #-sbcl defvar **builder**
-  (make-instance 'iconoclast-builder:builder))
+(#+sbcl sb-ext:defglobal #-sbcl defvar **builder** 'list)
 
 (defmacro parse (syntax form)
   `(let* ((builder       **builder**)
@@ -20,6 +18,20 @@
                           (princ-to-string condition))))
            (error 'macro-syntax-error :format-control   "~S"
                                       :format-arguments (list message)))))))
+
+(declaim (inline string<-designator-node value<-literal-node))
+
+(defun string<-designator-node (designator-node)
+  (let ((initargs (architecture.builder-protocol:node-initargs
+                   **builder** designator-node)))
+    (getf initargs :string)))
+
+(defun value<-literal-node (literal-node)
+  (let ((initargs (architecture.builder-protocol:node-initargs
+                   **builder** literal-node)))
+    (getf initargs :value)))
+
+;;;
 
 (defmacro define-macro (name (&rest lambda-list) ast-var &body body)
   (let ((cl-name (cl:intern (string name) '#:common-lisp)))

@@ -6,9 +6,7 @@
   :version (:read-file-form "data/version-string.sexp")
   :depends-on ("parcl-core"
                "s-expression-syntax"
-               "ecclesia"
-               "iconoclast"
-               "iconoclast-builder")
+               "ecclesia") ; TODO: temporary
   :components ((:module     "macros"
                 :pathname   "code/macros"
                 :serial     t

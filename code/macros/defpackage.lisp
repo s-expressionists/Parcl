@@ -48,35 +48,41 @@
 
 ;;; Parsing
 
-(defun strings<-designator-asts (designator-asts)
-  (mapcar #'ico:designated-string designator-asts))
+(defun strings<-designator-nodes (designator-nodes)
+  (mapcar #'string<-designator-node designator-nodes))
 
-(defun cons<-import-from-ast (import-from-ast)
-  (let ((package-name (ico:designated-string
-                       (ico:package-name-ast import-from-ast)))
-        (symbol-names (strings<-designator-asts
-                       (ico:name-asts import-from-ast))))
+(defun cons<-import-from-node (import-from-node)
+  (let ((package-name (string<-designator-node
+                       (architecture.builder-protocol:node-relation
+                        **builder** '(:package . 1) import-from-node)))
+        (symbol-names (strings<-designator-nodes
+                       (architecture.builder-protocol:node-relation
+                        **builder** '(:name . *) import-from-node))))
     (cons package-name symbol-names)))
 
-(defun conses<-import-from-asts (import-from-asts)
-  (mapcar #'cons<-import-from-ast import-from-asts))
+(defun conses<-import-from-nodes (import-from-nodes)
+  (mapcar #'cons<-import-from-node import-from-nodes))
 
 ;;; TODO: local-nicknames
-(define-macro defpackage (name &rest options) ast
-  (let* ((name (ico:designated-string (ico:name-ast ast)))
+(define-macro defpackage (name &rest options) node
+  (let* ((name (string<-designator-node
+                (architecture.builder-protocol:node-relation
+                 **builder** '(:name . 1) node)))
          (args '()))
-    (macrolet ((maybe-initarg (initarg reader transformation)
+    (macrolet ((maybe-initarg (initarg relation transformation)
                  ;; TODO: we can't distinguish e.g. (:export) from no :export at all
-                 `(alexandria:when-let ((child (,reader ast)))
-                    (push (,transformation child) args)
-                    (push ,initarg                args))))
-      (maybe-initarg :nicknames     ico:nickname-asts     strings<-designator-asts)
-      (maybe-initarg :shadow        ico:shadow-asts       strings<-designator-asts)
-      (maybe-initarg :shadowing-import-from ico:shadowing-import-from-asts conses<-import-from-asts)
-      (maybe-initarg :use           ico:use-asts          strings<-designator-asts)
-      (maybe-initarg :import-from   ico:import-from-asts  conses<-import-from-asts)
-      (maybe-initarg :intern        ico:intern-asts       strings<-designator-asts)
-      (maybe-initarg :export        ico:export-asts       strings<-designator-asts)
-      (maybe-initarg :size          ico:size-ast          ico:literal)
-      (maybe-initarg :documentation ico:documentation-ast ico:%string))
-    (apply #'expand-defpackage name args )))
+                 `(let ((child (architecture.builder-protocol:node-relation
+                                **builder** ,relation node)))
+                    (unless (null child)
+                      (push (,transformation child) args)
+                      (push ,initarg                args)))))
+      (maybe-initarg :nicknames     :nickname      strings<-designator-nodes)
+      (maybe-initarg :shadow        :shadow        strings<-designator-nodes)
+      (maybe-initarg :shadowing-import-from :shadowing-import-from conses<-import-from-nodes)
+      (maybe-initarg :use           :use           strings<-designator-nodes)
+      (maybe-initarg :import-from   :import-from   conses<-import-from-nodes)
+      (maybe-initarg :intern        :intern        strings<-designator-nodes)
+      (maybe-initarg :export        :export        strings<-designator-nodes)
+      (maybe-initarg :size          :size          value<-literal-node)
+      (maybe-initarg :documentation :documentation string<-designator-node))
+    (apply #'expand-defpackage name args)))
