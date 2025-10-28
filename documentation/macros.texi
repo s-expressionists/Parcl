@@ -6,14 +6,24 @@ Parcl
 @macro commonlisp
 Common Lisp
 @end macro
+
 @macro toppackage
 parcl
+@end macro
+@macro middlepackage
+@toppackage{}.middle
+@end macro
+@macro lowpackage
+@toppackage{}.low
 @end macro
 
 @c Lambda list keywords
 
 @macro optional
 @t{&optional}
+@end macro
+@macro rest
+@t{&rest}
 @end macro
 @macro pkey
 @t{&key}
@@ -23,6 +33,19 @@ parcl
 @end macro
 
 @c Semantic markup and references
+
+@macro term{TERM}
+@anchor{Term \TERM\}@dfn{\TERM\}
+@end macro
+@macro terml{TERM,LABEL}
+@anchor{Term \TERM\}@dfn{\LABEL\}
+@end macro
+@macro termref{TERM}
+@link{Term \TERM\,@emph{\TERM\}}
+@end macro
+@macro termrefl{TERM,LABEL}
+@link{Term \TERM\,@emph{\LABEL\}}
+@end macro
 
 @macro setf{NAME}
 (setf \NAME\)
@@ -43,23 +66,87 @@ parcl
 @anchor{Variable \PACKAGE\|\NAME\}
 @defvar {@symbol{\NAME\,\PACKAGE\}}
 @end macro
+@macro varref{NAME,PACKAGE}
+@link{Variable \PACKAGE\|\NAME\,@t{\PACKAGE\:\NAME\}}
+@end macro
 
 @macro deffuna{NAME,PACKAGE}
 @anchor{Function \PACKAGE\|\NAME\}
 @deffn {Function} {@symbol{\NAME\,\PACKAGE\}}
+@end macro
+@macro funref{NAME,PACKAGE}
+@link{Function \PACKAGE\|\NAME\,@t{\PACKAGE\:\NAME\}}
 @end macro
 
 @macro defgena{NAME,PACKAGE}
 @anchor{Generic-Function \PACKAGE\|\NAME\}
 @deffn {Generic Function} {@symbol{\NAME\,\PACKAGE\}}
 @end macro
+@macro genref{NAME,PACKAGE}
+@link{Generic-Function \PACKAGE\|\NAME\,@t{\PACKAGE\:\NAME\}}
+@end macro
 
 @macro defmaca{NAME,PACKAGE}
 @anchor{Macro \PACKAGE\|\NAME\}
 @deffn {Macro} {@symbol{\NAME\,\PACKAGE\}}
 @end macro
+@macro macref{NAME,PACKAGE}
+@link{Macro \PACKAGE\|\NAME\,@t{\PACKAGE\:\NAME\}}
+@end macro
 
 @macro defclassa{NAME,PACKAGE}
 @anchor{Class \PACKAGE\|\NAME\}
 @deftp {Class} {@symbol{\NAME\,\PACKAGE\}}
+@end macro
+@macro classref{NAME,PACKAGE}
+@link{Class \PACKAGE\|\NAME\,@t{\PACKAGE\:\NAME\}}
+@end macro
+
+@c Link to Common Lisp specification
+
+@macro speclink{CATEGORY,NAME}
+@uref{https://novaspec.org/cl/\CATEGORY\_\NAME\,@t{cl:\NAME\}}
+@end macro
+@macro speclinkl{CATEGORY,NAME,LABEL}
+@uref{https://novaspec.org/cl/\CATEGORY\_\NAME\,@t{\LABEL\}}
+@end macro
+
+@macro spectermref{TERM}
+@uref{https://novaspec.org/cl/26_1_Glossary#\TERM\,@emph{\TERM\}}
+@end macro
+@macro spectermrefl{TERM,LABEL}
+@uref{https://novaspec.org/cl/26_1_Glossary#\TERM\,@emph{\LABEL\}}
+@end macro
+
+@c Extensions
+
+@macro partofpln
+@quotation note
+This function does not correspond to a standard @commonlisp{} operator.
+Instead, it is part of the semi-standard @ref{Package-local Nicknames}
+extension.
+@end quotation
+
+@end macro
+
+@c Trampoline
+
+@macro like{CATEGORY,NAME}
+Behaves like the @commonlisp{} operator @speclink{\CATEGORY\,\NAME\}.
+@end macro
+
+@macro implements{CATEGORY,NAME}
+This function can be used to implement and customize the standard
+function @speclink{\CATEGORY\,\NAME\}.
+@end macro
+
+@macro implementedby{MODULE,IMPLEMENTATION}
+This function resolves designators and then calls the generic function
+@genref{\IMPLEMENTATION\,@toppackage{}.\MODULE\} with the value of
+@varref{*client*,@toppackage{}} as the first argument and the results of
+resolving all designators as additional arguments.
+@end macro
+
+@macro trampoline{CATEGORY,NAME,MODULE,IMPLEMENTATION}
+@like{\CATEGORY\,\NAME\} @implementedby{\MODULE\,\IMPLEMENTATION\}
 @end macro
