@@ -4,7 +4,9 @@
   :author ("Robert Strandh"
            "Jan Moringen")
   :version (:read-file-form "data/version-string.sexp")
-  :depends-on ("ecclesia"
+  :depends-on ("parcl-core"
+               "s-expression-syntax"
+               "ecclesia"
                "iconoclast"
                "iconoclast-builder")
   :components ((:module     "macros"
