@@ -2,7 +2,7 @@
 
 ;;;; Utility functions
 
-(defun find-symbols (client package-name symbol-names)
+(defun resolve-symbols (client package-name symbol-names)
   (loop :with package = (parcl::find-undeleted-package-or-error
                         client package-name) ; TODO(jmoringe): error
         :for symbol-name in symbol-names
@@ -16,9 +16,9 @@
                 (error "No symbol named ~S in package ~A" symbol-name package)) ; TODO(jmoringe): proper error
         ))
 
-(defun find-symbols-in-packages (client package-and-symbols-pairs)
+(defun resolve-symbols-in-packages (client package-and-symbols-pairs)
   (loop :for (package-name . symbol-names) :in package-and-symbols-pairs
-        :nconc (find-symbols client package-name symbol-names)))
+        :nconc (resolve-symbols client package-name symbol-names)))
 
 ;;;; Default methods
 
@@ -49,9 +49,9 @@
       (maybe-argument (use use-supplied-p)
                       :use parcl::package-list<-designator-list)
       (maybe-argument (shadowing-import-from shadowing-import-from-supplied-p)
-                      :shadowing-import find-symbols-in-packages)
+                      :shadowing-import resolve-symbols-in-packages)
       (maybe-argument (import-from import-from-supplied-p)
-                      :import find-symbols-in-packages))
+                      :import resolve-symbols-in-packages))
     (apply #'ensure-package-using-package client existing-package name
            new-args)))
 

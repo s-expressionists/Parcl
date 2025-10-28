@@ -42,9 +42,9 @@
    (cons :shadowing-import-from (alexandria:mappend #'cdr shadowing-import-from)))
   (check-options-disjoint :intern intern :export export)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (ensure-package *client* ',name
-                     ,@(loop :for (key value) :on args :by #'cddr
-                             :collect key :collect `',value))))
+     (parcl.middle:ensure-package
+      *client* ',name ,@(loop :for (key value) :on args :by #'cddr
+                              :collect key :collect `',value))))
 
 ;;; Parsing
 
