@@ -7,6 +7,9 @@
 
 (defsystem "parcl-implementation-native/test"
   :depends-on ("fiveam"
+
+               "parcl-core/test" ; for `parcl.test::*high-tests*'
+
                "parcl-implementation-native")
   :components ((:module     "native"
                 :pathname   "test/implementation/native"

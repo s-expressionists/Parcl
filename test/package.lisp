@@ -36,7 +36,8 @@
 (defmacro high-test (name-and-options &body body)
   (destructuring-bind (name &key (client-class 'mock-client))
       (a:ensure-list name-and-options)
-    (register-high-test name body)
-    `(test ,name
-       (let ((*client-maker* (lambda () (make-instance ',client-class))))
-         ,@body))))
+    `(progn
+       (register-high-test ',name ',body)
+       (test ,name
+         (let ((*client-maker* (lambda () (make-instance ',client-class))))
+           ,@body)))))
