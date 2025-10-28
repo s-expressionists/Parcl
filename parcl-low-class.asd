@@ -17,8 +17,10 @@ with slots that holds all the information related to a package."
 
 (defsystem "parcl-low-class/test"
   :depends-on  ("fiveam"
-                "parcl-core/test")
+                "parcl-core/test"
+
+                "parcl-low-class")
   :components  ((:file     "test"
-                :pathname "test/low/class/test"))
+                 :pathname "test/low/class/test"))
   :perform     (test-op (operation component)
                  (uiop:symbol-call '#:parcl-low-class.test '#:run-tests)))
