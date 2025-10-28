@@ -1,0 +1,30 @@
+@cindex package-local nicknames
+@partofpln
+
+Change the @termrefl{package-local nickname,package-local nicknames}
+within @var{package} such that @var{local-nickname} refers to
+@var{nicknamed-package} and return the package object designated by
+@var{nicknamed-package}.
+
+@var{local-nickname} is a @spectermrefl{string_designator,string
+designator} that represents the local nickname to be used to refer to
+@var{nicknamed-package}.  @var{nicknamed-package} is a
+@spectermrefl{package_designator,designator} for the package object to
+be nicknamed.  @var{package} is a
+@spectermrefl{package_designator,designator} for a package object to
+which the pair of @var{local-nickname} and @var{nicknamed-package} is to
+be added.  If @var{package} is not supplied, the current value of
+@varref{*package*,@toppackage{}} is used instead.
+
+If the pair of @var{local-nickname} and @var{nicknamed-package} exists in
+@var{package} already, then the call to this function has no effect.  If
+a pair of @var{local-nickname} and a different nicknamed package exists in
+@var{package} already, then an error of type
+@classref{nickname-refers-to-different-package-error,@toppackage{}} is
+signaled.
+
+TODO: the default method
+;;; Otherwise, the NICKNAME/NICKNAMED-PACKAGE pair
+;;; is added to PACKAGE using the accessor LOCAL-NICKNAMES, and
+;;; PACKAGE is added to NICKNAMED-PACKAGE using the accessor
+;;; LOCALLY-NICKNAMED-BY.

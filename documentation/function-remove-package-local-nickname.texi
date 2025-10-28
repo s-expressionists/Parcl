@@ -1,0 +1,22 @@
+@cindex package-local nicknames
+@partofpln
+
+Remove the @termref{package-local nickname} @var{local-nickname} from
+@var{package} and return @emph{true} if @var{package} has been changed
+and @code{nil} otherwise.
+
+@var{local-nickname} is a @spectermrefl{string_designator,string
+designator} that represents the local nickname to be removed from
+@var{package}.  @var{package}
+@spectermrefl{package_designator,designator} for a package object from
+which @var{local-nickname} is to be removed.  If @var{package} is not
+supplied, the current value of @varref{*package*,@toppackage{}} is used
+instead.
+
+If @var{local-nickname} is the @termref{package-local nickname} of any
+package in @var{package}, then it is removed, and this function returns
+@emph{true}.  If @var{nickname} is not the @termref{package-local
+nickname} of any package in @var{package}, then this function has no
+effect, and returns @code{nil}.
+
+TODO The default implementation
