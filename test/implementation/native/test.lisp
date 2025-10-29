@@ -13,14 +13,23 @@
   (fiveam:run! :parcl.implementation.native))
 
 (defclass native-test-client (parcl.implementation.native:client)
-  ((%created-packages :accessor created-packages
-                      :initform '())))
+  ((%created-system-packages :accessor created-system-packages
+                             :initform '())
+   (%created-packages        :accessor created-packages
+                             :initform '())))
 
 (defmethod parcl.middle:make-package :around
     ((client native-test-client) (name t) (nicknames t) (used-packages t))
-  (let ((package (call-next-method)))
-    (pushnew package (created-packages client))
-    package))
+  ;; Allow `make-package' once for "COMMON-LISP" and "KEYWORD", then complain.
+  (cond ((not (member name '("COMMON-LISP" "KEYWORD") :test #'string=))
+         (let ((package (call-next-method)))
+           (pushnew package (created-packages client))
+           package))
+        ((member name (created-system-packages client))
+         (call-next-method))
+        (t
+         (push name (created-system-packages client))
+         (find-package name))))
 
 (defmethod parcl.test::reset ((client native-test-client))
   (handler-bind ((error #'continue))

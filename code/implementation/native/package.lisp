@@ -24,7 +24,7 @@
          (existing-package (find-package name)))
    (error 'parcl:package-name-occupied-error
           :new-name         name
-          :existing-package existing-package )))
+          :existing-package existing-package)))
 
 (defun translate-name-conflict (condition)
   (let ((conflicts '()))
@@ -41,14 +41,27 @@
            :package   (package-error-package condition)
            :conflicts conflicts)))
 
-(defmacro with-translated-name-conflict (() &body body)
-  `(handler-bind ((sb-ext:name-conflict #'translate-name-conflict))
-     ,@body))
+(defmacro with-translated-restarts ((&rest restart-mapping) &body body)
+  `(restart-case
+       (progn ,@body)
+     ,@(loop :for (restart native-restart) :in restart-mapping
+             :collect `(,restart ()
+                         (invoke-restart ',native-restart)))))
+
+(defmacro with-translated-name-conflict ((&rest restart-mapping) &body body)
+  `(restart-case
+       (handler-bind ((sb-ext:name-conflict
+                        (lambda (condition)
+                          (with-translated-restarts (,@restart-mapping)
+                            (translate-name-conflict condition)))))
+         ,@body)
+     (abort () nil)))
 
 (defmethod middle:use-packages ((client          client)
                                 (package         package)
                                 (packages-to-use t))
-  (with-translated-name-conflict ()
+  (with-translated-name-conflict ((parcl:unintern       #+sbcl sb-impl::take-new)
+                                  (parcl:shadow         #+sbcl sb-impl::keep-old))
     (use-package packages-to-use package)))
 
 (defmethod middle:unuse-package ((client            client)
@@ -77,16 +90,30 @@
   (intern name package))
 
 (defmethod middle:unintern ((client client) (package package) (symbol t))
-  (with-translated-name-conflict ()
+  (with-translated-name-conflict ((parcl::abort-operation abort))
     (unintern symbol package)))
 
 (defmethod middle:export ((client client) (package package) (symbol t))
-  (with-translated-name-conflict ()
+  (with-translated-name-conflict ((parcl:unintern            #+sbcl sb-impl::take-new)
+                                  (parcl:shadow              #+sbcl sb-impl::keep-old)
+                                  (parcl::make-new-shadowing #+sbcl sb-impl::take-new)
+                                  (parcl::make-old-shadowing #+sbcl sb-impl::keep-old)
+                                  (parcl::do-not-export      abort))
     (export symbol package)))
 
 (defmethod middle:unexport ((client client) (package package) (symbol t))
-  (with-translated-name-conflict ()
-    (unexport symbol package)))
+  (flet ((unexport-forbidden (package symbol)
+           (error 'parcl:unexport-forbidden-for-system-package-error
+                  :package            package
+                  :symbol-to-unexport symbol)))
+    #+sbcl (when (eq package (load-time-value (find-package "KEYWORD")))
+             (unexport-forbidden package symbol))
+    (with-translated-name-conflict ()
+      (handler-bind (#+sbcl (sb-ext:package-locked-error
+                              (lambda (condition)
+                                (let ((package (package-error-package condition)))
+                                  (unexport-forbidden package symbol)))))
+        (unexport symbol package)))))
 
 (defmethod middle:import ((client client) (package package) (symbol t))
   (with-translated-name-conflict ()
@@ -111,7 +138,11 @@
 (defmethod middle:make-package
     ((client client) (name t) (nicknames t) (used-packages t))
   ;; TODO: could be problem with used packages as well
-  (handler-bind ((package-error #'translate-package-name-occupied))
+  (handler-bind ((package-error
+                   (lambda (condition)
+                     (with-translated-restarts
+                         ((parcl::return-existing #+sbcl continue))
+                       (translate-package-name-occupied condition)))))
     (make-package name :nicknames nicknames :use used-packages)))
 
 (defmethod middle:delete-package ((client client) (package package))
