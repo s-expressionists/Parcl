@@ -25,13 +25,13 @@
 
 (defmethod parcl.low:map-symbol-entries
     ((client client) (function t) (package package) &optional status)
-  (declare (ignore status))
-  (maphash (lambda (name entry)
-             (declare (ignore name)) ; TODO: alexandria maphash-values
-             (destructuring-bind (symbol . (export-status . shadow-status))
-                 entry
-               (funcall function symbol export-status shadow-status)))
-           (%entries package)))
+  (maphash          ; TODO: alexandria maphash-values
+   (lambda (name entry)
+     (declare (ignore name))
+     (destructuring-bind (symbol . (export-status . shadow-status)) entry
+       (when (or (null status) (eq export-status status))
+         (funcall function symbol export-status shadow-status))))
+   (%entries package)))
 
 (defmethod parcl.low:symbol-entry ((client client) (name t) (package package))
   (let ((entry (gethash name (%entries package))))

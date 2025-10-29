@@ -58,13 +58,13 @@
                                    (function t)
                                    (package  mock-package)
                                    &optional status)
-  (declare (ignore status))
-  (maphash (lambda (name entry)
-             (declare (ignore name))
-             (destructuring-bind (symbol . (export-status . shadow-status))
-                 entry
-               (funcall function symbol export-status shadow-status)))
-           (%entries package)))
+  (maphash
+   (lambda (name entry)
+     (declare (ignore name))
+     (destructuring-bind (symbol . (export-status . shadow-status)) entry
+       (when (or (null status) (eq export-status status))
+         (funcall function symbol export-status shadow-status))))
+   (%entries package)))
 
 (defmethod low:symbol-entry ((cilent  mock-package-mixin)
                              (name    string)

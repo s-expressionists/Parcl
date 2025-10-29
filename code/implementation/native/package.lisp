@@ -178,12 +178,14 @@
              (shadowing?        (member symbol shadowing-symbols :test #'eq)))
         (values symbol status shadowing?)))))
 
-(defmethod low:map-symbol-entries ((client client) (function t) (package package) &optional status)
+(defmethod low:map-symbol-entries ((client client) (function t) (package package)
+                                   &optional status)
   (let ((shadowing-symbols (package-shadowing-symbols package)))
     (do-symbols (symbol package)
-      (multiple-value-bind (symbol status)
+      (multiple-value-bind (symbol actual-status)
           (find-symbol (symbol-name symbol) package)
-        (when (member status '(:internal :external))
+        (when (or (eq actual-status status)
+                  (member actual-status '(:internal :external)))
           (let ((shadowing? (member symbol shadowing-symbols :test #'eq)))
             (funcall function symbol status shadowing?)))))))
 

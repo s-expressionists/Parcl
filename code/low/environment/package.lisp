@@ -95,23 +95,14 @@
 
 (defmethod low:map-symbol-entries
     ((client client) (function t) (package package) &optional status)
-  (let ((environment (environment client))
-        ;; TODO: is this worth the effort? could just do the cases in the local function
-        (visit       (cond ((null status)
-                            (lambda (name entry container)
-                              (declare (ignore name container))
-                              (funcall function (car entry))))
-                           ((symbolp status)
-                            (lambda (name entry container)
-                              (declare (ignore name container))
-                              (when (eq (cdr entry) status)
-                                (funcall function (car entry)))))
-                           ((listp status)
-                            (lambda (name entry container)
-                              (declare (ignore name container))
-                              (when (member (cdr entry) status :test #'eq)
-                                (funcall function (car entry))))))))
-    (env:map-entries visit package environment)))
+  (let ((environment (environment client)))
+    (env:map-entries
+     (lambda (name entry container)
+       (declare (ignore name container))
+       (destructuring-bind (symbol . (export-status . shadow-status)) entry
+         (when (or (null status) (eq export-status status))
+           (funcall function symbol export-status shadow-status))))
+     package environment)))
 
 #++ (defmethod low:map-symbols ((client   client)
                             (package  package)
