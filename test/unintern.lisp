@@ -63,6 +63,8 @@
                              (return))
                             (t
                              (let ((restart (find-restart restart-name)))
+                               (is-true restart "~@<Expected to find a restart named ~S but there is none.~@:>"
+                                        restart-name)
                                (is-false (a:emptyp (princ-to-string restart)))
                                (invoke-restart restart)))))))
                (parcl:unintern symbol1 package1)))

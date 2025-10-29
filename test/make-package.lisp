@@ -48,7 +48,8 @@
                        (lambda (condition)
                          (declare (ignore condition))
                          (let ((restart (find-restart 'parcl::return-existing)))
-                           (is (not (null restart)))
+                           (is-true restart "~@<Expected to find a restart named ~S but there is none.~@:>"
+                                    'parcl::return-existing)
                            (is (not (= 0 (length (princ-to-string restart)))))
                            (invoke-restart restart)))))
         (is (eq package (parcl:make-package #1#)))))))

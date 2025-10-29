@@ -79,7 +79,7 @@
          (parcl:use-package package1 package2)
          (let ((symbol1 (parcl:intern #1="baz" package1)))
            (parcl:intern #1# package2)
-           (block nil
+           (block nil ; TODO: make an abstraction for the restart stuff
              (handler-bind
                  ((parcl:symbol-conflicts-error
                     (lambda (condition)
@@ -89,6 +89,8 @@
                              (return))
                             (t
                              (let ((restart (find-restart restart-name)))
+                               (is-true restart "~@<Expected to find a restart named ~S but there is none.~@:>"
+                                        restart-name)
                                (is-false (a:emptyp (princ-to-string restart)))
                                (invoke-restart restart)))))))
                (parcl:export symbol1 package1)))
@@ -128,6 +130,8 @@
                              (return))
                             (t
                              (let ((restart (find-restart restart-name)))
+                               (is-true restart "~@<Expected to find a restart named ~S but there is none.~@:>"
+                                        restart-name)
                                (is-false (a:emptyp (princ-to-string restart)))
                                (invoke-restart restart)))))))
                (parcl:export symbol2 package2)))
