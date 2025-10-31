@@ -16,7 +16,7 @@
 
 (defclass client () ())
 
-;;;; Middle
+;;;; Implementation of middle module protocols
 
 (defun translate-package-name-occupied (condition)
   (let* ((name             (first (simple-condition-format-arguments
@@ -153,7 +153,7 @@
   (with-translated-name-conflict ()
     (rename-package package new-name new-nicknames)))
 
-;;;; Low
+;;;; Implementation of low module protocols
 
 ;;; Symbol functions
 

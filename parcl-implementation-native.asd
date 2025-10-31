@@ -11,7 +11,7 @@
                "parcl-core/test" ; for `parcl.test::*high-tests*'
 
                "parcl-implementation-native")
-  :components ((:module     "native"
+  :components ((:module     "implementation-native"
                 :pathname   "test/implementation/native"
                 :components ((:file "test"))))
   :perform (test-op (operation component)
