@@ -103,9 +103,14 @@
 
 (defmethod middle:unexport ((client client) (package package) (symbol t))
   (flet ((unexport-forbidden (package symbol)
-           (error 'parcl:unexport-forbidden-for-system-package-error
-                  :package            package
-                  :symbol-to-unexport symbol)))
+           (restart-case
+               (error 'parcl:unexport-forbidden-for-system-package-error
+                      :package            package
+                      :symbol-to-unexport symbol)
+             (#1=parcl::do-nothing ()
+               :report (lambda (stream)
+                         (parcl::report-restart '#1# stream 'parcl:unexport)
+                         (return-from middle:unexport nil))))))
     #+sbcl (when (eq package (load-time-value (find-package "KEYWORD")))
              (unexport-forbidden package symbol))
     (with-translated-name-conflict ()
