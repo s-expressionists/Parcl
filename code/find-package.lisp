@@ -4,7 +4,6 @@
   (let ((client *client*))
     (multiple-value-bind (package-or-name packagep)
         (check-package-designator client name)
-      ;; TODO: retry restart
       (cond (packagep
              package-or-name)
             ((boundp '*package*)
