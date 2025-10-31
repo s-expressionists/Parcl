@@ -4,11 +4,11 @@
 
 (defclass local-nicknames-mixin ()
   ((%local-nicknames      :initarg  :local-nicknames
-                          :type     list ; of TODO
+                          :type     list ; of (cons string `package')
                           :accessor local-nicknames
                           :initform '())
    (%locally-nicknamed-by :initarg  :locally-nicknamed-by
-                          :type     list ; of TODO
+                          :type     list ; of `package'
                           :accessor locally-nicknamed-by
                           :initform '())))
 
@@ -18,15 +18,15 @@
   ((%name         :initarg  #1=:name
                   :accessor name)
    (%nicknames    :initarg  :nicknames
-                  :type     list ; of string
+                  :type     list ; of `string'
                   :accessor nicknames
                   :initform '())
    (%use-list     :initarg  :use-list
-                  :type     list ; of (satisfies packagep)
+                  :type     list ; of `package'
                   :accessor use-list
                   :initform '())
    (%used-by-list :initarg  :used-by-list
-                  :type     list ; of (satisfies packagep)
+                  :type     list ; of `package'
                   :accessor used-by-list
                   :initform '())
    (%entries      :reader   %entries
