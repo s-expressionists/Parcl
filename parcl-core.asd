@@ -88,12 +88,12 @@
                               ;; Package-symbol relation functions
                               (:file "find-symbol")
                               (:file "intern")
+                              (:file "unintern")
                               (:file "import")
                               (:file "shadowing-import")
                               (:file "export")
                               (:file "unexport")
                               (:file "shadow")
-                              (:file "unintern")
                               ;; Environment functions
                               (:file "list-all-packages")
                               (:file "find-package")
@@ -141,6 +141,7 @@
                              (:file "add-package-local-nickname")
                              (:file "remove-package-local-nickname")
                              ;; Package-symbol relation functions
+                             (:file "intern")
                              (:file "unintern")
                              (:file "export")
                              (:file "unexport")
