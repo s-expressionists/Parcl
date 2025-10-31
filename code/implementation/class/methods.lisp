@@ -1,12 +1,14 @@
-(cl:in-package #:parcl-low-class)
+(cl:in-package #:parcl.implementation.class)
 
-(defmethod parcl.low:packagep ((client client) (package package))
+(defmethod parcl.low:packagep ((client package-class-mixin) (package package))
   t)
 
-(macrolet ((define (accessor)
+(macrolet ((define (accessor &optional (client-class  'package-class-mixin)
+                                       (package-class 'package))
              (let ((low-accessor (intern (string accessor) '#:parcl.low)))
                `(progn
-                  (defmethod ,low-accessor ((client client) (package package))
+                  (defmethod ,low-accessor ((client  ,client-class)
+                                            (package ,package-class))
                     (,accessor package))
 
                   (defmethod (setf ,low-accessor)
@@ -14,8 +16,10 @@
                     (setf (,accessor package) new-value))))))
   (define name)
   (define nicknames)
-  (define local-nicknames)
-  (define locally-nicknamed-by)
+  (define local-nicknames      parcl.middle:local-nicknames-mixin
+                               local-nicknames-mixin)
+  (define locally-nicknamed-by parcl.middle:local-nicknames-mixin
+                               local-nicknames-mixin)
   (define use-list)
   (define used-by-list)
   ; (define documentation)
@@ -24,7 +28,8 @@
 ;;; Package-symbol relation functions
 
 (defmethod parcl.low:map-symbol-entries
-    ((client client) (function t) (package package) &optional status)
+    ((client package-class-mixin) (function t) (package package)
+     &optional status)
   (maphash          ; TODO: alexandria maphash-values
    (lambda (name entry)
      (declare (ignore name))
@@ -33,7 +38,8 @@
          (funcall function symbol export-status shadow-status))))
    (%entries package)))
 
-(defmethod parcl.low:symbol-entry ((client client) (name t) (package package))
+(defmethod parcl.low:symbol-entry
+    ((client package-class-mixin) (name t) (package package))
   (let ((entry (gethash name (%entries package))))
     (if (null entry)
         (values nil nil nil)
@@ -42,7 +48,7 @@
 (defmethod parcl.low:set-symbol-entry ((new-symbol        t)
                                        (new-export-status t)
                                        (new-shadow-status t)
-                                       (client            client)
+                                       (client            package-class-mixin)
                                        (name              t)
                                        (package           package))
   (let ((entries (%entries package)))
@@ -53,5 +59,9 @@
 
 ;;;
 
-(defmethod parcl.low:make-package-object ((client client) (name t))
+(defmethod parcl.low:make-package-object ((client package-class-mixin) (name t))
   (make-instance 'package :name name))
+
+(defmethod parcl.low:make-package-object ((client client-with-local-nicknames)
+                                          (name   t))
+  (make-instance 'package-with-local-nicknames :name name))
