@@ -34,17 +34,17 @@
       (with-fresh-package-system ()
         (parcl:make-package name1)
         (do-string-designators (name2 #1#)
-          (signals parcl::package-name-occupied-error
+          (signals parcl:package-name-occupied-error
             (parcl:make-package name2)))
         (do-string-designators (name2 #1#)
           (do-string-designators (name3 "bar")
-            (signals parcl::package-name-occupied-error
+            (signals parcl:package-name-occupied-error
               (parcl:make-package name3 :nicknames (list name2)))))))))
 
 (high-test make-package.recover.return-existing
   (with-mock-package-system ()
     (with-mock-package (package #1="foo")
-      (handler-bind ((parcl::package-name-occupied-error
+      (handler-bind ((parcl:package-name-occupied-error
                        (lambda (condition)
                          (declare (ignore condition))
                          (let ((restart (find-restart 'parcl::return-existing)))
