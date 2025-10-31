@@ -15,6 +15,11 @@
                      `(lambda (,stream-var ,@parameters)
                         ,@body)))))
 
+  (define-restart-reporter (do-nothing stream operation)
+    (format stream "~@<Finish the ~A operation without actually doing ~
+                    anything~@:>"
+            operation))
+
   (define-restart-reporter (abort-operation stream operation)
     (format stream "~@<Abort the ~A operation~@:>" operation))
 
