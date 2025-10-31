@@ -1,4 +1,4 @@
-(cl:defpackage #:parcl-low-environment
+(cl:defpackage #:parcl.implementation.environment
   (:use
    #:common-lisp)
 
