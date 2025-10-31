@@ -27,15 +27,30 @@
 
 ;;; Package-symbol relation functions
 
+(declaim (inline decode-status encode-status))
+(defun decode-status (encoded-status)
+  (values (if (logbitp 0 encoded-status) :external :internal)
+          (logbitp 1 encoded-status)))
+
+(defun encode-status (export-status shadow-status)
+  (let ((result 0))
+    (setf (ldb (byte 1 0) result) (ecase export-status
+                                    (:internal 0)
+                                    (:external 1))
+          (ldb (byte 1 1) result) (if shadow-status 1 0))
+    result))
+
 (defmethod parcl.low:map-symbol-entries
     ((client package-class-mixin) (function t) (package package)
      &optional status)
-  (maphash          ; TODO: alexandria maphash-values
+  (maphash                           ; TODO: alexandria maphash-values
    (lambda (name entry)
      (declare (ignore name))
-     (destructuring-bind (symbol . (export-status . shadow-status)) entry
-       (when (or (null status) (eq export-status status))
-         (funcall function symbol export-status shadow-status))))
+     (destructuring-bind (symbol . encoded-status) entry
+       (multiple-value-bind (export-status shadow-status)
+           (decode-status encoded-status)
+         (when (or (null status) (eq export-status status))
+           (funcall function symbol export-status shadow-status)))))
    (%entries package)))
 
 (defmethod parcl.low:symbol-entry
@@ -43,7 +58,11 @@
   (let ((entry (gethash name (%entries package))))
     (if (null entry)
         (values nil nil nil)
-        (values (car entry) (cadr entry) (cddr entry)))))
+        (let ((symbol         (car entry))
+              (encoded-status (cdr entry)))
+          (multiple-value-bind (export-status shadow-status)
+              (decode-status encoded-status)
+            (values symbol export-status shadow-status))))))
 
 (defmethod parcl.low:set-symbol-entry ((new-symbol        t)
                                        (new-export-status t)
@@ -55,7 +74,8 @@
     (if (null new-export-status)
         (remhash name entries)
         (setf (gethash name entries)
-              (cons new-symbol (cons new-export-status new-shadow-status))))))
+              (cons new-symbol (encode-status new-export-status
+                                              new-shadow-status))))))
 
 ;;;
 
