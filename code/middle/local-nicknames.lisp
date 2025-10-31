@@ -24,25 +24,36 @@
   (let* ((old-local-nicknames (low:local-nicknames client package))
          (existing-entry      (assoc nickname old-local-nicknames
                                      :test #'string=)))
-    (cond ((null existing-entry)
-           (setf (low:local-nicknames client package)
-                 (acons nickname nicknamed-package old-local-nicknames))
-           ;; Since PACKAGE may have multiple nicknames fro
-           ;; NICKNAMED-PACKAGE, only add PACKAGE if it is not already
-           ;; there.
-           (pushnew package (low:locally-nicknamed-by client nicknamed-package)
-                    :test #'eq)
-           t)
-          ((eq nicknamed-package (cdr existing-entry))
-           ;; existing pair with same name and same package => nothing to do
-           nil) ; TODO: does the protocol specify what to return here?
-          (t ; existing pair with same name but different package => error
-           ;; FIXME: signal a continuable error.
-           (error 'nickname-refers-to-different-package-error
-                  :package           package
-                  :nickname          nickname
-                  :nicknamed-package nicknamed-package)
-           nil))))
+    (flet ((add-entry ()
+             (setf (low:local-nicknames client package)
+                   (acons nickname nicknamed-package old-local-nicknames))
+             ;; Since PACKAGE may have multiple nicknames fro
+             ;; NICKNAMED-PACKAGE, only add PACKAGE if it is not
+             ;; already there.
+             (pushnew package (low:locally-nicknamed-by client nicknamed-package)
+                      :test #'eq)))
+      (cond ((null existing-entry)
+             (add-entry)
+             t)
+            ((eq nicknamed-package (cdr existing-entry))
+             ;; existing pair with same name and same package => nothing to do
+             nil) ; TODO: does the protocol specify what to return here?
+            (t ; existing pair with same name but different package => error
+             (restart-case
+                 (error 'parcl:nickname-refers-to-different-package-error
+                        :package           package
+                        :nickname          nickname
+                        :nicknamed-package nicknamed-package)
+               (#1=parcl::keep-old-nicknamed-package ()
+                 :report (lambda (stream)
+                           (parcl::report-restart '#1# stream nickname package))
+                 nil)
+               (#2=parcl::use-new-nicknamed-package ()
+                 :report (lambda (stream)
+                           (parcl::report-restart '#2# stream nickname package))
+                 (remove-local-nickname client package nickname)
+                 (add-entry)
+                 t)))))))
 
 (defmethod remove-local-nickname ((client   local-nicknames-mixin)
                                   (package  t)

@@ -46,7 +46,15 @@
     (format stream "~@<Abort the EXPORT of ~s~@:>" symbol))
 
   (define-restart-reporter (import stream symbol package)
-    (format stream "~@<Import ~S into ~S~@:>" symbol package)))
+    (format stream "~@<Import ~S into ~S~@:>" symbol package))
+
+  (define-restart-reporter (keep-old-nicknamed-package stream nickname package)
+    (format stream "~@<Keep the nickname ~S associated with the package ~A~@:>"
+            nickname package))
+
+  (define-restart-reporter (use-new-nicknamed-package stream nickname package)
+    (format stream "~@<Associate the nickname ~S with the package ~A~@:>"
+            nickname package)))
 
 (macrolet ((define-reporter (((condition-var condition-specializer) stream-var
                               &optional (language-var 'language))
