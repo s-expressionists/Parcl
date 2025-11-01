@@ -54,7 +54,11 @@
 
   (define-restart-reporter (use-new-nicknamed-package stream nickname package)
     (format stream "~@<Associate the nickname ~S with the package ~A~@:>"
-            nickname package)))
+            nickname package))
+
+  (define-restart-reporter (unuse-package stream used-package using-package)
+    (format stream "~@<Make package ~A no longer use package ~A.~@:>"
+            using-package  used-package)))
 
 (macrolet ((define-reporter (((condition-var condition-specializer) stream-var
                               &optional (language-var 'language))

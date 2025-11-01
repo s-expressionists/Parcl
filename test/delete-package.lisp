@@ -35,7 +35,8 @@
   (with-mock-package-system ()
     (do-string-designators (name "does-not-exist")
       (with-fresh-package-system ()
-        (signals parcl::package-does-not-exist-error
+        ;;; TODO: restart
+        (signals parcl:package-does-not-exist-error
           (parcl:delete-package name))))))
 
 (high-test delete-package.already-deleted
@@ -46,13 +47,21 @@
           (parcl:delete-package package)
           (finishes (parcl:delete-package package)))))))
 
-(high-test delete-package.still-in-use
+(high-test delete-package.error.still-in-use
   (with-mock-package-system ()
-    (with-fresh-package-system ()
-      (with-mock-package (package1 "foo")
-        (with-mock-package (package2 "bar")
-          (parcl:use-package package1 package2)
-          (signals parcl::package-in-use-error
-            (parcl:delete-package package1)))))))
-
-;;; TODO: restarts
+    (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
+      (parcl:use-package package1 package2)
+      (let ((signaled?  nil))
+        (handler-bind
+            ((#1=parcl:package-in-use-error
+               (lambda (condition)
+                 (setf signaled? t)
+                 (is (eq package1 (parcl:package-error-package condition)))
+                 (is (eq package2 (parcl:used-by condition)))
+                 (let ((restart (find-restart '#2=parcl:unuse-package)))
+                   (is-false (null restart))
+                   (is-false (alexandria:emptyp (princ-to-string restart)))
+                   (invoke-restart restart)))))
+          (is (eq t (parcl:delete-package package1))))
+        (unless signaled?
+          (fiveam:fail "~@<Failed to signal a ~S condition" '#1#))))))
