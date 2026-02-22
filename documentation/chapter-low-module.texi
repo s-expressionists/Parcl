@@ -1,0 +1,453 @@
+@node Low Module
+@chapter Low Module
+
+The protocols in the low module provide the basic ``storage'' aspect of
+a package system without additional logic or consideration of the
+package system consistency rules:
+
+@itemize
+
+@item
+Predicates for symbol and package objects and construction of symbol and
+package objects
+
+@item
+Accessors for ``slots'' of symbols and packages
+
+@item
+Registration of package objects in the environment and retrieval of
+package objects from the environment
+
+@end itemize
+
+The functions in this module accept only strings where names are
+required and only symbol objects and package objects (not designators)
+where symbols and packages are required.
+
+@menu
+* Low Symbol Functions::
+* Low Package Functions::
+* Low Package-symbol Relation Functions::
+* Low Environment Functions::
+@end menu
+
+@node Low Symbol Functions
+@section Low Symbol Functions
+
+;;;; TODO: Old This file contains definitions of generic functions that are
+;;;; called by various parts of Parcl.  Client code must supply a
+;;;; method on each one of these functions, specialized to the
+;;;; paticular client object it uses.
+
+@defgena{symbolp,@lowpackage{}} client object
+
+Return true if @var{object} is a symbol object @emph{in the package
+system specified by @var{client}}.
+
+The default method returns false for all objects so that clients can
+simply define a method that is specialized to the respective client
+class and the associated symbol class and returns true.
+@end deffn
+
+@defgena{symbol-name,@lowpackage{}} client symbol
+
+Return the string that is the name of @var{symbol} @emph{in the package
+system specified by @var{client}}.
+@end deffn
+
+@defgena{symbol-package,@lowpackage{}} client symbol
+
+Return the package object that is the home package of @var{symbol} or
+@code{nil} if @var{symbol} is uninterned @emph{in the package system
+specified by @var{client}}.
+@end deffn
+
+@defgena{(setf symbol-package),@lowpackage{}} new-value client symbol
+
+Set the home package of @var{symbol} to @var{new-value} @emph{in the
+package system specified by @var{client}} and return @var{new-value}.
+
+@var{new-value} is either @code{nil} or a package object.
+@end deffn
+
+@defgena{make-symbol,@lowpackage{}} client name package
+
+Create and return a symbol object with name @var{name} and home package
+@var{package} @emph{in the package system specified by @var{client}}.
+
+@var{name} is a string and @var{package} is either @code{nil} or a
+package object.  If @var{package} is @code{nil}, an uninterned symbol is
+created and returned.
+@end deffn
+
+@node Low Package Functions
+@section Low Package Functions
+
+;;;; TODO: Old This file contains essential accessors for package objects.  They
+;;;; are deliberately distinct from any standard Common Lisp function,
+;;;; because we might want different implementations of these
+;;;; accessors in different contexts.
+
+@defgena{packagep,@lowpackage{}} client object
+
+Return @emph{true} if @var{object} is a package object @emph{in the
+package system specified by @var{client}}.
+
+The default method returns false for all objects so that clients can
+simply define a method that is specialized to the respective client
+class and the associated package class and returns @emph{true}.
+@end deffn
+
+@defgena{name,@lowpackage{}} client package
+
+Return a string that is the name of the package object @var{package}
+@emph{in the package system specified by @var{client}}.
+
+This function can be used to implement and customize the standard
+function @speclink{f,package-name}.
+@end deffn
+
+@defgena{(setf name),@lowpackage{}} new-value client package
+
+Set the name of the package object @var{package} to the string
+@var{new-value} @emph{in the package system specified by @var{client}}.
+
+In accordance with the role of the low module, this function does not
+check whether @var{new-name} is the name or the nickname of an existing
+package nor does it register @var{package} in the environment under the
+provided name.
+
+TODO: return value
+@end deffn
+
+@defgena{nicknames,@lowpackage{}} client package
+
+Return the list of nicknames of @var{package} @emph{in the package
+system specified by @var{client}}.
+
+This function can be used to implement and customize the standard
+function @speclink{f,package-nicknames}.
+
+The returned list is not freshly allocated.
+@end deffn
+
+@defgena{(setf nicknames),@lowpackage{}} new-value client package
+
+Set the nicknames of @var{package} to the list of strings
+@var{new-value} @emph{in the package system specified by @var{client}}.
+
+This function only sets the nicknames ``slot'' of @var{package}.  This
+function does not check whether @var{new-value} contains a string that
+is already the name or the nickname of any existing package nor does it
+register @var{package} in the environment under the provided names.
+This function does not copy the @var{new-value} list, so client code
+should make sure this list is not used after being passed as an argument
+to this function.
+
+TODO: return value
+@end deffn
+
+@defgena{local-nicknames,@lowpackage{}} client package
+
+;;; This function is used to implement the semi-standard function
+;;; PACKAGE-LOCAL-NICKNAMES.  The PACKAGE argument of this function
+;;; must be a package object.
+
+This function can be used to implement and customize the semi-standard
+function @t{package-local-nicknames}.
+@end deffn
+
+@defgena{(setf local-nicknames),@lowpackage{}} new-value client package
+
+This function can be used as part of the implementation of the
+semi-standard functions @t{add-package-local-nickname} and
+@t{remove-package-local-nickname}.
+@end deffn
+
+@defgena{locally-nicknamed-by,@lowpackage{}} client package
+
+;;; The @var{package} argument of this
+;;; function must be a package object.
+
+This function can be used to implement and customize the semi-standard
+function @t{package-locally-nicknamed-by-list}.
+@end deffn
+
+@defgena{(setf locally-nicknamed-by),@lowpackage{}} new-value client package
+
+TODO
+@end deffn
+
+@defgena{use-list,@lowpackage{}} client package
+
+Return a list of package objects that contains the packages which
+@var{package} uses @emph{in the package system specified by
+@var{client}}.
+
+This function can be used to implement and customize the standard function
+@speclink{f,package-use-list}.
+
+The returned list is not freshly allocated.
+@end deffn
+
+@defgena{(setf use-list),@lowpackage{}} new-value client package
+
+Set the list of used packages of @var{package} to the list of package
+objects @var{new-value} @emph{in the package system specified by
+@var{client}}.
+
+This function only sets the @t{use-list} ``slot'' in @var{package}.  It
+does not update the @t{used-by-list} ``slots'' of the packages in
+@var{new-value}, not does it check for any conflicts resulting from the
+changed use relations.  This function does not copy the @var{new-value}
+list, so client code should make sure this list is not used after being
+passed as an argument to this function.
+
+TODO: return value
+@end deffn
+
+@defgena{used-by-list,@lowpackage{}} client package
+
+Return a list of package objects that contains the packages which are
+used by @var{package} @emph{in the package system specified by
+@var{client}}.
+
+This function can be used to implement and customize the standard
+function @speclink{f,package-used-by-list}.
+
+The returned list is not freshly allocated.
+
+TODO: why "list" in this name but not the other list-typed accessors?
+@end deffn
+
+@defgena{(setf used-by-list),@lowpackage{}} new-value client package
+
+This function is used to implement the standard functions
+@speclink{f,use-package} and @speclink{f,unuse-package}.
+
+TODO The @var{package} argument of this function must be a package object.
+
+@var{new-value} is a list of package objects that become the new list of
+packages used by @var{package}.
+
+TODO This function does not copy the @var{new-value} list, so client
+code should make sure this list is not used after being passed as an
+argument to this function.
+
+TODO The return value of this function is @var{new-value} as required by
+the @commonlisp{} standard.
+@end deffn
+
+@defgena{documentation,@lowpackage{}} client package
+
+Return the documentation of @var{package} @emph{in the package system
+specified by @var{client}}.
+
+The returned documentation is either a string or @code{nil}.
+
+The function can be used to implement the behavior of calls
+@code{(@speclink{f,documentation} @var{package} t)}
+where @var{package} is a package object with the following properties
+
+@enumerate
+@item
+
+@code{(@genref{packagep,@lowpackage{}} @var{client} @var{package}) @result{} @emph{true}}
+
+@item
+
+@code{(typep @var{package} '@lowpackage{}:package) @result{} @emph{true}}
+@end enumerate
+@end deffn
+
+@defgena{(setf documentation),@lowpackage{}} new-value client package
+
+Set the document of @var{package} to @var{new-value} @emph{in the
+package system specified by @var{client}}.
+
+@var{package} is a package object. @var{new-value} is a string or @code{nil}.
+
+The function can be used to implement the behavior of calls
+@code{(setf (@speclink{f,documentation} @var{package} t) @var{new-value})}
+where @var{package} is a package object with the following properties
+
+@enumerate
+@item
+
+@code{(@genref{packagep,@lowpackage{}} @var{client} @var{package})
+@result{} @emph{true}}
+
+@item
+
+@code{(typep @var{package} '@lowpackage{}:package) @result{} @emph{true}}
+@end enumerate
+@end deffn
+
+@defgena{make-package-object,@lowpackage{}} client name
+
+Create and return a new package object named @var{name} that is suitable
+for the package system specified by @var{client}.
+
+@var{name} is a string.
+
+In contrast to the behavior of @speclink{f,make-package}, the returned
+package contains no nicknames, no relations to other packages, no
+symbols and it is not registered under the name @var{name} in the
+package system.  Those aspects have to be set up by separate calls to
+other low-level functions.  Furthermore, whether @var{name} already
+names a different package is not considered.
+@end deffn
+
+@node Low Package-symbol Relation Functions
+@section Low Package-symbol Relation Functions
+
+@cindex symbol entry
+@cindex export status
+@cindex shadow status
+This protocol uses the concept of a @term{symbol entry} which is a
+triple consisting of a @speclink{t,symbol} object, an
+@term{export status} and a @term{shadow status}.  The information in
+such a triple is associated with a symbol name within a package to
+indicate the status of the symbol in that package in terms of the symbol
+being present in the package, the symbol being external and the symbol
+being shadowing.  Concretely, the @termref{export status} is either
+@code{:internal} or @code{:external} while the @termref{shadow status} is
+either @code{t} or @code{nil}.
+
+;;; TODO: old The SYMBOL ENTRIES of a package is a list of CONS cells, each
+;;; representing a present symbol and its status.  The CAR of such a
+;;; CONS cell is the symbol itself, and the CDR is the status which is
+;;; one of :INTERNAL, :INTERNAL-SHADOWING, :EXTERNAL, and
+;;; :EXTERNAL-SHADOWING.
+
+@defgena{map-symbol-entries,@lowpackage{}} client function package @
+  @optional{} status
+
+Call @var{function} for each @termref{symbol entry} in @var{package}
+@emph{in the package system specified by @var{client}} and return
+@code{nil}.
+
+@var{function} is a function the lambda list of which has to be
+compatible with @code{(symbol export-status shadow-status)} where
+@var{symbol} is the symbol object for which the @termref{symbol entry}
+is reported, @var{export-status} indicates the @termref{export status}
+of @var{symbol} and @var{shadow-status} indicates the @termref{shadow
+status} of @var{symbol}.  Any values returned by @var{function} are
+ignored.
+
+As is probably obvious, this function does not consider inherited
+symbols in any way.
+@end deffn
+
+@defgena{symbol-entries,@lowpackage{}} client package &optional status
+
+@quotation warning
+Do we keep this function or remove it?
+@end quotation
+
+Return as a list of triples the @termrefl{symbol entry, symbol entries}
+of @var{package} @emph{in the package system specified by @var{client}}.
+
+The elements of the returned list of the form @code{(symbol
+export-status shadow-status)}.
+@end deffn
+
+@defgena{symbol-entry,@lowpackage{}} client name package
+
+Look up the @termref{symbol entry} for @var{name} in @var{package}
+@emph{in the package system specified by @var{client}} and return three
+values:
+
+@enumerate
+
+@item
+The symbol object if such an entry exists in @var{package} or @code{nil}
+otherwise.
+
+@item
+@cindex export status
+The @termref{export status} of the symbol in @var{package} if an entry
+exists or @code{nil} otherwise.  The export status is either
+@code{:internal} or @code{:external}.
+
+@item
+@cindex shadow status
+A Boolean which indicates the @termref{shadow status} of the symbol in
+@var{package}.  @code{t} indicates that the symbol named @var{name} is
+shadowing in @var{package}.  @code{nil} indicates that the symbol is not
+shadowing, either because it is not interned in package or because it is
+interned but not shadowing.
+
+@end enumerate
+
+The most general way to check whether @var{name} names a symbol that is
+interned in @var{package} is to check whether the second return value is
+@code{nil}.  This is because the first return value can be @code{nil} if
+the package system in question uses ordinary @commonlisp{} symbols as
+its symbol objects and because the third return value can be @code{nil}
+whether the entry exists or not.
+
+As is probably obvious, this function does not consider inherited
+symbols in any way.
+@end deffn
+
+@defgena{set-symbol-entry,@lowpackage{}} symbol export-status shadow-status @
+  client name package
+
+@cindex symbol entry
+Create or change the @termref{symbol entry} for @var{name} in
+@var{package} @emph{in the package system specified by @var{client}}.
+
+@cindex export status
+@cindex shadow status
+@var{symbol} is the symbol of the new or changed symbol entry.
+@var{export-status} is the @termref{export status} of the new or changed
+symbol entry.  @var{export-status} has to be either @code{:internal} or
+@code{:external}.  @var{shadow-status} is the @termref{shadow status} of
+the new or changed symbol entry.  @var{shadow-status} has to be either
+@code{nil} or @code{t}.
+
+This function does not adjust the home package of @var{symbol} nor
+consider a potentially existing symbol entry for @var{name}.  This
+function also does not check for or handle any conflicts that are caused
+by the changes of the export status and shadow status of @var{name} in
+@var{package}.
+
+@quotation Note
+There is a @code{setf} expander for @code{symbol-entry} which expands to
+@code{set-symbol-entry} so that clients can use the syntax
+@code{(setf (symbol-entry @var{client} @var{name} @var{package})
+            (values @var{symbol} @var{export-status} @var{shadow-status}))}
+to call @code{set-symbol-entry}.
+@end quotation
+@end deffn
+
+@node Low Environment Functions
+@section Low Environment Functions
+
+@defgena{packages,@lowpackage{}} client
+
+Return a list of all defined packages @emph{in the package system
+specified by @var{client}}.
+@end deffn
+
+@defgena{find-package,@lowpackage{}} client name
+
+Return the package object that has @var{name} as its name or one of its
+nicknames @emph{in the package system specified by @var{client}}.
+Return @code{nil} if no package has @var{name} as its name or as one of
+its nicknames.
+@end deffn
+
+@defgena{(setf find-package),@lowpackage{}} new-value client name
+
+Set the package associated with @var{name} to @var{new-value} @emph{in
+the package system specified by @var{client}}.  @var{new-value} is
+either @code{nil} or a package object.  If @var{new-value} is
+@code{nil}, arrange for @var{name} to be associated with no package.
+
+In accordance with the role of the low module, this function does not
+check or adjust the name and nicknames of @var{new-value} if
+@var{new-value} is a package object.  Neither does this function check
+whether @var{name} is associated with a package at the time of the call.
+@end deffn
