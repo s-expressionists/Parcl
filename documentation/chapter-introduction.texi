@@ -344,6 +344,7 @@ original @code{defpackage} form due to error recovery).
 When evaluated at runtime, the produced expansion calls the generic
 function @genref{ensure-package,@middlepackage{}} with the supplied
 options.
+TODO: where does the value for @code{*client*} come from?
 
 @table @b
 
