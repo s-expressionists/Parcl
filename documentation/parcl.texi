@@ -28,7 +28,6 @@ Copyright @copyright{} 2022 - 2025 s-expressionists
 
 @menu
 * Introduction:: The reason for the existence of Parcl.
-* Implementations:: Several different implementations.
 * Extensions::
 * High Module:: Protocols for package system implementations.
 * Middle Module:: Protocols for package system implementations.
@@ -37,7 +36,6 @@ Copyright @copyright{} 2022 - 2025 s-expressionists
 @end menu
 
 @include chapter-introduction.texi
-@include chap-implementations.texi
 @include chapter-extensions.texi
 @include generated-chapter-high-module.texi
 @include chapter-middle-module.texi
