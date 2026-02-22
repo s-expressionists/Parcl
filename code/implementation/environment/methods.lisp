@@ -67,7 +67,6 @@
 
 (defmethod low:symbol-entry ((client client) (name string) (package package))
   (let* ((environment (environment client))
-         #++ (name        (%name package))
          (entry       (env:lookup name package environment
                                   :if-does-not-exist nil)))
     (if (null entry)
