@@ -105,6 +105,15 @@
     (format stream "~@<The package ~S has been deleted and cannot be operated on.~@:>"
             (package-error-package condition)))
 
+  (define-reporter ((condition package-variance-error) stream)
+    (format stream "~@<The new definition of package ~S is at variance with ~
+                    the old definition: The package used to ~(~A~) ~S but the ~
+                    corresponding option is not present in the new ~
+                    definition.~@:>"
+            (package-error-package condition)
+            (aspect condition)
+            (value condition)))
+
   (define-reporter ((condition package-in-use-error) stream)
     (format stream "~@<The package ~A is used by package ~A.~@:>"
             (package-error-package condition)

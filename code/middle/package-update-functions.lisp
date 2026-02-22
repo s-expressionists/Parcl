@@ -4,7 +4,7 @@
 
 (defun resolve-symbols (client package-name symbol-names)
   (loop :with package = (parcl::find-undeleted-package-or-error
-                        client package-name) ; TODO(jmoringe): error
+                         client package-name) ; TODO(jmoringe): error
         :for symbol-name in symbol-names
         :for (symbol status) = (multiple-value-list
                                (find-symbol client symbol-name package))
@@ -21,11 +21,16 @@
         :nconc (resolve-symbols client package-name symbol-names)))
 
 ;;;; Default methods
+;;;
+;;; These methods perform the runtime effects of `defpackage';
+;;; `ensure-package' is defined as a generic function to allow for
+;;; customization and to minimize the code size of the expansion of
+;;; `defpackage'.  The performed runtime effects include looking up
+;;; referenced packages and symbols, handling package variance and
+;;; actually creating or updating the package object.  Variance
+;;; handling can include unusing, unexporting, etc. things that were
+;;; part of the old definition but are missing from the new definition
 
-;;; TODO: move to middle module
-;;; runtime effect of defpackage; defined as a function to minimize code size of defpackage expansion
-;;; this function should handle package variance
-;; handling variance might including unusing, unexporting, etc. things that were part of the old definition but are missing from the new defintion
 (defmethod ensure-package
     ((client t) (name t)
      &rest args
@@ -55,13 +60,27 @@
     (apply #'ensure-package-using-package client existing-package name
            new-args)))
 
+(defmethod note-variance ((client t) (package t) (aspect t) (event t) (value t))
+  (error 'parcl:package-variance-error :package package
+                                       :aspect  aspect
+                                       :event   event
+                                       :value   value))
+
 (defmethod note-variance ((client  t)
                           (package t)
                           (aspect  (eql :use))
                           (event   (eql :remove))
                           (value   t))
-    (with-simple-restart (continue "Unuse the package ~S" value)
-      (error "Variance: ~S used to use ~S" package value)))
+  (with-simple-restart (continue "Unuse the package ~S" value)
+    (call-next-method)))
+
+(defmethod note-variance ((client  t)
+                          (package t)
+                          (aspect  (eql :shadow))
+                          (event   (eql :remove))
+                          (value   t))
+  (with-simple-restart (continue "Stop shadowing ~S" value)
+    (call-next-method)))
 
 (defmethod note-variance ((client  t)
                           (package t)
@@ -69,7 +88,7 @@
                           (event   (eql :remove))
                           (value   t))
   (with-simple-restart (continue "Stop exporting the symbol ~S" value)
-    (error "Variance: ~S used to export ~S" package value)))
+    (call-next-method)))
 
 (defmethod ensure-package-using-package
     ((client t) (existing-package null) (name t) &rest args &key size)
@@ -79,19 +98,22 @@
 
 (defmethod ensure-package-using-package
     ((client t) (existing-package t) (name t)
-     &rest args &key (nicknames        '() nicknames-supplied-p)
-                     (use              '() use-supplied-p)
-                     (shadow           '() shadow-supplied-p)
-                     (shadowing-import '())
-                     (import           '() import-supplied-p)
-                     (intern           '() intern-supplied-p)
-                     (export           '() export-supplied-p)
-                     (documentation    nil documentation-supplied-p)
-                     ;;
-                     (update-nicknames :if-supplied)
-                     (update-use       :if-supplied)
-                     (update-shadow    :if-supplied)
-                     (update-export    :if-supplied))
+     &key (nicknames            '() nicknames-supplied-p)
+          (use                  '() use-supplied-p)
+          (shadow               '() shadow-supplied-p)
+          (shadowing-import     '())
+          (import               '())
+          (intern               '())
+          (export               '() export-supplied-p)
+          (documentation        nil documentation-supplied-p)
+          ;;
+          (update-nicknames     :if-supplied)
+          (update-use           :if-supplied)
+          (update-shadow        :if-supplied)
+          (update-export        :if-supplied)
+          (update-documentation :if-supplied))
+  ;; Actions that should be performed once all (if any) variance
+  ;; issues have been reported and resolved.
   (let ((use-actions              '())
         (unuse-actions            '())
         (shadow-actions           '())
@@ -127,17 +149,15 @@
        client
        (lambda (symbol export-status shadow-status)
          (let ((name (parcl.low:symbol-name client symbol))) ; TODO: only when needed?
-           (ecase export-status
-             (:internal )
-             (:external (setf (gethash name old-external) symbol)))
+           (when (eq export-status :external)
+             (setf (gethash name old-external) symbol))
            (when shadow-status
              (setf (gethash name old-shadowed) symbol))))
        existing-package)
-      ;; Remove the names of symbol that will be shadowing from
+      ;; Remove the names of symbols that will be shadowing from
       ;; OLD-SHADOWED so that those names will not be reported as
-      ;; variance.  Report the remaining symbol names as variances and
-      ;; possibly queue unintern actions.
-      ;; TODO: only if shadow is supplied?
+      ;; variance.  Report the remaining symbol names in OLD-SHADOWED
+      ;; as variances and possibly queue unintern actions.
       (when (ecase update-shadow
               ((t)          t)
               (:if-supplied shadow-supplied-p))
@@ -145,17 +165,23 @@
         (loop :for symbol-name :in shadow
               :do (remhash symbol-name old-shadowed))
         (setf shadowing-import-actions shadowing-import)
-        (loop :for symbol :in shadowing-import
-              :do (remhash (parcl.low:symbol-name client symbol) old-shadowed)))
-      ;; TODO: could be `alexandria:maphash-values'
-      (maphash
-       (lambda (ignored symbol)
-         (declare (ignore ignored))
-         (ecase (note-variance client existing-package :shadow :remove symbol)
-           (:old)                       ; keep shadowing
-           (:new (push symbol unintern-actions))))
-       old-shadowed)
-
+        (loop :for symbol      :in shadowing-import
+              :for symbol-name =   (parcl.low:symbol-name client symbol)
+              :do (remhash symbol-name old-shadowed))
+        ;; The remaining entries correspond to removed shadowing
+        ;; names.  Report those as variance.
+        ;; TODO: could be `alexandria:maphash-values'
+        (maphash
+         (lambda (ignored symbol)
+           (declare (ignore ignored))
+           (ecase (note-variance client existing-package :shadow :remove symbol)
+             (:old) ; keep shadowing
+             (:new (push symbol unintern-actions))))
+         old-shadowed))
+      ;; Remove the names of symbols that will external from
+      ;; OLD-EXTERNAL so that those names will not be reported as
+      ;; variance.  Report the remaining symbol names in OLD-EXTERNAL
+      ;; as variable and possibly queue unexport actions.
       (when (ecase update-export
               ((t)          t)
               (:if-supplied export-supplied-p))
@@ -182,7 +208,7 @@
          (lambda (ignored symbol)
            (declare (ignore ignored))
            (ecase (note-variance client existing-package :export :remove symbol)
-             (:old)                     ; keep exporting
+             (:old) ; keep exporting
              (:new (push symbol unexport-actions))))
          old-external)))
     ;; Call `update-package' to perform the queued actions.
@@ -196,9 +222,13 @@
            :unintern         unintern-actions
            :export           export-actions
            :unexport         unexport-actions
-           (append (when nicknames-supplied-p
+           (append (when (ecase update-nicknames
+                           (t            t)
+                           (:if-supplied nicknames-supplied-p))
                      (list :nicknames nicknames))
-                   (when documentation-supplied-p
+                   (when (ecase update-documentation
+                           (t            t)
+                           (:if-supplied documentation-supplied-p))
                      (list :documentation documentation))))))
 
 (defmethod update-package ((client t) (package t)
@@ -213,6 +243,9 @@
                                 (export           '())
                                 (unexport         '())
                                 (documentation    nil documentation-supplied-p))
+  ;; Update nicknames but retain the name.  We could probably use more
+  ;; fine-grained operators but we go through `rename-package' to not
+  ;; skip client customizations via that function.
   (when nicknames-supplied-p
     (let ((name (parcl.low:name client package)))
       (rename-package client package name nicknames)))
@@ -240,7 +273,7 @@
                           (string (intern client package element))
                           (t      element))
           :do (export client package symbol)))
-  ;;
+  ;; Update documentation if supplied.
   (when documentation-supplied-p
     (setf (parcl.low:documentation client package) documentation))
   package)

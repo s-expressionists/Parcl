@@ -66,6 +66,22 @@ a package is supplied as a package designator."))
    "This error is signaled when a deleted package object is supplied to an
 operator that requires an undeleted package object."))
 
+(define-condition package-variance-error (package-error)
+
+  ((%aspect :initarg #1=:aspect
+            :reader  aspect)
+   (%event  :initarg #2=:event
+            :reader  event)
+   (%value  :initarg #3=:value
+            :reader  value))
+  (:default-initargs
+   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#)
+   #2# (error "~@<The required initarg ~S has not been supplied.~@:>" #2#)
+   #3# (error "~@<The required initarg ~S has not been supplied.~@:>" #3#))
+  (:documentation
+   "This error is signaled when a package is updated in a way that is not
+compatible with the current state of the package."))
+
 ;;; Conditions related to package-package relations
 
 ;;; Signaled from `delete-package'

@@ -22,6 +22,11 @@
 
    #:package-does-not-exist-error
 
+   #:package-variance-error
+   #:aspect                             ; reader
+   #:event                              ; reader
+   #:value                              ; reader
+
    #:package-has-been-deleted-error
 
    ;; Conditions related to package-package relations

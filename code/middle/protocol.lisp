@@ -57,14 +57,13 @@
 
 ;;;; Package updating functions
 
-(defgeneric ensure-package (client name &rest args &key &allow-other-keys))
+(defgeneric ensure-package (client name &key &allow-other-keys))
 
 ;;; Symbol designators and package designators passed to this function
 ;;; have to be strings.
 (defgeneric ensure-package-using-package
-    (client existing-package name &rest args &key &allow-other-keys))
+    (client existing-package name &key &allow-other-keys))
 
-(defgeneric note-variance (client package aspect event value)
-  (:method ((client t) (package t) (aspect t) (event t) (value t))))
+(defgeneric note-variance (client package aspect event value))
 
 (defgeneric update-package (client package &key &allow-other-keys))
