@@ -15,22 +15,25 @@
 ;;;; `package' class
 
 (defclass package (parcl.low:package)
-  ((%name         :initarg  #1=:name
-                  :accessor name)
-   (%nicknames    :initarg  :nicknames
-                  :type     list ; of `string'
-                  :accessor nicknames
-                  :initform '())
-   (%use-list     :initarg  :use-list
-                  :type     list ; of `package'
-                  :accessor use-list
-                  :initform '())
-   (%used-by-list :initarg  :used-by-list
-                  :type     list ; of `package'
-                  :accessor used-by-list
-                  :initform '())
-   (%entries      :reader   %entries
-                  :initform (make-hash-table :test #'equal)))
+  ((%name          :initarg  #1=:name
+                   :accessor name)
+   (%nicknames     :initarg  :nicknames
+                   :type     list ; of `string'
+                   :accessor nicknames
+                   :initform '())
+   (%use-list      :initarg  :use-list
+                   :type     list ; of `package'
+                   :accessor use-list
+                   :initform '())
+   (%used-by-list  :initarg  :used-by-list
+                   :type     list ; of `package'
+                   :accessor used-by-list
+                   :initform '())
+   (%entries       :reader   %entries
+                   :initform (make-hash-table :test #'equal))
+   (%documentation :accessor documentation
+                   :type     (or string null)
+                   :initform nil))
   (:default-initargs
    ;: TODO: make a helper function or use alexandria
    #1# (error "The initarg ~S is required by class ~S" '#1# 'package)))

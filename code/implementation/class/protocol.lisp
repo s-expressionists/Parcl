@@ -28,3 +28,7 @@
 (defgeneric used-by-list (package))
 
 (defgeneric (setf used-by-list) (new-used-by-list package))
+
+(defgeneric documentation (package))
+
+(defgeneric (setf documentation) (new-value package))

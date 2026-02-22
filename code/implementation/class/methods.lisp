@@ -24,8 +24,7 @@
                                local-nicknames-mixin)
   (define use-list)
   (define used-by-list)
-  ; (define documentation)
-  )
+  (define documentation))
 
 (defmethod parcl.low:make-package-object ((client package-class-mixin) (name t))
   (make-instance 'package :name name))

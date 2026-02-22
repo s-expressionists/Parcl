@@ -135,6 +135,7 @@
                              ;; Package functions
                              (:file "package-local-nicknames")
                              (:file "package-locally-nicknamed-by-list")
+                             (:file "documentation")
                              ;; Package-package relation functions
                              (:file "use-package")
                              (:file "unuse-package")

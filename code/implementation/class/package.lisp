@@ -3,7 +3,8 @@
    #:common-lisp)
 
   (:shadow
-   #:package)
+   #:package
+   #:documentation)
 
   ;; Client class
   (:export

@@ -46,7 +46,8 @@
   (define low:use-list             :use-list)
   (define low:used-by-list         :used-by-list)
   (define low:local-nicknames      :local-nicknames)
-  (define low:locally-nicknamed-by :locally-nicknamed-by))
+  (define low:locally-nicknamed-by :locally-nicknamed-by)
+  (define low:documentation        :documentation))
 
 (defmethod low:make-package-object ((client client) (name string))
   (make-instance 'package :name name))

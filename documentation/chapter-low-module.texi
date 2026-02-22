@@ -317,7 +317,8 @@ changed use relations.  This function is called by
 Return the documentation of @var{package} @emph{in the package system
 specified by @var{client}}.
 
-The returned documentation is either a string or @code{nil}.
+@var{package} is a package object.  The returned documentation is either
+a string or @code{nil}.
 
 The function can be used to implement the behavior of calls
 @code{(@speclink{f,documentation} @var{package} t)}
@@ -339,7 +340,8 @@ where @var{package} is a package object with the following properties
 Set the document of @var{package} to @var{new-value} @emph{in the
 package system specified by @var{client}} and return @var{new-value}.
 
-@var{package} is a package object. @var{new-value} is a string or @code{nil}.
+@var{new-value} is a string or @code{nil}.  @var{package} is a package
+object.
 
 The function can be used to implement the behavior of calls
 @code{(setf (@speclink{f,documentation} @var{package} t) @var{new-value})}
