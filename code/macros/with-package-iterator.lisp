@@ -2,8 +2,6 @@
 
 ;;; TODO: should this be a middle generic function?
 (defun %make-symbol-iterator (client package-list symbol-types)
-  (when (or (null package-list) (null symbol-types))
-    (return-from %make-symbol-iterator (lambda () nil)))
   (let ((internal?          (member :internal symbol-types))
         (external?          (member :external symbol-types))
         (inherited?         (member :inherited symbol-types))
