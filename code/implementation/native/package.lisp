@@ -28,6 +28,7 @@
 
 (defun translate-name-conflict (condition)
   (let ((conflicts '()))
+    #+sbcl
     (loop :for symbol        :in (sb-ext:name-conflict-symbols condition)
           :for name          =   (symbol-name symbol)
           :for other-package =   (symbol-package symbol)
@@ -50,18 +51,21 @@
 
 (defmacro with-translated-name-conflict ((&rest restart-mapping) &body body)
   `(restart-case
-       (handler-bind ((sb-ext:name-conflict
-                        (lambda (condition)
-                          (with-translated-restarts (,@restart-mapping)
-                            (translate-name-conflict condition)))))
+       (handler-bind ((#+sbcl sb-ext:name-conflict
+                       #+ccl  (or ccl::unintern-conflict-error
+                                  ccl::use-package-conflict-error
+                                  ccl::export-conflict-error)
+                       (lambda (condition)
+                         (with-translated-restarts (,@restart-mapping)
+                           (translate-name-conflict condition)))))
          ,@body)
      (abort () nil)))
 
 (defmethod middle:use-packages ((client          client)
                                 (package         package)
                                 (packages-to-use t))
-  (with-translated-name-conflict ((parcl:unintern       #+sbcl sb-impl::take-new)
-                                  (parcl:shadow         #+sbcl sb-impl::keep-old))
+  (with-translated-name-conflict ((parcl:unintern #+sbcl sb-impl::take-new)
+                                  (parcl:shadow   #+sbcl sb-impl::keep-old))
     (use-package packages-to-use package)))
 
 (defmethod middle:unuse-package ((client            client)
@@ -73,12 +77,14 @@
                                       (package           package)
                                       (nickname          string)
                                       (nicknamed-package package))
-  (sb-ext:add-package-local-nickname nickname nicknamed-package package))
+  #+sbcl (sb-ext:add-package-local-nickname nickname nicknamed-package package)
+  #+ccl  (ccl:add-package-local-nickname    nickname nicknamed-package package))
 
 (defmethod middle:remove-local-nickname ((client   client)
                                          (package  package)
                                          (nickname string))
-  (sb-ext:remove-package-local-nickname nickname package))
+  #+sbcl (sb-ext:remove-package-local-nickname nickname package)
+  #+ccl  (ccl:remove-package-local-nickname    nickname package))
 
 (defmethod middle:shadowing-symbols ((client client) (package package))
   (package-shadowing-symbols package))
@@ -114,10 +120,11 @@
     #+sbcl (when (eq package (load-time-value (find-package "KEYWORD")))
              (unexport-forbidden package symbol))
     (with-translated-name-conflict ()
-      (handler-bind (#+sbcl (sb-ext:package-locked-error
-                              (lambda (condition)
-                                (let ((package (package-error-package condition)))
-                                  (unexport-forbidden package symbol)))))
+      (handler-bind (#+sbcl
+                     (sb-ext:package-locked-error
+                       (lambda (condition)
+                         (let ((package (package-error-package condition)))
+                           (unexport-forbidden package symbol)))))
         (unexport symbol package)))))
 
 (defmethod middle:import ((client client) (package package) (symbol t))
@@ -193,10 +200,12 @@
   (package-nicknames package))
 
 (defmethod low:local-nicknames ((client client) (package package))
-  (sb-ext:package-local-nicknames package))
+  #+sbcl (sb-ext:package-local-nicknames package)
+  #+ccl  (ccl:package-local-nicknames    package))
 
 (defmethod low:locally-nicknamed-by ((client client) (package package))
-  (sb-ext:package-locally-nicknamed-by-list package))
+  #+sbcl (sb-ext:package-locally-nicknamed-by-list package)
+  #+ccl  (ccl:package-locally-nicknamed-by-list    package))
 
 (defmethod low:use-list ((client client) (package package))
   (package-use-list package))
