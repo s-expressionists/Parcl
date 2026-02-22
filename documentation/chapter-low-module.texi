@@ -34,25 +34,29 @@ where symbols and packages are required.
 @node Low Symbol Functions
 @section Low Symbol Functions
 
-;;;; TODO: Old This file contains definitions of generic functions that are
-;;;; called by various parts of Parcl.  Client code must supply a
-;;;; method on each one of these functions, specialized to the
-;;;; paticular client object it uses.
+This protocol consists mostly of accessor-like generic functions that
+operator on symbol objects.  Some of the functions are called directly
+by functions in the @ref{High Module} while others are called via
+functions of the @ref{Middle Module}.
 
 @defgena{symbolp,@lowpackage{}} client object
 
 Return true if @var{object} is a symbol object @emph{in the package
 system specified by @var{client}}.
 
-The default method returns false for all objects so that clients can
-simply define a method that is specialized to the respective client
-class and the associated symbol class and returns true.
+@lowimplements{symbolp,f,symbolp}
+
+The default method returns @code{nil} for all objects so that clients
+can simply define a method that is specialized to the respective client
+class and the associated symbol class and returns @emph{true}.
 @end deffn
 
 @defgena{symbol-name,@lowpackage{}} client symbol
 
 Return the string that is the name of @var{symbol} @emph{in the package
 system specified by @var{client}}.
+
+@lowimplements{symbol-name,f,symbol-name}
 @end deffn
 
 @defgena{symbol-package,@lowpackage{}} client symbol
@@ -60,6 +64,8 @@ system specified by @var{client}}.
 Return the package object that is the home package of @var{symbol} or
 @code{nil} if @var{symbol} is uninterned @emph{in the package system
 specified by @var{client}}.
+
+@lowimplements{symbol-package,f,symbol-package}
 @end deffn
 
 @defgena{(setf symbol-package),@lowpackage{}} new-value client symbol
@@ -78,46 +84,57 @@ Create and return a symbol object with name @var{name} and home package
 @var{name} is a string and @var{package} is either @code{nil} or a
 package object.  If @var{package} is @code{nil}, an uninterned symbol is
 created and returned.
+
+@lowimplements{make-symbol,f,make-symbol}
 @end deffn
 
 @node Low Package Functions
 @section Low Package Functions
 
-;;;; TODO: Old This file contains essential accessors for package objects.  They
-;;;; are deliberately distinct from any standard Common Lisp function,
-;;;; because we might want different implementations of these
-;;;; accessors in different contexts.
+This protocol consists of accessor-like generic functions that operate
+on package objects.  Some of the functions are called directly by
+functions in the @ref{High Module} while others are called via functions
+in the @ref{Middle Module}.
 
 @defgena{packagep,@lowpackage{}} client object
 
 Return @emph{true} if @var{object} is a package object @emph{in the
 package system specified by @var{client}}.
 
-The default method returns false for all objects so that clients can
-simply define a method that is specialized to the respective client
+@lowimplements{packagep,f,packagep}
+
+The default method returns @code{nil} for all objects so that clients
+can simply define a method that is specialized to the respective client
 class and the associated package class and returns @emph{true}.
 @end deffn
 
 @defgena{name,@lowpackage{}} client package
 
-Return a string that is the name of the package object @var{package}
-@emph{in the package system specified by @var{client}}.
+Return @code{nil} or a string that is the name of the package object
+@var{package} @emph{in the package system specified by @var{client}}.
 
-This function can be used to implement and customize the standard
-function @speclink{f,package-name}.
+The higher layers of @sysname{} use the name @code{nil} to indicate that
+@var{package} has been deleted.
+
+@lowimplements{package-name,f,package-name}
 @end deffn
 
 @defgena{(setf name),@lowpackage{}} new-value client package
 
-Set the name of the package object @var{package} to the string
-@var{new-value} @emph{in the package system specified by @var{client}}.
+Set the name of the package object @var{package} to @var{new-value}
+@emph{in the package system specified by @var{client}} and return
+@var{new-value}.
+
+@var{new-value} is either @code{nil} or a string.  The higher layers of
+@sysname{} use the name @code{nil} to indicate that @var{package} has
+been deleted.
 
 In accordance with the role of the low module, this function does not
 check whether @var{new-name} is the name or the nickname of an existing
 package nor does it register @var{package} in the environment under the
-provided name.
-
-TODO: return value
+provided name.  This function is called by
+@genref{rename-package,@middlepackage{}} and
+@genref{delete-package,@middlepackage{}}.
 @end deffn
 
 @defgena{nicknames,@lowpackage{}} client package
@@ -125,33 +142,45 @@ TODO: return value
 Return the list of nicknames of @var{package} @emph{in the package
 system specified by @var{client}}.
 
-This function can be used to implement and customize the standard
-function @speclink{f,package-nicknames}.
+@var{package} is a package object.  The returned list is not freshly
+allocated.
 
-The returned list is not freshly allocated.
+@lowimplements{package-nicknames,f,package-nicknames}
 @end deffn
 
 @defgena{(setf nicknames),@lowpackage{}} new-value client package
 
-Set the nicknames of @var{package} to the list of strings
-@var{new-value} @emph{in the package system specified by @var{client}}.
+Set the nicknames of @var{package} to @var{new-value} @emph{in the
+package system specified by @var{client}} and return @var{new-value}.
+
+@var{new-value} is a list of strings.  This function does not copy the
+@var{new-value} list, so callers should make sure this list is not used
+after being passed as an argument to this function.  @var{package} is a
+package object.
 
 This function only sets the nicknames ``slot'' of @var{package}.  This
 function does not check whether @var{new-value} contains a string that
 is already the name or the nickname of any existing package nor does it
 register @var{package} in the environment under the provided names.
-This function does not copy the @var{new-value} list, so client code
-should make sure this list is not used after being passed as an argument
-to this function.
-
-TODO: return value
+This function is called by @genref{make-package,@middlepackage{}} and
+@genref{rename-package,@middlepackage{}}.
 @end deffn
 
 @defgena{local-nicknames,@lowpackage{}} client package
 
-;;; This function is used to implement the semi-standard function
-;;; PACKAGE-LOCAL-NICKNAMES.  The PACKAGE argument of this function
-;;; must be a package object.
+@cindex package-local nicknames
+@partofpln
+
+Return an @spectermref{alist} which describes the
+@termrefl{package-local nickname,local nicknames} which are defined in
+@var{package} @emph{in the package system specified by @var{client}}.
+
+@var{package} is a package object.
+
+Elements of the returned alist are of the form
+@code{(@var{local-nickname} . @var{nicknamed-package})} where
+@var{local-nickname} is a string and @var{nicknamed-package} is a
+package object.  The returned list is not freshly allocated.
 
 This function can be used to implement and customize the semi-standard
 function @funref{package-local-nicknames,@toppackage{}}.
@@ -159,16 +188,39 @@ function @funref{package-local-nicknames,@toppackage{}}.
 
 @defgena{(setf local-nicknames),@lowpackage{}} new-value client package
 
-This function can be used as part of the implementation of the
-semi-standard functions
-@funref{add-package-local-nickname,@toppackage{}} and
-@funref{remove-package-local-nickname,@toppackage{}}.
+@cindex package-local nicknames
+@partofpln
+
+Set the @termrefl{package-local nickname,local nicknames} of
+@var{package} to @var{new-value} @emph{in the package system specified
+by @var{client}} and return @var{new-value}.
+
+@var{new-value} is an @spectermref{alist} with elements of the form
+@code{(@var{local-nickname} . @var{nicknamed-package})} where
+@var{local-nickname} is a string and @var{nicknamed-package} is a
+package object.  This function does not copy the @var{new-value} list,
+so callers should make sure this list is not used after being passed as
+an argument to this function.  @var{package} is a package object.
+
+This function only sets the @t{local-nicknames} ``slot'' in
+@var{package}.  It does not update the @t{locally-nicknamed-by}
+``slots'' of the packages in @var{new-value} nor does it check the new
+nicknames in any way.  This function is called by
+@genref{add-local-nickname,@middlepackage{}} and
+@genref{remove-local-nickname,@middlepackage{}}.
 @end deffn
 
 @defgena{locally-nicknamed-by,@lowpackage{}} client package
 
-;;; The @var{package} argument of this
-;;; function must be a package object.
+@cindex package-local nicknames
+@partofpln
+
+Return a list of package objects that refer to @var{package} via one or
+more @termrefl{package-local nickname,local nicknames} @emph{in the
+package system specified by @var{client}}.
+
+@var{package} is a package object. The returned list is not freshly
+allocated.
 
 This function can be used to implement and customize the semi-standard
 function @funref{package-locally-nicknamed-by-list,@toppackage{}}.
@@ -176,7 +228,24 @@ function @funref{package-locally-nicknamed-by-list,@toppackage{}}.
 
 @defgena{(setf locally-nicknamed-by),@lowpackage{}} new-value client package
 
-TODO
+@cindex package-local nicknames
+@partofpln
+
+Set the list of package objects that refer to @var{package} via one or
+more @termrefl{package-local nickname,local nicknames} to
+@var{new-value} @emph{in the package system specified by @var{client}}
+and return @var{new-value}.
+
+@var{new-value} is a list of package objects without duplicates.  This
+function does not copy the @var{new-value} list, so callers should make
+sure this list is not used after being passed as an argument to this
+function.  @var{package} is a package object.
+
+This function only sets the @t{locally-nicknamed-by} ``slot'' in
+@var{package}.  It does not update the packages in @var{new-value} in
+any way nor does it check the list of packages in any way.  This
+function is called by @genref{add-local-nickname,@middlepackage{}} and
+@genref{remove-local-nickname,@middlepackage{}}.
 @end deffn
 
 @defgena{use-list,@lowpackage{}} client package
@@ -185,26 +254,30 @@ Return a list of package objects that contains the packages which
 @var{package} uses @emph{in the package system specified by
 @var{client}}.
 
-This function can be used to implement and customize the standard function
-@speclink{f,package-use-list}.
+@var{package} is a package object.  The returned list is not freshly
+allocated.
 
-The returned list is not freshly allocated.
+@lowimplements{package-use-list,f,package-use-list}
 @end deffn
 
 @defgena{(setf use-list),@lowpackage{}} new-value client package
 
 Set the list of used packages of @var{package} to the list of package
 objects @var{new-value} @emph{in the package system specified by
-@var{client}}.
+@var{client}} and return @var{new-value}.
+
+@var{package} must be a package object.  @var{new-value} is a list of
+package objects that become the new list of used packages for
+@var{package}.  This function does not copy the @var{new-value} list, so
+callers should make sure this list is not used after being passed as an
+argument to this function.
 
 This function only sets the @t{use-list} ``slot'' in @var{package}.  It
 does not update the @t{used-by-list} ``slots'' of the packages in
-@var{new-value}, not does it check for any conflicts resulting from the
-changed use relations.  This function does not copy the @var{new-value}
-list, so client code should make sure this list is not used after being
-passed as an argument to this function.
-
-TODO: return value
+@var{new-value}, nor does it check for any conflicts resulting from the
+changed use relations.  This function is called by
+@genref{use-packages,@middlepackage{}} and
+@genref{unuse-package,@middlepackage{}}.
 @end deffn
 
 @defgena{used-by-list,@lowpackage{}} client package
@@ -213,30 +286,30 @@ Return a list of package objects that contains the packages which are
 used by @var{package} @emph{in the package system specified by
 @var{client}}.
 
-This function can be used to implement and customize the standard
-function @speclink{f,package-used-by-list}.
-
 The returned list is not freshly allocated.
 
 TODO: why "list" in this name but not the other list-typed accessors?
+
+@lowimplements{package-used-by-list,f,package-used-by-list}
 @end deffn
 
 @defgena{(setf used-by-list),@lowpackage{}} new-value client package
 
-This function is used to implement the standard functions
-@speclink{f,use-package} and @speclink{f,unuse-package}.
+Set the used-by list of @var{package} to @var{new-value} @emph{in the
+package system specified by @var{client}} and return @var{new-value}.
 
-TODO The @var{package} argument of this function must be a package object.
-
-@var{new-value} is a list of package objects that become the new list of
-packages used by @var{package}.
-
-TODO This function does not copy the @var{new-value} list, so client
-code should make sure this list is not used after being passed as an
+@var{package} must be a package object.  @var{new-value} is a list of
+package objects that become the new list of packages used by
+@var{package}.  This function does not copy the @var{new-value} list, so
+callers should make sure this list is not used after being passed as an
 argument to this function.
 
-TODO The return value of this function is @var{new-value} as required by
-the @commonlisp{} standard.
+This function only sets the @t{used-by-list} ``slot'' in @var{package}.
+It does not update the @t{use-list} ``slots'' of the packages in
+@var{new-value}, nor does it check for any conflicts resulting from the
+changed use relations.  This function is called by
+@genref{use-packages,@middlepackage{}} and
+@genref{unuse-package,@middlepackage{}}.
 @end deffn
 
 @defgena{documentation,@lowpackage{}} client package
@@ -264,7 +337,7 @@ where @var{package} is a package object with the following properties
 @defgena{(setf documentation),@lowpackage{}} new-value client package
 
 Set the document of @var{package} to @var{new-value} @emph{in the
-package system specified by @var{client}}.
+package system specified by @var{client}} and return @var{new-value}.
 
 @var{package} is a package object. @var{new-value} is a string or @code{nil}.
 
@@ -438,14 +511,19 @@ Return the package object that has @var{name} as its name or one of its
 nicknames @emph{in the package system specified by @var{client}}.
 Return @code{nil} if no package has @var{name} as its name or as one of
 its nicknames.
+
+@var{name} is a string.
 @end deffn
 
 @defgena{(setf find-package),@lowpackage{}} new-value client name
 
 Set the package associated with @var{name} to @var{new-value} @emph{in
-the package system specified by @var{client}}.  @var{new-value} is
-either @code{nil} or a package object.  If @var{new-value} is
-@code{nil}, arrange for @var{name} to be associated with no package.
+the package system specified by @var{client}} and return
+@var{new-value}.  If @var{new-value} is @code{nil}, arrange for
+@var{name} to be associated with no package.
+
+@var{new-value} is either @code{nil} or a package object.  @var{name} is
+a string.
 
 In accordance with the role of the low module, this function does not
 check or adjust the name and nicknames of @var{new-value} if
