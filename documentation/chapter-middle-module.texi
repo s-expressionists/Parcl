@@ -4,35 +4,572 @@
 @menu
 * Middle Symbol Functions::
 * Middle Package Functions::
-* Middle Package-package Functions::
-* Middle Package-symbol Functions::
+* Middle Package-package Relation Functions::
+* Middle Package-symbol Relation Functions::
 * Middle Environment Functions::
+* Mixin Classes::
 @end menu
+
+@cindex client parameter
+As explained in @ref{Architecture}, the @emph{middle module} contains
+customizable generic functions with a client parameter which implement
+the behavior of package system operations.  There is mostly but not
+quite a one-to-one correspondence between the generic functions in this
+module and the @commonlisp{} package system operators.  One exception
+are ``accessor-like'' operators such as @speclink{f,symbol-name} or
+@speclink{f,package-used-by-list}.  Those operators are implemented by
+generic functions in the @ref{Low Module,low module}.  The other
+exceptions are the generic functions concerned with updating packages
+and handling variance such as @genref{update-package,@middlepackage{}}.
+
+The functions in this module accept only strings when names are required
+and only symbol objects and package objects (not designators) where
+symbols and packages are required.
+
+Old:
+@quotation
+The ``low'' system exists in a single version, common to the extrinsic
+and the intrinsic systems.  The ``low'' system contains the bulk of
+the functionality of Parcl, but the operators in this system are
+defined as generic functions taking an additional @t{client}
+parameter compared to the standard operators.  A large part of the
+code for the package system consists of checking for symbol conflicts
+and other exceptional situations, and those situations are handled by
+the signaling of correctable errors, as required by the standard.
+All this code is present in the ``low'' system.
+@end quotation
 
 @node Middle Symbol Functions
 @section Middle Symbol Functions
 
-None
+@defgena{keywordp,@middlepackage{}} client object
+
+Return true if @var{object} is a keyword symbol @emph{in the package
+system specified by @var{client}}.
+
+@implements{f,keywordp}
+
+The default method on this generic function returns true if
+@code{(@genref{symbolp,@lowpackage{}} @var{client} @var{object})} returns
+true and
+@code{(@genref{symbol-package,@lowpackage{}} @var{client} @var{object})}
+returns the package named @code{"KEYWORD"}.
+@end deffn
 
 @node Middle Package Functions
 @section Middle Package Functions
 
-None
+Most standard @commonlisp{} operators and the corresponding high-level
+functions in @sysname{} that operate package objects, like
+@speclink{f,package-name} for example, are like readers.  For
+reader-like functions, @sysname{} has the high-level function,
+@t{package-name} in the example, directly call the @ref{Low
+Module,low-level} function, @genref{name,@lowpackage{}} in the example.
+Clients can customize the low-level function and there is nothing an
+intermediate function in the middle module could add.  The only
+exception is the following function because @sysname{} does not handle
+the information about shadowing as if there was corresponding slot in
+the package object.  Instead, the information is computed when needed as
+explained below:
 
-@node Middle Package-package Functions
-@section Middle Package-package Functions
+@defgena{shadowing-symbols,@middlepackage{}} client package
 
-@node Middle Package-symbol Functions
-@section Middle Package-symbol Functions
+Return the list of shadowing symbols of @var{package}.
+
+@implements{f,shadowing-symbols}
+
+@cindex shadow status
+The default method calls @genref{map-symbol-entries,@lowpackage{}} and
+returns symbols the @var{shadow-status} of which is @emph{true}.
+@end deffn
+
+The following generic functions do not correspond to standard
+@commonlisp{} operators but instead exist to allow clients to customize
+the process of creating and updating packages including handling of
+package variance.  While clients could use this non-standard protocol
+directly to create and update packages, the usual call chain is from the
+expansion produced by @speclink{m,defpackage}
+@c TODO: @macref{defpackage,@toppackage{}}
+to @genref{ensure-package,@middlepackage{}}.
+
+@defgena{ensure-package,@middlepackage{}} @
+  client name @pkey{} @allowotherkeys{}
+
+Either create or update the package named @var{name} according to the
+options supplied as keyword arguments and return it.
+
+The default method on this generic function calls
+@genref{find-package-using-package,@middlepackage{}} and then@comma{}
+regardless of whether the result of that call was a package object or
+@code{nil}@comma{} applies
+@genref{ensure-package-using-package,@middlepackage{}} to
+@var{client}@comma{} the result and @var{args}.
+@end deffn
+
+@defgena{ensure-package-using-package,@middlepackage{}} @
+  client existing-package name @pkey{} @allowotherkeys{}
+
+Apply the options supplied as keyword arguments to either a new package
+or the existing package @var{existing-package} and return the new or
+updated package.
+
+The caller has to ensure that this function is called in one of the
+following two ways.  If a package named @var{name} does not yet
+exist@comma{} @var{existing-package} is @code{nil} and this generic
+function has to create a new package.  If a package named @var{name}
+exists@comma{} the value of @var{existing-package} is that package ad
+this generic function has to update @var{existing-package}.
+
+The default methods on this generic function handle those two cases: one
+method is specialized to @var{existing-package} being @code{null} and
+calls @genref{make-package,@middlepackage{}} followed by
+@genref{update-package,@middlepackage{}}.  The other default method
+handles the case of @var{existing-package} being an existing package.
+The method computes differences between the existing package and the
+desired new definition of the package as specified by the keyword
+arguments the method receives.  For each incompatible change@comma{} the
+method calls @genref{note-variance,@middlepackage{}} to either abort the
+whole operation or select an action that resolves the incompatibility.
+If the operation is not aborted@comma{} this method calls
+@genref{update-package,@middlepackage{}} with the list of actions that
+realize the new definition and resolve all incompatibilities if any.
+@end deffn
+
+@defgena{note-variance,@middlepackage{}} client package aspect event value
+
+Indicate that an aspect of the new definition of @var{package} is at
+variance with the current state of @var{package}.
+
+@var{aspect} is the aspect of @var{package} that is at variance with the
+current state @var{package}.  Possible values @code{:use}@comma{}
+@code{:shadow} and @code{:export} as well potential additions by
+clients.
+
+@var{event} is either @code{:add} or @code{:remove}
+
+@var{value} is either a package object or a symbol object.  @var{value}
+is the object the addition to/removal from @var{aspect} of @var{package}
+causes the variance issue being reported.
+@end deffn
+
+@defgena{update-package,@middlepackage{}} @
+  client package @pkey{} @allowotherkeys{}
+
+Modify @var{package} according to the supplied keyword arguments and
+return the modified @var{package}.
+
+Depending on the value of @var{client}@comma{} different modifications and thus
+keyword arguments may be accepted@comma{} but at least the following keyword
+arguments are always recognized:
+
+@table @code
+
+@item :nicknames @var{names}
+
+@item :shadow @var{symbols}
+
+@item :shadowing-import @var{symbols}
+
+@item :use @var{packages}
+
+@item :unuse @var{packages}
+
+@item :import @var{symbol-names}
+
+@item :intern @var{symbols}
+
+Intern @var{symbols} into @var{package}
+
+@item :unintern @var{symbols}
+
+Intern @var{symbols} from @var{package}
+
+@item :export @var{symbols}
+
+Export @var{symbols} from @var{package}
+
+@item :unexport @var{symbols}
+
+Unexport @var{symbols} from @var{package}
+
+@item :documentation @var{new-value}
+
+Set the documentation of @var{package} to @var{new-value} which is
+either @code{nil} or a string.
+
+@end table
+
+The changes are performed in the order given in the specification of
+@speclink{f,defpackage} not in the order in which the keyword arguments
+are supplied.  TODO mention order for removal changes
+@end deffn
+
+@node Middle Package-package Relation Functions
+@section Middle Package-package Relation Functions
+
+@defgena{use-packages,@middlepackage{}} client package packages-to-use
+
+Change the state of the package system such that @var{package} uses the
+packages in the list @var{packages-to-use}.
+
+@implements{f,use-package}
+
+TODO: return value
+
+The default method checks whether the changed usage relations lead to
+conflicts, signals errors as needed and uses the accessors
+@genref{use-list,@lowpackage{}} and @genref{used-by-list,@lowpackage{}}
+to adjust the usage relations between @var{package} and
+@var{packages-to-use}.
+@end deffn
+
+@defgena{unuse-package,@middlepackage{}} client package package-to-unuse
+
+Change package relations such that @var{package} no longer uses
+@var{package-to-unuse} @emph{in the package system specified by
+@var{client}}.
+
+@implements{f,unuse-package}  It differs from the standard function in
+that it takes a single package to unuse as opposed to a list of packages
+to unuse. Client code for the standard function must then call this
+function multiple times.
+
+The default method checks whether the removed usage relation leads to
+conflicts, signals errors as needed and uses the accessors
+@genref{use-list,@lowpackage{}} and @genref{used-by-list,@lowpackage{}}
+to remove the usage relation between @var{package} and
+@var{package-to-unuse}.
+
+TODO: return value
+@end deffn
+
+@cindex package-local nicknames
+@defgena{add-local-nickname,@middlepackage{}} client package @
+  local-nickname nicknamed-package
+
+TODO: mention extension?
+TODO: return value
+
+Change the @termrefl{package-local nickname,package-local nicknames}
+within @var{package} such that @var{local-nickname} refers to
+@var{nicknamed-package} @emph{in the package system specified by
+@var{client}}.
+
+@var{package} is a package object to which the pair of
+@var{local-nickname} and @var{nicknamed-package} is to be added.
+@var{local-nickname} is a string that represents the local nickname to
+be used to refer to @var{nicknamed-package}.  @var{nicknamed-package} is
+the package object to be nicknamed.
+
+If the pair of @var{local-nickname} and @var{nicknamed-package} exists
+in @var{package} already, then the call to this function has no effect.
+If a pair of @var{local-nickname} and a different nicknamed package
+exists in @var{package} already, then an error of type
+@t{nickname-refers-to-different-package-error} is signaled.
+
+This function can be used to implement and customize the
+@emph{semi-standard} function @t{add-package-local-nickname}.
+
+The default method, if necessary, adds the pair of @var{local-nickname}
+and @var{nicknamed-package} to @var{package} using the accessor
+@genref{local-nicknames,@lowpackage{}} and adds @var{package} to
+@var{nicknamed-package} using the accessor
+@genref{locally-nicknamed-by,@lowpackage{}}.
+@end deffn
+
+@cindex package-local nicknames
+@defgena{remove-local-nickname,@middlepackage{}} client package @
+  local-nickname
+
+TODO: mention extension
+
+Remove the @termref{package-local nickname} @var{local-nickname} from
+@var{package} and return @emph{true} if @var{package} has been changed
+and @t{nil} otherwise.
+
+@var{local-nickname} is a string that represents the local nickname to
+be removed from @var{package}.  @var{package} is a package object from
+which @var{local-nickname} is to be removed.
+
+If @var{local-nickname} is the @termref{package-local nickname} of any
+package in @var{package}, then it is removed, and this function returns
+@emph{true}.  If @var{local-nickname} is not the @termref{package-local
+nickname} of any package in @var{package}, then this function has no
+effect, and returns @var{nil}.
+
+This function can be used to implement and customize the
+@emph{semi-standard} function @t{remove-package-local-nickname}.
+
+The default method, if necessary the local nicknames of @var{package}
+contain a pair of @var{local-nickname} and a nicknamed package
+@var{nicknamed-package}, removes the pair from @var{package} using the
+accessor using the accessor @genref{local-nicknames,@lowpackage{}} and
+removes @var{package} from @var{nicknamed-package} using the accessor
+@genref{locally-nicknamed-by,@lowpackage{}}
+@end deffn
+
+@node Middle Package-symbol Relation Functions
+@section Middle Package-symbol Relation Functions
+
+@defgena{find-symbol,@middlepackage{}} client package name
+
+Try to find a symbol named @var{name} in @var{package} and return two
+values: The first value is either a symbol with the name @var{name} that
+is accessible in @var{package}, or @code{nil} if there is no such
+symbol.  The second value is either @code{:internal}, @code{:external},
+@code{:inherited}, or @code{nil}.
+
+@implements{f,find-symbol}
+
+@cindex export status
+The default method on this generic function calls
+@code{(@genref{symbol-entry,@lowpackage{}} @var{client} @var{package} @var{name})}
+to potentially obtain a present symbol and the export status of the
+symbol.  If such a present symbol exists, the associated export status
+determines whether the second return value is @code{:internal} or
+@code{:external}.  If there is no such present symbol, the method makes
+similar calls to @genref{symbol-entry,@lowpackage{}} for packages on the
+use-list of @var{package}.  If one such call yields a symbol with export
+status @code{:external}, the method returns that symbol and
+@code{:inherited}.  If no accessible symbol is found, the method returns
+@code{nil nil}.
+@end deffn
+
+@defgena{intern,@middlepackage{}} client package name
+
+Ensure that a symbol named @var{name} is @spectermref{present} in
+@var{package}.
+
+TODO return value
+
+If @var{package} is the keyword package, that is it has the property
+@code{(equal (@genref{name,@lowpackage{}} @var{client} @var{package}) "KEYWORD")}
+, then this function also exports the interned symbol from
+@var{package}.
+
+@implements{f,intern}
+
+The default method on this generic function calls checks for conflicts
+and performs the calls
+@code{(@genref{make-symbol,@lowpackage{}} @var{client} @var{name})} and
+@code{(@genref{set-symbol-entry,@lowpackage{}} @var{symbol} @var{export-status} @var{shadow-status} @var{client} @var{name} @var{package})}
+with the new @var{symbol}, the appropriate @var{export-status} and
+@var{shadow-status} @code{nil}.
+@end deffn
+
+@defgena{unintern,@middlepackage{}} client package symbol
+
+If @var{symbol} is @spectermref{present} in @var{package}, it is removed
+so that it is no longer present.  It is also removed from the list of
+shadowing symbols of @var{package}.  If @var{package} is the home
+package of @var{symbol}, as determined by a call to
+@genref{symbol-package,@lowpackage{}}, then this function sets the
+@spectermrefl{home_package,home package} of @var{symbol} to @code{nil}.
+TODO return value
+
+@implements{f,unintern}
+
+TODO The default method ...
+
+performs a call like
+@code{(setf (@lowpackage{}:symbol-package @var{client} @var{symbol}) nil)}.
+@end deffn
+
+@defgena{export,@middlepackage{}} client package symbol
+
+TODO
+
+@implements{f,export}  It differs from the standard function in that it
+takes a single symbol as opposed to a list of symbols.  Client code for
+the standard function must then call this function multiple times.
+
+TODO The default method on this generic function
+@end deffn
+
+@defgena{unexport,@middlepackage{}} client package symbol
+
+Change the export status of @var{symbol} in @var{package} so that
+@var{symbol} is no longer @spectermref{exported}.
+TODO return value
+
+@implements{f,unexport}  It differs from the standard function in that it
+takes a single symbol as opposed to a list of symbols.  As a result,
+client code as well as the function @t{unexport} must potentially call
+this function multiple times.
+
+TODO The default method on this generic function
+@end deffn
+
+@defgena{import,@middlepackage{}} client package symbol
+
+Make @var{symbol} @spectermref{present} in @var{package} if it is not
+already present and return two values: 1) A Boolean which indicates
+whether the status of @var{symbol} in @var{package} has been changed 2)
+A Boolean which indicates whether the @spectermref{home_package,home
+package} of @var{symbol} has been changed.
+
+TODO conflicts,
+
+If, as a result of a call to this function, @var{symbol} is imported
+into @var{package}, and @var{symbol} has no home package (as determined
+by a call to @genref{symbol-package,@lowpackage{}}) then this function
+calls @code{(setf (symbol-package @var{client} @var{symbol})
+@var{package})}.
+
+@implements{f,import}  It differs from the standard function in that it
+takes a single symbol as opposed to a list of symbols.  As a result,
+client code as well as the function @t{import} must potentially call
+this function multiple times.
+@end deffn
+
+@defgena{shadow,@middlepackage{}} client package name
+
+TODO
+and return the present or newly created symbol object.
+
+@implements{f,shadow}  It differs from the standard function in that it
+takes a single string as opposed to a designator for a list of strings.
+As a result, client code as well as the function @t{shadowing-import}
+must resolve designators and then potentially call this function
+multiple times.
+
+The default method on this generic function calls
+@genref{symbol-entry,@lowpackage{}} to determine whether a symbol with
+the name @var{name} is @spectermref{present} in @var{package}.
+;;; If that is the case, then that
+;;; existing symbol is added to the set of shadowing symbols of
+;;; PACKAGE.  If no such symbol is present in PACKAGE, this function
+;;; calls MAKE-SYMBOL, passing it CLIENT, NAME, and PACKAGE as
+;;; arguments.  The resulting symbol is then added to PACKAGE as an
+;;; internal symbol and as a shadowing symbol.
+@end deffn
+
+@defgena{shadowing-import,@middlepackage{}} client package symbol
+
+Make @var{symbol} @spectermref{present} in @var{package} and make
+@var{symbol} @spectermrefl{shadowing_symbol,shadowing} in @var{package}.
+Return either @code{nil} or a symbol object with the same name as
+@var{symbol} that was already present in @var{package} which may be
+@var{symbol} itself.
+
+@implements{f,shadowing-import}  It differs from the standard function in
+that it takes a single symbol object as opposed to a designator for a
+list of symbols.  As a result, client code as well as the function
+@t{shadowing-import} must resolve designators and then potentially call
+this function multiple times.
+
+The default method on this generic function calls
+@genref{symbol-entry,@lowpackage{}} to check the status of the name of
+@var{symbol} in @var{package}.  If a present symbol that is not
+@var{symbol} is found, the default method calls
+@genref{unintern,@middlepackage{}} on that symbol.  TODO and then
+@end deffn
 
 @node Middle Environment Functions
 @section Middle Environment Functions
 
-@defgena{make-package,@toppackage.middle} client name nicknames used-packages
+@defgena{packages,@middlepackage{}} client
+
+Return a list of all package objects in the package system designated by
+@var{client}.
+
+@implements{f,list-all-package}
+
+The default method on this generic function simply calls
+@t{(@genref{packages,@lowpackage{}} @var{client})}.
 @end deffn
 
-@defgena{delete-package,@toppackage.middle} client package
+@defgena{find-package-using-package,@middlepackage{}} client package name
+
+Find, in relation to @var{package}, and return the package named
+@var{name} in the package system designated by @var{client} or return
+@code{nil} if no such package exists.
+
+The default method on this generic function behaves like
+@speclink{f,find-package}.
+
+For the @ref{Package-local Nicknames} extension, a method specialized to
+@classref{local-nicknames-mixin,@middlepackage{}} extends the behavior
+of this generic function such that it first looks for @var{name} in the
+@termrefl{package-local nickname,local nicknames} defined in
+@var{package} and returns the nicknamed package, if any, before
+executing the default behavior.
 @end deffn
 
-@defgena{rename-package,@toppackage.middle} client name new-name new-nicknames
+@defgena{make-package,@middlepackage{}} client name nicknames used-packages
+
+Make and return a new package with name @var{name}, nicknames
+@var{nicknames} and used packages @var{used-package}, including
+registering the new package under specified names in the package system
+designated by @var{client} and establishing ``use'' relations to
+@var{used-package} in both directions.
+
+@var{name} is @var{nicknames} is @var{used-packages}
+
+TODO: conflicts
+
+@implements{f,make-package}
+
+TODO The default method on this generic function
 @end deffn
+
+@defgena{delete-package,@middlepackage{}} client package
+
+Change the name of @var{package} to @t{nil} and change the package
+system designated by @var{client} such that no name refers to
+@var{package}.
+
+TODO exceptional situations
+
+@implements{f,delete-package}
+
+@end deffn
+
+@defgena{rename-package,@middlepackage{}} client package new-name new-nicknames
+
+Change @var{package} as well as the environment and other packages in
+the package system designated by @var{client} such that @var{package}
+has the name @var{new-name} and the nicknames @var{new-nicknames}.  TODO
+return value
+
+@var{new-name} is a string that should become the new name of
+@var{package}.  @var{new-nicknames} is a list of strings that should
+become the new nicknames of @var{package}.
+
+If @var{new-name} or one of the @var{new-nicknames} refers to a package
+other than @var{package}, a condition of type
+@t{package-name-occupied-error} is signaled.
+
+@implements{f,rename-package}
+
+TODO: The default method on this generic function
+@end deffn
+
+@defgena{find-symbols,@middlepackage{}} client name
+
+Return a list of all symbol object in the package system designated by
+@var{client} whose name is @var{name}.
+
+@var{name} is a string.
+
+@implements{f,find-symbols}
+
+TODO: The default method on this generic function
+@end deffn
+
+@node Mixin Classes
+@section Mixin Classes
+
+@sysname{} provides certain aspects of the behavior of the package system
+in the form of mixin classes.  Clients can choose whether to include
+those mixin classes as superclasses and thus add or omit the respective
+behavior from the package system being defined.
+
+@defclassa{local-nicknames-mixin,@middlepackage{}}
+
+This class is intended to be mixed into client classes that provide the
+@ref{Package-local Nicknames} extension.  A client which includes this
+class in its superclasses will support the operators and additional
+@speclink{f,defpackage} option mentioned in the description of the
+extension.
+@end deftp

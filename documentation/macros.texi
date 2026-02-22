@@ -28,6 +28,9 @@ parcl
 @macro pkey
 @t{&key}
 @end macro
+@macro allowotherkeys
+@t{&allow-other-keys}
+@end macro
 @macro pbody
 @t{&body}
 @end macro
