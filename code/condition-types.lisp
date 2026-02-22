@@ -18,12 +18,15 @@
 
 ;;; Package related conditions
 
-;;; TODO package-name-condition?
+;;; TODO: package-name-condition?
 (define-condition package-name-occupied-condition (package-system-condition)
-  ((%new-name         :initarg :new-name
+  ((%new-name         :initarg #1=:new-name
                       :reader  new-name)
-   (%existing-package :initarg :existing-package
-                      :reader  existing-package)))
+   (%existing-package :initarg #2=:existing-package
+                      :reader  existing-package))
+  (:default-initargs
+   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#)
+   #2# (error "~@<The required initarg ~S has not been supplied.~@:>" #2#)))
 
 (define-condition package-name-occupied-error (error
                                                package-name-occupied-condition)

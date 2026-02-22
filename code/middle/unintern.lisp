@@ -37,8 +37,7 @@
                                                                ,@conflicts)))
                                    :package-labels `((,package . "using package")
                                                      ,@(loop :for (nil . package) :in conflicts
-                                                             :collect `(,package . "exporting package")))
-                                   "Symbol conflict, not uninterning ~s" symbol)
+                                                             :collect `(,package . "exporting package"))))
                           (#1=parcl::abort-operation ()
                             :report (lambda (stream)
                                       (parcl::report-restart '#1# stream 'unintern))
