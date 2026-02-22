@@ -154,14 +154,15 @@ TODO: return value
 ;;; must be a package object.
 
 This function can be used to implement and customize the semi-standard
-function @t{package-local-nicknames}.
+function @funref{package-local-nicknames,@toppackage{}}.
 @end deffn
 
 @defgena{(setf local-nicknames),@lowpackage{}} new-value client package
 
 This function can be used as part of the implementation of the
-semi-standard functions @t{add-package-local-nickname} and
-@t{remove-package-local-nickname}.
+semi-standard functions
+@funref{add-package-local-nickname,@toppackage{}} and
+@funref{remove-package-local-nickname,@toppackage{}}.
 @end deffn
 
 @defgena{locally-nicknamed-by,@lowpackage{}} client package
@@ -170,7 +171,7 @@ semi-standard functions @t{add-package-local-nickname} and
 ;;; function must be a package object.
 
 This function can be used to implement and customize the semi-standard
-function @t{package-locally-nicknamed-by-list}.
+function @funref{package-locally-nicknamed-by-list,@toppackage{}}.
 @end deffn
 
 @defgena{(setf locally-nicknamed-by),@lowpackage{}} new-value client package

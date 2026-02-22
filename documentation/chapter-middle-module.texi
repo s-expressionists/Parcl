@@ -59,18 +59,18 @@ returns the package named @code{"KEYWORD"}.
 @node Middle Package Functions
 @section Middle Package Functions
 
-Most standard @commonlisp{} operators and the corresponding high-level
-functions in @sysname{} that operate package objects, like
-@speclink{f,package-name} for example, are like readers.  For
+Most standard @commonlisp{} operators and the corresponding @ref{High
+Module,high-level} functions in @sysname{} that operate package objects,
+like @speclink{f,package-name} for example, are like readers.  For
 reader-like functions, @sysname{} has the high-level function,
-@t{package-name} in the example, directly call the @ref{Low
-Module,low-level} function, @genref{name,@lowpackage{}} in the example.
-Clients can customize the low-level function and there is nothing an
-intermediate function in the middle module could add.  The only
-exception is the following function because @sysname{} does not handle
-the information about shadowing as if there was corresponding slot in
-the package object.  Instead, the information is computed when needed as
-explained below:
+@funref{package-name,@toppackage{}} in the example, directly call the
+@ref{Low Module,low-level} function, @genref{name,@lowpackage{}} in the
+example.  Clients can customize the low-level function and there is
+nothing an intermediate function in the middle module could add.  The
+only exception is the following function because @sysname{} does not
+handle the information about shadowing as if there was corresponding
+slot in the package object.  Instead, the information is computed when
+needed as explained below:
 
 @defgena{shadowing-symbols,@middlepackage{}} client package
 
@@ -265,10 +265,12 @@ If the pair of @var{local-nickname} and @var{nicknamed-package} exists
 in @var{package} already, then the call to this function has no effect.
 If a pair of @var{local-nickname} and a different nicknamed package
 exists in @var{package} already, then an error of type
-@t{nickname-refers-to-different-package-error} is signaled.
+@classref{nickname-refers-to-different-package-error,@toppackage{}} is
+signaled.
 
 This function can be used to implement and customize the
-@emph{semi-standard} function @t{add-package-local-nickname}.
+@emph{semi-standard} function
+@funref{add-package-local-nickname,@toppackage{}}.
 
 The default method, if necessary, adds the pair of @var{local-nickname}
 and @var{nicknamed-package} to @var{package} using the accessor
@@ -298,7 +300,8 @@ nickname} of any package in @var{package}, then this function has no
 effect, and returns @var{nil}.
 
 This function can be used to implement and customize the
-@emph{semi-standard} function @t{remove-package-local-nickname}.
+@emph{semi-standard} function
+@funref{remove-package-local-nickname,@toppackage{}}.
 
 The default method, if necessary the local nicknames of @var{package}
 contain a pair of @var{local-nickname} and a nicknamed package
@@ -394,8 +397,8 @@ TODO return value
 
 @implements{f,unexport}  It differs from the standard function in that it
 takes a single symbol as opposed to a list of symbols.  As a result,
-client code as well as the function @t{unexport} must potentially call
-this function multiple times.
+client code as well as the function @funref{unexport,@toppackage{}} must
+potentially call this function multiple times.
 
 TODO The default method on this generic function
 @end deffn
@@ -418,8 +421,8 @@ calls @code{(setf (symbol-package @var{client} @var{symbol})
 
 @implements{f,import}  It differs from the standard function in that it
 takes a single symbol as opposed to a list of symbols.  As a result,
-client code as well as the function @t{import} must potentially call
-this function multiple times.
+client code as well as the function @funref{import,@toppackage{}} must
+potentially call this function multiple times.
 @end deffn
 
 @defgena{shadow,@middlepackage{}} client package name
@@ -429,9 +432,9 @@ and return the present or newly created symbol object.
 
 @implements{f,shadow}  It differs from the standard function in that it
 takes a single string as opposed to a designator for a list of strings.
-As a result, client code as well as the function @t{shadowing-import}
-must resolve designators and then potentially call this function
-multiple times.
+As a result, client code as well as the function
+@funref{shadowing-import,@toppackage{}} must resolve designators and
+then potentially call this function multiple times.
 
 The default method on this generic function calls
 @genref{symbol-entry,@lowpackage{}} to determine whether a symbol with
@@ -455,8 +458,8 @@ Return either @code{nil} or a symbol object with the same name as
 @implements{f,shadowing-import}  It differs from the standard function in
 that it takes a single symbol object as opposed to a designator for a
 list of symbols.  As a result, client code as well as the function
-@t{shadowing-import} must resolve designators and then potentially call
-this function multiple times.
+@funref{shadowing-import,@toppackage{}} must resolve designators and
+then potentially call this function multiple times.
 
 The default method on this generic function calls
 @genref{symbol-entry,@lowpackage{}} to check the status of the name of
@@ -538,7 +541,7 @@ become the new nicknames of @var{package}.
 
 If @var{new-name} or one of the @var{new-nicknames} refers to a package
 other than @var{package}, a condition of type
-@t{package-name-occupied-error} is signaled.
+@classref{package-name-occupied-error,@toppackage{}} is signaled.
 
 @implements{f,rename-package}
 

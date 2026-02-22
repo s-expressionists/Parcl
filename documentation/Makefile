@@ -4,7 +4,8 @@ NAME = parcl
 
 SOURCES = $(wildcard *.texi)
 
-GENERATED = generated-version.texi
+GENERATED = generated-version.texi             \
+            generated-chapter-high-module.texi
 
 INPUTS = $(SOURCES) $(GENERATED)
 
@@ -28,6 +29,19 @@ generated-version.texi: ../data/version-string.sexp
                 --eval '(format t "@macro sysversion~%~A~%@end macro" (uiop:read-file-form "$<"))' \
                 --quit                                                                             \
 	  > $@
+
+generated-chapter-high-module.texi: ../tools/texinfo.lisp                \
+                                    ../tools/generate-documentation.lisp \
+                                    ../code/condition-types.lisp
+	$(SBCL) --noinform --disable-debugger --no-sysinit --no-userinit \
+                --eval '(declaim (optimize (debug 3)))'                  \
+                --eval '(require :asdf)'                                 \
+                --eval '(asdf:load-system "alexandria")'                 \
+                --eval '(asdf:load-system "parcl-extrinsic")'            \
+                --eval '(asdf:load-system "parcl-core" :force t)'        \
+                $(foreach file,$^,--load "$(file)")                      \
+                --quit                                                   \
+          > $@
 
 $(NAME).info: $(INPUTS) $(IMAGES)
 	makeinfo --output $@ $(NAME).texi

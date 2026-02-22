@@ -1,0 +1,8 @@
+@cindex package-local nicknames
+@partofpln
+
+Return a list of package objects that refer to @var{package} via one or
+more @termrefl{package-local nickname,local nicknames}.
+
+@var{package} is a @spectermrefl{package_designator, package
+designator}.

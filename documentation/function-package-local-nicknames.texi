@@ -1,0 +1,13 @@
+@cindex package-local nicknames
+@partofpln
+
+Return an @spectermref{alist} which describes the
+@termrefl{package-local nickname,local nicknames} which are defined in
+@var{package}.
+
+@var{package} is a @spectermrefl{package_designator,package designator}.
+
+Elements of the returned alist are of the form
+@code{(@var{local-nickname} . @var{nicknamed-package})} where
+@var{local-nickname} is a string and @var{nicknamed-package} is a
+package object.
