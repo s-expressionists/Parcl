@@ -25,33 +25,35 @@ certain situations, for example when @t{(@speclink{f,find-package}
 "@var{N}")} is called or @t{@var{N}:@dots{}} is read @emph{while
 @speclinkl{v,package,*package*} is bound to @var{C}}.
 
-The high-level protocol for this extension consists of the following
-functions:
+The @termrefl{high module,high-level} protocol for this extension
+consists of the following functions:
 
 @itemize
 
 @item
-@code{@toppackage{}:package-local-nicknames}
+@funref{package-local-nicknames,@toppackage{}}
 
 @item
-@code{@toppackage{}:package-locally-nicknamed-by-list}
+@funref{package-locally-nicknamed-by-list,@toppackage{}}
 
 @item
-@code{@toppackage{}:add-package-local-nickname}
+@funref{add-package-local-nickname,@toppackage{}}
 
 @item
-@code{@toppackage{}:remove-package-local-nickname}
+@funref{remove-package-local-nickname,@toppackage{}}
 
 @end itemize
 
-as well as the @code{:local-nicknames} option for @code{@toppackage{}:defpackage}.
+as well as the @code{:local-nicknames} option for @speclink{m,defpackage}
+@c TODO: @macref{defpackage,@toppackage{}}
+.
 
-The @emph{middle module} has matching functions and also the generic
-function @code{@middlepackage{}:find-package-using-package} which can
+The @termref{middle module} has matching functions and also the generic
+function @genref{find-package-using-package,@middlepackage{}} which can
 take into account the current package when looking up a package by name.
 
 Clients can select this extension by including the class
-@code{@middlepackage{}:local-nicknames-mixin}.
+@classref{local-nicknames-mixin,@middlepackage{}}.
 
 @node Package Locks
 @section Package Locks
@@ -82,4 +84,11 @@ package system is to give clients control over the consequences (See the
 @uref{https://www.sbcl.org/manual/#Package-Variance,SBCL Manual} for an
 example).
 
-@sysname{} does not support a package variance extension at the moment.
+@sysname{} does not support a package variance extension like the one in
+SBCL at this high level at the moment.  However, @sysname{} allows
+clients to customize the process of handling variance and updating
+existing packages by means of the generic functions
+@genref{ensure-package,@middlepackage{}},
+@genref{ensure-package-using-package,@middlepackage{}},
+@genref{note-variance,@middlepackage{}}, and
+@genref{update-package,@middlepackage{}}.

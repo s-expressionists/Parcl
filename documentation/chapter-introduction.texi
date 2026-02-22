@@ -2,70 +2,399 @@
 @chapter Introduction
 
 @menu
-* Purpose::
+* Usage Scenarios::
 * Architecture::
+* The Client Parameter::
+* Protocols for defpackage::
 @end menu
 
-@node Purpose
-@section Purpose
-
-@cindex intrinsic
-@cindex extrinsic
 @sysname{} provides a complete implementation of the @commonlisp{}
-package system as well some parts of the Symbols dictionary.  It can be
-used as either an @dfn{extrinsic} system in a @commonlisp{}
-implementation that already has its own package system, or as an
-@dfn{intrinsic} system to provide a package system in a new
-@commonlisp{} implementation. @xref{Implementations}.
+package system as well as some parts of the Symbols dictionary.  What
+sets @sysname{} apart from typical package systems contained in
+@commonlisp{} implementations is that @sysname{} can also be used as a
+library as well as a high level of customizability.
+
+@node Usage Scenarios
+@section Usage Scenarios
+
+@cindex extrinsic
+@cindex intrinsic
+@sysname{} can be used as either an @termref{extrinsic} system in a
+@commonlisp{} implementation that already has its own package system, or
+as an @termref{intrinsic} system to provide a package system in a new
+@commonlisp{} implementation.  For each of those cases, clients can
+customize the behavior or select existing implementations of symbol and
+package operators as well as the @link{Package System State
+Storage,``storage'' of the package system} state.
+
+@subheading Extrinsic Usage
+
+@terml{extrinsic,Extrinsic} usage of @sysname{} allows it to exist
+and function in a @commonlisp{} system that has its own native package
+system.  One extrinsic use can be for testing @sysname{} without
+affecting the native package system in the @commonlisp{} implementation
+used for running the test.  Another use can be analyzing @commonlisp{}
+code without creating the packages and symbols that occur in the
+analyzed code in the ``host'' @commonlisp{} environment.
+
+To load @sysname{} for an extrinsic usage scenario, the client should
+load the @t{parcl-extrinsic} system.  Loading this system causes the
+@t{parcl} package to be defined such that it shadows the names of
+@commonlisp{} operators related to symbols and packages.  After that,
+the core of @sysname{} is loaded as part of the @t{parcl-extrinsic}
+system and attached to those shadowed names so that the symbol and
+package operators provided by the ``host'' @commonlisp{} system are not
+affected in any way.
+
+@subheading Intrinsic Usage
+
+@terml{intrinsic,Intrinsic} use of @sysname{} means that it is used
+in a new @commonlisp{} system to provide a native package system when
+the implementation does not have a package system of its own.
+
+To load @sysname{} for an intrinsic usage scenario, the client should
+load the @t{parcl-intrinsic} system.  Loading this system causes the
+@t{parcl} package to be defined such that it uses the @t{common-lisp}
+package without shadowing the names of @commonlisp{} operators related
+to symbols and packages.  After that, the core of @sysname{} is loaded
+as part of the @t{parcl-intrinsic} system and attached to the names
+inherited from the @t{common-lisp} package so that @sysname{} provides
+the definitions of the standard operators.
+
+``Loading'' @sysname{} into a @commonlisp{} system that does not have a
+package system is of course more than a little hand-wavy.  The client
+has to make arrangements to resolve the associated bootstrapping issues.
+
+@menu
+* Package System State Storage::
+@end menu
+
+@node Package System State Storage
+@subheading Package System State Storage
+
+Another aspect of using @sysname{} that depends on the usage scenario is
+the representation of the package system state: the mapping of package
+names to package objects, the usage relations between packages, the
+status of symbols with respect to packages, the home packages of symbols
+and some other pieces of data.
+
+@cindex traditional implementation
+A @term{traditional} implementation is one in which the contents of a
+package are stored in slots of an instance of the package object.
+@sysname{} includes one implementation of this kind in the
+@t{parcl-low-class} system.
+
+@cindex trampoline implementation
+A @term{trampoline} implementation is one in which the contents of a
+package are stored in some kind of environment, and the accessor
+functions on a package object trampoline to accessor functions on the
+environment.  @sysname{} does not include an implementation of this kind
+since any such implementation would be tied to a certain environment
+implementation.
+
+Note that both kinds of implementations are compatible with both
+@termref{extrinsic} and @termref{intrinsic} usage.
+
+@cindex native implementation
+Another kind of implementation is a @term{native} implementation which
+maps @sysname{} operators to the corresponding operators of the host
+@commonlisp{} system.  This kind of implementation can be used only
+@termrefl{extrinsic,extrinsically} and is useful mainly for tests.
+@sysname{} includes a native implementation in the
+@t{parcl-implementation-native} system.
 
 @node Architecture
 @section Architecture
 
-As mentioned in TODO, users of @sysname{} may several different purposes
-each of which requires a different interaction between the user and
-@sysname{}.  To facilitate those different ways of using the system,
-@sysname{} provides multiple protocol which are tailored to specific
-purposes:
+As mentioned in @ref{Usage Scenarios}, clients may use @sysname{} for
+several different purposes each of which requires a different
+interaction between the client and @sysname{}.  To facilitate those
+different ways of using the system, @sysname{} provides multiple
+protocols which are tailored to specific purposes:
 
 @itemize
 
 @item
-The basic protocol consists of the @commonlisp{} package system variables,
-condition types and operators.  This protocol may be used in an intrisic
-or extrinsic (TODO reference or explain here?) context.  Users will use
-apply the ordinary @commonlisp{} package system operators and not care much
-about @sysname{}'s internals or even its existence.
+@cindex high module
+The basic protocol consists of the @commonlisp{} package system
+variables, condition types and operators.  In contrast to the other
+provided protocols, this module includes macros as well, specifically
+the @commonlisp{} macros related to symbols and packages.  This protocol
+may be used in @termref{intrinsic} and @termref{extrinsic} scenarios.
+Clients apply the ordinary @commonlisp{} package system operators and
+don't care much about @sysname{}'s internals or, in an
+@termref{intrinsic} scenario, even its existence.  We call the interface
+provided to these clients (which basically consists of @commonlisp{}
+symbol and package operators) the @term{high module}.  See @ref{High
+Module} for the protocols provided by the module.
 
 @item
-Some user may which too hook into package system functionality, for
-example to monitor or modify the respective behavior.  Since the @commonlisp{}
-package system operators are not customizable, @sysname{} provides a
-client parameter customizable generic functions which implement the
-behavior of package system operations.  Each @commonlisp{} package system
-operator provided by @sysname{} calls the corresponding generic function
-so that users can extend or change the behavior without any change to
-the interface provided to clients which just use the @commonlisp{} package
-system operators.
+@cindex client parameter
+@cindex middle module
+Some clients may wish to hook into package system functionality, for
+example to monitor or modify the respective behavior.  Since the
+@commonlisp{} package system operators are not customizable, @sysname{}
+provides customizable generic functions with a @term{client parameter}
+(see @ref{The Client Parameter}) which implement the behavior of package
+system operations.  Each @commonlisp{} package system operator provided
+by the @termref{high module} calls the corresponding generic function so
+that clients can extend or change the behavior without any change to the
+interface provided to clients which just use the @commonlisp{} package
+system operators through the @termref{high module}.  We call the
+interface for customizing package system operators the @term{middle
+module}.  See @ref{Middle Module} for the protocols provided by the
+module.
 
 @item
-The goal of the third group of users is implement symbols and packages
-with custom data structures without changing the behavior of the package
-system.  One such user could be a @commonlisp{} implementation that uses
-@sysname{} intrinsically as its implementation of the package system.
-Another user could need a simulated package system within an existing
-@commonlisp{} implementation, for example for the purpose of statically
-analyzing @commonlisp{} code or for sandboxing.
+@cindex low module
+The goal of the third group of clients is to implement symbols and/or
+packages with custom data structures without changing the higher-level
+behavior of the package system.  One such client could be a
+@commonlisp{} implementation that uses @sysname{}
+@termrefl{intrinsic,intrinsically} as its implementation of the package
+system.  Another client could need a simulated package system within an
+existing @commonlisp{} implementation, for example for the purpose of
+analyzing @commonlisp{} code or for sandboxing.  We call the interface
+provided to these clients the @term{low module}.  See @ref{Low Module}
+for the protocols provided by the module.
 
 @end itemize
 
+The following figure illustrates @sysname{}'s architecture visually in
+terms of the above modules, the respectively provided protocols and the
+relations between higher-level and lower-level functions:
+
 @float Figure,fig:architecture
 @center @image{architecture,12cm}
-@caption{TODO}
+@caption{Overview of @sysname{}'s architecture.  The outer boxes
+represent the @emph{high}, @emph{middle} and @emph{low} modules.  The
+inner gray boxes represent groups of functions with related purposes.
+Arrows from left to right indicate that functions from a higher-level
+protocol call functions from a lower-level protocol to realize (part of)
+their behavior.}
 @end float
 
-The way the standard function obtains the value to pass is specific to
-the client, which is why @sysname{} does not impose a particular
-technique.  One possibility for client code is to define the standard
-function as a @emph{closure}, closing over the @code{client} object.
-Another possibility is to keep the @code{client} object as the value of
-a special variable.
+@node The Client Parameter
+@section The Client Parameter
+
+@cindex client parameter
+As mentioned (@pxref{Architecture}), high-level protocols do not accept
+a client argument while the lower-level protocols do.  As a consequence,
+clients which use the high-level protocols have to communicate to
+@sysname{} via some channel which client object should be used by the
+underlying lower-level functions.  The fundamental mechanism for
+providing this information is the variable
+@varref{*client*,@toppackage{}}.  There are different strategies clients
+can use to control the value of this variable.  @sysname{} does not
+mandate any particular strategy as the most appropriate approach depends
+on the usage scenario (@pxref{Usage Scenarios}).  The following
+strategies might be useful to some clients:
+
+@itemize
+
+@item
+One possibility for client code is to completely fix the client
+parameter by defining its functions as @emph{closures}, closing over one
+particular client object and either binding
+@varref{*client*,@toppackage{}} to that object around calls to
+high-level @sysname{} functions or supplying the object directly in
+calls to lower-level @sysname{} functions:
+
+@lisp
+(let ((my-client (make-instance 'my-client)))
+
+  (defun my-find-package (name)
+    (let ((parcl:*client* my-client))
+      (parcl:find-package name)))
+
+  ;; Note: This is just an example. The function as written would not
+  ;; be a suitable implementation of CL:PACKAGE-NAME because the
+  ;; standard function accepts package designators.
+  (defun my-package-name (package)
+    (parcl.low:name my-client package)))
+@end lisp
+
+This strategy is probably most useful for either implementing a package
+system that is not customizable in an @termref{intrinsic} usage scenario
+or for defining a package system that is guaranteed to not interact with
+any other package system in the Lisp system in an @termref{extrinsic}
+scenario.
+
+@item
+Another possibility, which could possibly be suitable for some
+@termref{intrinsic} usage scenarios, is to globally set
+@varref{*client*,@toppackage{}} to a particular client object.  This
+strategy establishes that client object as the global default but still
+allows the behavior of package system functions to be modified locally
+by binding @varref{*client*,@toppackage{}} around the function calls in
+question.
+
+@item
+Another strategy, probably most suitable to ``local'' uses of the
+package system such as employing a simulated package system for static
+analysis of Lisp code, is to let the ``end user'' bind
+@varref{*client*,@toppackage{}} as needed:
+
+@lisp
+(defun statically-analyze-lisp-code (source)
+  (let* ((parcl:*client* (make-instance 'simulated-package-system))
+         (cst (my-read source))
+         (ast (parse cst)))
+    #|...|#
+    result))
+@end lisp
+
+The above usage scenario highlights a slight issue: assume the
+@var{result} contains references to simulated symbols and packages.
+When those objects are used in any capacity, even just being printed,
+package system functions will likely be applied to the objects but
+@varref{*client*,@toppackage{}} will no longer be bound to the correct
+client object, or any client object.  As a result, using the simulated
+symbol and package objects would likely signal an error.  One solution
+would be to extend the scope of the binding of
+@varref{*client*,@toppackage{}} but that would go against the idea of
+using the package system only locally for the analysis.
+
+To address this issue, @sysname{} provides a hopefully convenient but
+slightly odd convention: if @varref{*client*,@toppackage{}} is bound to
+or globally set to @t{nil}, the client object should somehow be obtained
+from the symbol or package object to which the package system function
+is applied.  This can be achieved, for example, by storing the client
+object in the symbol or package object as demonstrated in the following
+example:
+
+@lisp
+(defclass my-client () ())
+
+(defclass my-symbol ()
+  ((%client :initarg :client :reader %client)
+   (%name :initarg :name :reader %name)
+   (%package :initarg :package :reader %package))
+  (:default-initargs
+   :client (error "~S must be supplied" :client)))
+
+;;; Ordinary implementation of the low-level protocol function
+(defmethod parcl.low:symbol-name ((client my-client) (symbol my-symbol))
+  (%name symbol))
+
+;;; Alternative 1 for implementing the NIL-convention
+(defmethod parcl.low:symbol-name ((client null) (symbol my-symbol))
+  (parcl.low:symbol-name (%client symbol) symbol))
+
+;;; Alternative 2 for implementing the NIL-convention
+(defmethod parcl.low:symbol-name ((client null) (symbol my-symbol))
+  (%name symbol))
+@end lisp
+
+The above symbol implementation would allow uses like this:
+@lisp
+(let* ((result (statically-analyze-lisp-code some-source))
+       ;; At this point, PARCL:*CLIENT* is no longer bound for the
+       ;; simulated package system.
+       (symbols (extract-symbols result)))
+  ;; Same here
+  (print symbols))
+@end lisp
+
+@end itemize
+
+@node Protocols for defpackage
+@section Protocols for @t{defpackage}
+
+Due to the desire of making things customizable and extensible, the
+implementation of the @speclink{f,defpackage} macro in @sysname{} is a
+bit complicated.  The implementation consists of the following aspects:
+
+@table @b
+
+@item Compile-time processing
+
+At compile-time, the macroexansion of the @code{defpackage} form is
+performed in the following steps:
+
+@table @b
+
+@item Macro syntax
+
+@sysname{} parses the @code{defpackage} form according to the
+s-expression syntax.  If the form contains syntax errors, continuable
+errors are signaled.  The result of parsing is a collection of string
+designators, package designators and symbol designators associated with
+different @code{defpackage} options which serve as input for the
+following checks and the expansion.
+
+@item Early checks
+
+Before the expansion starts, the supplied options are checked for
+statically apparent errors such as symbols listed in both @code{:shadow}
+and @code{:intern}.  For each such error, a continuable error is
+signaled.
+
+@item Expansion
+
+The final expansion consists of a call to
+@genref{ensure-package,@middlepackage{}} with the options and
+designators as keyword arguments (possibly modified compared to the
+original @code{defpackage} form due to error recovery).
+
+@end table
+
+@item Runtime processing
+
+When evaluated at runtime, the produced expansion calls the generic
+function @genref{ensure-package,@middlepackage{}} with the supplied
+options.
+
+@table @b
+
+@item Designator resolution
+
+@sysname{} resolves the designators for symbols and packages with which
+@genref{ensure-package,@middlepackage{}} was called to symbol and
+package objects.
+
+@item Package lookup
+
+@sysname{} calls @genref{find-package-using-package,@middlepackage{}} to
+find an existing package with the specified name.  Regardless of whether
+such a package exists, @sysname{} then calls the generic function
+@genref{ensure-package-using-package,@middlepackage{}} to either create
+a new package or update an existing package.  Two default methods on
+@genref{ensure-package-using-package,@middlepackage{}} handle those two
+cases: one method is specialized to @code{nil} and the other method is
+not specialized so that it is applicable for any non-@code{nil} package
+object.
+
+@item Package creation or variance processing
+
+The method on @genref{ensure-package-using-package,@middlepackage{}}
+that is specialized to the existing package being @code{nil} calls
+@t{make-package} to create a new package of the specified name and then
+calls @genref{update-package,@middlepackage{}} to apply the remaining
+options to that package.  Since the package is newly created, package
+variance cannot occur.
+
+The method on @genref{ensure-package-using-package,@middlepackage{}}
+that handles updating an existing package first computes the differences
+between the supplied options and the current state of the existing
+package.  Aspects of the package for which no option has been supplied
+remain unchanged.  For each package variance issue, that is a supplied
+option demanding an incompatible change compared to the current state of
+the package, @sysname{} calls the generic function
+@genref{note-variance,@middlepackage{}} which allows clients to
+customize the behavior in case of package variance.  Methods on
+@genref{note-variance,@middlepackage{}} will typically either perform no
+action or signal an error while establishing restarts that represent
+different ways of resolving the variance issue.
+
+@item Package update
+
+Once the necessary changes for the new or existing package have been
+computed, possibly after signaling and resolving variance issues,
+@sysname{} calls the generic function
+@genref{update-package,@middlepackage{}} to update the package object
+and complete the process.
+
+@end table
+
+@end table
