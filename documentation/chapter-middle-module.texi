@@ -47,7 +47,7 @@ All this code is present in the ``low'' system.
 Return true if @var{object} is a keyword symbol @emph{in the package
 system specified by @var{client}}.
 
-@implements{f,keywordp}
+@middleimplements{f,keywordp}
 
 The default method on this generic function returns true if
 @code{(@genref{symbolp,@lowpackage{}} @var{client} @var{object})} returns
@@ -76,7 +76,7 @@ needed as explained below:
 
 Return the list of shadowing symbols of @var{package}.
 
-@implements{f,shadowing-symbols}
+@middleimplements{f,shadowing-symbols}
 
 @cindex shadow status
 The default method calls @genref{map-symbol-entries,@lowpackage{}} and
@@ -212,7 +212,7 @@ are supplied.  TODO mention order for removal changes
 Change the state of the package system such that @var{package} uses the
 packages in the list @var{packages-to-use}.
 
-@implements{f,use-package}
+@middleimplements{f,use-package}
 
 TODO: return value
 
@@ -229,7 +229,7 @@ Change package relations such that @var{package} no longer uses
 @var{package-to-unuse} @emph{in the package system specified by
 @var{client}}.
 
-@implements{f,unuse-package}  It differs from the standard function in
+@middleimplements{f,unuse-package}  It differs from the standard function in
 that it takes a single package to unuse as opposed to a list of packages
 to unuse. Client code for the standard function must then call this
 function multiple times.
@@ -322,7 +322,7 @@ is accessible in @var{package}, or @code{nil} if there is no such
 symbol.  The second value is either @code{:internal}, @code{:external},
 @code{:inherited}, or @code{nil}.
 
-@implements{f,find-symbol}
+@middleimplements{f,find-symbol}
 
 @cindex export status
 The default method on this generic function calls
@@ -350,7 +350,7 @@ If @var{package} is the keyword package, that is it has the property
 , then this function also exports the interned symbol from
 @var{package}.
 
-@implements{f,intern}
+@middleimplements{f,intern}
 
 The default method on this generic function calls checks for conflicts
 and performs the calls
@@ -370,7 +370,7 @@ package of @var{symbol}, as determined by a call to
 @spectermrefl{home_package,home package} of @var{symbol} to @code{nil}.
 TODO return value
 
-@implements{f,unintern}
+@middleimplements{f,unintern}
 
 TODO The default method ...
 
@@ -382,7 +382,7 @@ performs a call like
 
 TODO
 
-@implements{f,export}  It differs from the standard function in that it
+@middleimplements{f,export}  It differs from the standard function in that it
 takes a single symbol as opposed to a list of symbols.  Client code for
 the standard function must then call this function multiple times.
 
@@ -395,7 +395,7 @@ Change the export status of @var{symbol} in @var{package} so that
 @var{symbol} is no longer @spectermref{exported}.
 TODO return value
 
-@implements{f,unexport}  It differs from the standard function in that it
+@middleimplements{f,unexport}  It differs from the standard function in that it
 takes a single symbol as opposed to a list of symbols.  As a result,
 client code as well as the function @funref{unexport,@toppackage{}} must
 potentially call this function multiple times.
@@ -419,7 +419,7 @@ by a call to @genref{symbol-package,@lowpackage{}}) then this function
 calls @code{(setf (symbol-package @var{client} @var{symbol})
 @var{package})}.
 
-@implements{f,import}  It differs from the standard function in that it
+@middleimplements{f,import}  It differs from the standard function in that it
 takes a single symbol as opposed to a list of symbols.  As a result,
 client code as well as the function @funref{import,@toppackage{}} must
 potentially call this function multiple times.
@@ -430,7 +430,7 @@ potentially call this function multiple times.
 TODO
 and return the present or newly created symbol object.
 
-@implements{f,shadow}  It differs from the standard function in that it
+@middleimplements{f,shadow}  It differs from the standard function in that it
 takes a single string as opposed to a designator for a list of strings.
 As a result, client code as well as the function
 @funref{shadowing-import,@toppackage{}} must resolve designators and
@@ -455,7 +455,7 @@ Return either @code{nil} or a symbol object with the same name as
 @var{symbol} that was already present in @var{package} which may be
 @var{symbol} itself.
 
-@implements{f,shadowing-import}  It differs from the standard function in
+@middleimplements{f,shadowing-import}  It differs from the standard function in
 that it takes a single symbol object as opposed to a designator for a
 list of symbols.  As a result, client code as well as the function
 @funref{shadowing-import,@toppackage{}} must resolve designators and
@@ -476,7 +476,7 @@ The default method on this generic function calls
 Return a list of all package objects in the package system designated by
 @var{client}.
 
-@implements{f,list-all-package}
+@middleimplements{f,list-all-package}
 
 The default method on this generic function simply calls
 @t{(@genref{packages,@lowpackage{}} @var{client})}.
@@ -511,7 +511,7 @@ designated by @var{client} and establishing ``use'' relations to
 
 TODO: conflicts
 
-@implements{f,make-package}
+@middleimplements{f,make-package}
 
 TODO The default method on this generic function
 @end deffn
@@ -524,7 +524,7 @@ system designated by @var{client} such that no name refers to
 
 TODO exceptional situations
 
-@implements{f,delete-package}
+@middleimplements{f,delete-package}
 
 @end deffn
 
@@ -543,7 +543,7 @@ If @var{new-name} or one of the @var{new-nicknames} refers to a package
 other than @var{package}, a condition of type
 @classref{package-name-occupied-error,@toppackage{}} is signaled.
 
-@implements{f,rename-package}
+@middleimplements{f,rename-package}
 
 TODO: The default method on this generic function
 @end deffn
@@ -555,7 +555,7 @@ Return a list of all symbol object in the package system designated by
 
 @var{name} is a string.
 
-@implements{f,find-symbols}
+@middleimplements{f,find-symbols}
 
 TODO: The default method on this generic function
 @end deffn

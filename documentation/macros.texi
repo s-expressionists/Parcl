@@ -138,9 +138,15 @@ extension.
 Behaves like the @commonlisp{} operator @speclink{\CATEGORY\,\NAME\}.
 @end macro
 
-@macro implements{CATEGORY,NAME}
+@macro middleimplements{CATEGORY,NAME}
 This function can be used to implement and customize the standard
 function @speclink{\CATEGORY\,\NAME\}.
+@end macro
+
+@macro lowimplements{HIGHNAME,CATEGORY,NAME}
+This function is called directly by @funref{\HIGHNAME\,@toppackage{}}
+and can thus be used to implement and customize the standard function
+@speclink{\CATEGORY\,\NAME\}.
 @end macro
 
 @macro implementedby{MODULE,IMPLEMENTATION}
