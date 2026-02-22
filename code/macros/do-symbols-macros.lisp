@@ -3,11 +3,9 @@
 (defun %map-external-symbols (function package-designator)
   (let ((package (find-package package-designator)))
     (flet ((one-symbol (symbol export-status shadow-status)
-             (declare (ignore shadow-status))
-             (when (eq export-status :external)
-               (funcall function symbol))))
-      ;; TODO: pass desired status
-      (parcl.low:map-symbol-entries *client* #'one-symbol package))))
+             (declare (ignore export-status shadow-status))
+             (funcall function symbol)))
+      (parcl.low:map-symbol-entries *client* #'one-symbol package :external))))
 
 (defun %map-symbols (function package-designator)
   (let ((package (find-package package-designator)))
@@ -28,13 +26,16 @@
 (defun expand-do-*-symbols
     (mapping-function symbol-variable package-designator-form
      result-form declarations tags-and-statements)
+  ;; This block and function arrangement provides a lexical binding of
+  ;; SYMBOL-VARIABLE as well as the corresponding declarations for
+  ;; both TAGS-AND-STATEMENTS and RESULT-FORM.
   `(block nil
      (flet ((body-function (,symbol-variable &optional donep)
               ,@declarations
               (declare (ignorable ,symbol-variable))
               (if (not donep)
                   (tagbody ,@tags-and-statements)
-                  (return ,result-form))))
+                  ,result-form)))
        (,mapping-function #'body-function ,@(when package-designator-form
                                               `(,package-designator-form)))
        (body-function nil t))))

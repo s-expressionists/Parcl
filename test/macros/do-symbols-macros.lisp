@@ -2,6 +2,28 @@
 
 (in-suite :parcl.macros)
 
+(test do-external-symbols.empty
+  (with-mock-package-constellation ((package "package"))
+    (let ((symbols '())
+          result)
+      (setf result (parcl:do-external-symbols (symbol package :result)
+                     (push symbol symbols)))
+      (is (eq    :result result))
+      (is (equal '()     symbols)))))
+
+(test do-external-symbols.smoke
+  (with-mock-package-constellation ((package "package"))
+    (let ((symbol1 (parcl:intern "foo" package))
+          (symbol2 (parcl:intern "bar" package))
+          (symbols '())
+          result)
+      (declare (ignore symbol1))
+      (parcl:export symbol2 package)
+      (setf result (parcl:do-external-symbols (symbol package :result)
+                     (push symbol symbols)))
+      (is (eq    :result        result))
+      (is (equal (list symbol2) symbols)))))
+
 (test do-all-symbols.empty
   (with-mock-package-constellation ()
     (let ((symbols '())
