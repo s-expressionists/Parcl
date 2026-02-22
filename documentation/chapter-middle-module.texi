@@ -476,10 +476,12 @@ The default method on this generic function calls
 Return a list of all package objects in the package system designated by
 @var{client}.
 
-@middleimplements{f,list-all-package}
+@middleimplements{f,list-all-packages}
 
 The default method on this generic function simply calls
-@t{(@genref{packages,@lowpackage{}} @var{client})}.
+@t{(@genref{packages,@lowpackage{}} @var{client})} and, if necessary,
+copies the returned list since the standard requires the return value to
+be a freshly allocated list.
 @end deffn
 
 @defgena{find-package-using-package,@middlepackage{}} client package name

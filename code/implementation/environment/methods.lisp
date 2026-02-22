@@ -88,13 +88,21 @@
 
 ;;; Environment functions
 
+(defmethod low:packages ((client client))
+  (let ((environment (environment client))
+        (result      '()))
+    (env:map-entries (lambda (name entry container)
+                       (declare (ignore name container))
+                       (push entry result))
+                     :package environment)
+    ;; `t' indicates that the returned list is fresh.
+    (values result t)))
+
 (defmethod low:find-package ((client client) (name string))
-  (assert (stringp name))
   (let ((environment (environment client)))
     (env:lookup name :package environment :if-does-not-exist nil)))
 
 (defmethod (setf low:find-package) ((new-value t) (client client) (name string))
-  (assert (stringp name))
   (let ((environment (environment client)))
     (setf (env:lookup name :package environment) (if (null new-value)
                                                      env::+unbound+ ; TODO: there should be a better way

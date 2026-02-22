@@ -1,4 +1,7 @@
 (cl:in-package #:parcl.middle)
 
 (defmethod packages ((client t))
-  (parcl.low:packages client))
+  (multiple-value-bind (packages fresh-lisp-p) (parcl.low:packages client)
+    (if fresh-lisp-p
+        packages
+        (copy-list packages))))

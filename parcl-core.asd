@@ -147,6 +147,7 @@
                              (:file "unexport")
                              (:file "import")
                              ;; Environment functions
+                             (:file "list-all-packages")
                              (:file "find-package")
                              (:file "make-package")
                              (:file "delete-package")

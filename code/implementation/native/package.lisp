@@ -236,5 +236,8 @@
 
 ;;;
 
+(defmethod low:packages ((client client))
+  (values (list-all-packages) t))
+
 #++ (defmethod low:find-package ((client client) (name string))
   (find-package name))

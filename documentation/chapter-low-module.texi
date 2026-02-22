@@ -506,7 +506,11 @@ correspondence.
 @defgena{packages,@lowpackage{}} client
 
 Return a list of all defined packages @emph{in the package system
-specified by @var{client}}.
+specified by @var{client}} and indicate whether the list is freshly
+allocated.
+
+The function returns two values: 1) the list of packages 2) a boolean
+which indicates whether the list is freshly allocated.
 @end deffn
 
 @defgena{find-package,@lowpackage{}} client name

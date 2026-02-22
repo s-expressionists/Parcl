@@ -7,9 +7,12 @@
               :initform (make-hash-table :test #'equal))))
 
 (defmethod low:packages ((client mock-environment-mixin))
-  (loop for name being the hash-keys of (%packages client) using (hash-value package)
-        when (equal name (low:name client package))
-          collect package))
+  (loop :for name :being :the :hash-keys :of (%packages client)
+          :using (hash-value package)
+        :when (equal name (low:name client package))
+          :collect package :into result
+        ;; `t' indicates that the returned list is freshly allocated.
+        :finally (return (values result t))))
 
 (defmethod low:find-package ((client             mock-environment-mixin)
                              (package-designator string))
