@@ -105,11 +105,11 @@
 ;;; This system ensures, ideally before any other operations are
 ;;; attempted, that the PARCL package is already defined when
 ;;; parcl-core is loaded.  When parcl loaded via either one of the
-;;; parcl-intrinsic or parcl-intrinsic system, the PARCL package is
+;;; parcl-intrinsic or parcl-intrinsic systems, the PARCL package is
 ;;; defined before anything else happens and this check succeeds.
 (defsystem "parcl-core/sentinel"
   :description "Internal helper system; prevents invalid operations on systems"
-  :perform (asdf:prepare-op (operation component)
+  :perform (prepare-op (operation component)
              (unless (find-package '#:parcl)
                (error "~@<The system ~S must not be loaded directly. Instead, ~
                        either the system ~S or the system ~S has to be ~
