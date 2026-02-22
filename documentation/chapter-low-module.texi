@@ -375,6 +375,11 @@ names a different package is not considered.
 @node Low Package-symbol Relation Functions
 @section Low Package-symbol Relation Functions
 
+The functions in this protocol are primitive operations for manipulating
+the relation between packages and symbols.  The functions are called by
+functions in the @ref{Middle Package-symbol Relation Functions} protocol
+but there is no one-to-one correspondence.
+
 @cindex symbol entry
 @cindex export status
 @cindex shadow status
@@ -387,12 +392,6 @@ being present in the package, the symbol being external and the symbol
 being shadowing.  Concretely, the @termref{export status} is either
 @code{:internal} or @code{:external} while the @termref{shadow status} is
 either @code{t} or @code{nil}.
-
-;;; TODO: old The SYMBOL ENTRIES of a package is a list of CONS cells, each
-;;; representing a present symbol and its status.  The CAR of such a
-;;; CONS cell is the symbol itself, and the CDR is the status which is
-;;; one of :INTERNAL, :INTERNAL-SHADOWING, :EXTERNAL, and
-;;; :EXTERNAL-SHADOWING.
 
 @defgena{map-symbol-entries,@lowpackage{}} client function package @
   @optional{} status
@@ -498,6 +497,11 @@ to call @code{set-symbol-entry}.
 
 @node Low Environment Functions
 @section Low Environment Functions
+
+The functions in this protocol are primitive operations for manipulating
+the package environment.  The functions are called by functions in the
+@ref{Middle Environment Functions} protocol but there is no one-to-one
+correspondence.
 
 @defgena{packages,@lowpackage{}} client
 
