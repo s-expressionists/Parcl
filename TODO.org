@@ -2,7 +2,7 @@
 
 * STARTED Features [0/10]
 
-** STARTED Entries in the Packages dictionary [1/8]
+** STARTED Entries in the Packages dictionary [2/7]
 
 *** DONE Conditions [2/2]
 
@@ -10,7 +10,7 @@
 
 **** DONE Function ~package-error-package~
 
-*** TODO Symbol functions [0/6]
+*** STARTED Symbol functions [0/6]
 
 **** STARTED Function ~symbolp~
 
@@ -36,7 +36,7 @@
 **** STARTED Function ~package-use-list~
 **** STARTED Function ~package-used-by-list~
 
-*** STARTED Package-package relation functions [2/2]
+*** DONE Package-package relation functions [2/2]
 
 **** DONE Function ~use-package~
 
@@ -86,17 +86,17 @@
 
 **** STARTED Macro ~with-package-iterator~
 
-**** TODO Macro ~in-package~
+**** STARTED Macro ~in-package~
 
 **** STARTED Macro ~defpackage~
 
      Error reporting should be improved.
 
-**** TODO Macro ~do-symbols~
+**** STARTED Macro ~do-symbols~
 
-**** TODO Macro ~do-external-symbols~
+**** STARTED Macro ~do-external-symbols~
 
-**** TODO Macro ~do-all-symbols~
+**** STARTED Macro ~do-all-symbols~
 
 ** STARTED Package-local nicknames [0/5]
 
@@ -110,7 +110,7 @@
 
 *** TODO Additional ~defpackage~ options
 
-** TODO Package variance
+** STARTED Package variance
 ** TODO Package Locks
 ** TODO Some form of transactions
 
@@ -127,28 +127,32 @@
 
 ** TODO It should be possible to give ~make-package~ a hint regarding the expected number of symbols
 
-** TODO ~describe-object~ methods, maybe
-   + [ ] for symbols
-   + [ ] for packages
-** STARTED Deleted packages
-
-   + ~package-name~ has to return ~nil~
-
-   + Checks in other functions; probably need something like
-     ~find-undeleted-package-or-error~
-
-** STARTED Print-object
-
-   For which objects?
-   For the ~package~ protocol class?
-   Should there be a symbol protocol class?
-
 ** TODO Optional function types
 
    It would be good to have a way of declaiming function types for the
    functions in the high module.  Those function type declamations
    should help "end users" catching some programming errors at compile
    time.
+
+** TODO ~describe-object~ methods, maybe
+   + [ ] symbol
+   + [ ] package
+
+** STARTED ~print-object~ methods
+
+   For which objects?
+   For the ~package~ protocol class?
+   Should there be a symbol protocol class?
+
+   + [ ] symbol
+   + [ ] package
+
+** STARTED Deleted packages
+
+   + ~package-name~ has to return ~nil~
+
+   + Checks in other functions; probably need something like
+     ~find-undeleted-package-or-error~
 
 * TODO Restarts
 
@@ -161,23 +165,35 @@
   Whenever operators accept a list of symbols, a ~continue~ restart
   could skip the operation for individual list elements
 
-* Refactoring [2/7]
+* Refactoring [4/10]
 
-** TODO Move implementations out of ~low~ module and into ~implementation~ module
+** TODO Use ~s-expression-syntax~ for ~do-*-symbols~ macros
+** TODO Split ~implementation.native~ into multiple files
 
-** TODO Package names: ~parcl.middle~ vs. ~parcl-low~
+** TODO Think about ~parcl.low:packages~
 
-   Rename ~parcl-low~ to ~parcl.low~
+   Maybe this should be ~parcl.low:map-packges~ instead? Would get rid
+   of the somewhat awkward "fresh" flag of the current protocol and
+   most of the existing implementations seem to be based on some kind
+   of mapping internally anyway.
 
 ** TODO Rename ~use-list~ to ~uses~ and ~used-by-list~ to ~used-by~ in internal protocols
 
 ** STARTED Reorganize ~defpackage~ options in file:code/packages-extrinsic.lisp
+
+   Seems like only separating the Variables and Macros sections remains?
 
 ** STARTED Package-local nicknames as client mixin
 
    Possibly separate system as well?
 
    Could make a sub-directory for extensions like in Eclector
+
+** DONE Package names: ~parcl.middle~ vs. ~parcl-low~
+
+   Rename ~parcl-low~ to ~parcl.low~
+
+** DONE Move implementations out of ~low~ module and into ~implementation~ module
 
 ** DONE Status
 
@@ -196,7 +212,7 @@
 
 ** TODO Add tests that checks the package system consistency rules
 
-** TODO Figure out a way to use tests from https://github.com/phoe/trivial-package-local-nickname
+** TODO Figure out a way to use tests from https://github.com/phoe/trivial-package-local-nicknames
 
 ** STARTED Compare to host
 
