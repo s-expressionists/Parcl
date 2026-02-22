@@ -1,5 +1,7 @@
 (cl:in-package #:parcl.implementation.class)
 
+;;; Package functions
+
 (defmethod parcl.low:packagep ((client package-class-mixin) (package package))
   t)
 
@@ -24,6 +26,13 @@
   (define used-by-list)
   ; (define documentation)
   )
+
+(defmethod parcl.low:make-package-object ((client package-class-mixin) (name t))
+  (make-instance 'package :name name))
+
+(defmethod parcl.low:make-package-object ((client client-with-local-nicknames)
+                                          (name   t))
+  (make-instance 'package-with-local-nicknames :name name))
 
 ;;; Package-symbol relation functions
 
@@ -76,12 +85,3 @@
         (setf (gethash name entries)
               (cons new-symbol (encode-status new-export-status
                                               new-shadow-status))))))
-
-;;;
-
-(defmethod parcl.low:make-package-object ((client package-class-mixin) (name t))
-  (make-instance 'package :name name))
-
-(defmethod parcl.low:make-package-object ((client client-with-local-nicknames)
-                                          (name   t))
-  (make-instance 'package-with-local-nicknames :name name))
