@@ -2,13 +2,19 @@
 
 (in-suite :parcl)
 
-(test package-local-nickname.not-implemented
-  "Ensure that an error is signaled if the package system does not
-support local nicknames."
+(test package-local-nickname.unsupported
+  "Ensure that `package-local-nicknames' signals an error if the package
+system does not support local nicknames."
   ;; TODO: designators?
   (with-mock-package-constellation ((package1 "foo"))
-    (signals error ; TODO: specific error
-      (parcl:package-local-nicknames package1))))
+    (block nil
+      (handler-bind ((#2=parcl:feature-not-supported-error
+                       (lambda (condition)
+                         (is (eq :package-local-nicknames
+                                 (parcl:feature condition)))
+                         (return))))
+        (#1=parcl:package-local-nicknames package1))
+      (fail "~@<~S failed to signal a ~A condition.~@:>" '#1# '#2#))))
 
 (high-test (package-local-nicknames.smoke
             :client-class mock-client-with-local-nicknames)

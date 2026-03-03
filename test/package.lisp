@@ -10,6 +10,7 @@
    #:def-suite
    #:in-suite
    #:test
+   #:fail
    #:is
    #:is-true
    #:is-false

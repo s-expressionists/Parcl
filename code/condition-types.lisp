@@ -5,6 +5,14 @@
 (define-condition package-system-condition (acclimation:condition)
   ())
 
+;;; General conditions
+
+(define-condition feature-not-supported-error (package-system-condition)
+  ((%feature :initarg #1=:feature
+             :reader  feature))
+  (:default-initargs
+   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#)))
+
 ;;; Symbol related conditions
 
 (define-condition symbol-name-must-be-string (type-error

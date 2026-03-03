@@ -32,15 +32,23 @@
 
 (defgeneric local-nicknames (client package)
   (:method ((client t) (package t))
-    (error "~@<Local nicknames are not supported by this package system.~@:>")))
+    (error 'parcl:feature-not-supported-error
+           :feature :package-local-nicknames)))
 
-(defgeneric (setf local-nicknames) (new-value client package))
+(defgeneric (setf local-nicknames) (new-value client package)
+  (:method ((new-value t) (client t) (package t))
+    (error 'parcl:feature-not-supported-error
+           :feature :package-local-nicknames)))
 
 (defgeneric locally-nicknamed-by (client package)
   (:method ((client t) (package t))
-    (error "~@<Local nicknames are not supported by this package system.~@:>")))
+    (error 'parcl:feature-not-supported-error
+           :feature :package-local-nicknames)))
 
-(defgeneric (setf locally-nicknamed-by) (new-value client package))
+(defgeneric (setf locally-nicknamed-by) (new-value client package)
+  (:method ((new-value t) (client t) (package t))
+   (error 'parcl:feature-not-supported-error
+          :feature :package-local-nicknames)))
 
 (defgeneric use-list (client package))
 

@@ -69,6 +69,13 @@
                  (,language-var acclimation:english))
                 ,@body)))
 
+  ;; General conditions
+
+  (define-reporter ((condition feature-not-supported-error) stream)
+    (format stream "~@<~A are not supported by this package system.~@:>"
+            (ecase (feature condition)
+              (:package-local-nicknames "Package-local nicknames"))))
+
   ;; Symbol related conditions
 
   (define-reporter ((condition symbol-name-must-be-string) stream)

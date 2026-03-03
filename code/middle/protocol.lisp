@@ -16,12 +16,13 @@
 
 (defgeneric add-local-nickname (client package nickname nicknamed-package)
   (:method ((client t) (package t) (nickname t) (nicknamed-package t))
-    ;; TODO: make a condition type for unsupported operations
-    (error "~@<Local nicknames are not supported by this package system.~@:>")))
+    (error 'parcl:feature-not-supported-error
+           :feature :package-local-nicknames)))
 
 (defgeneric remove-local-nickname (client package nickname)
   (:method ((client t) (package t) (nickname t))
-    (error "~@<Local nicknames are not supported by this package system.~@:>")))
+    (error 'parcl:feature-not-supported-error
+           :feature :package-local-nicknames)))
 
 ;;;; Package-symbol relation functions
 

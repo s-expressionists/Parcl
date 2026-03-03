@@ -12,6 +12,9 @@
   (:export
    #:package-system-condition
 
+   #:feature-not-supported-error
+   #:feature                            ; reader
+
    #:package-name-occupied-condition
    #:new-name                           ; reader
    #:existing-package                   ; reader

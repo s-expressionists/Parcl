@@ -2,6 +2,17 @@
 
 (in-suite :parcl)
 
+(test add-package-local-nickname.unsupported
+  (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
+    (block nil
+      (handler-bind ((#2=parcl:feature-not-supported-error
+                       (lambda (condition)
+                         (is (eq :package-local-nicknames
+                                 (parcl:feature condition)))
+                         (return))))
+        (#1=parcl:add-package-local-nickname "b" package2 package1))
+      (fail "~@<~S failed to signal a ~A condition.~@:>" '#1# '#2#))))
+
 (high-test (add-package-local-nickname.smoke
             :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
