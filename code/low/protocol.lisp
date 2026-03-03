@@ -76,15 +76,3 @@
 (defgeneric find-package (client name))
 
 (defgeneric (setf find-package) (new-value client name))
-
-;;;; TODO
-
-;;; This function is used by the macro DO-SYMBOLS to compute the
-;;; expansion.
-(defgeneric do-symbols-expander
-    (client symbol-variable package-designator-form result-form body))
-
-;;; This function is used by the macro DO-EXTERNAL-SYMBOLS to compute
-;;; the expansion.
-(defgeneric do-external-symbols-expander
-    (client symbol-variable package-designator-form result-form body))
