@@ -2,6 +2,10 @@
 *.cps
 *.fn
 *.fns
+*.tp
+*.tps
+*.vr
+*.vrs
 
 *.aux
 *.log
