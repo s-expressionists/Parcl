@@ -1,6 +1,21 @@
 ;;; This package definition shadows some Common Lisp symbols in order
 ;;; to provide replacements of the same (symbol-)name for the
 ;;; designated definitions.
+;;;
+;;; For each section ("Conditions", "Variables", etc.), we use the pattern
+;;;
+;;;   (:shadow
+;;;    . #N=(#:symbol1
+;;;          #:symbol2
+;;;          ...))
+;;;   (:export
+;;;    #:extra-symbol1
+;;;    #:extra-symbol2
+;;;    ...
+;;;    . #N#)
+;;;
+;;; so that we don't have to repeat the list of symbols which is both
+;;; shadowed and exported.
 (cl:defpackage #:parcl
   (:use
    #:common-lisp)
@@ -54,15 +69,7 @@
 
   ;; Variables
   (:shadow
-   . #2=(#:*package*
-
-         ;; Macros
-         #:defpackage
-         #:in-package
-         #:with-package-iterator
-         #:do-symbols
-         #:do-external-symbols
-         #:do-all-symbols))
+   . #2=(#:*package*))
   (:export . #2#)
 
   ;; Symbol functions
@@ -119,6 +126,16 @@
          #:rename-package
          #:find-all-symbols))
   (:export . #7#)
+
+  ;; Macros
+  (:shadow
+   . #8=(#:defpackage
+         #:in-package
+         #:with-package-iterator
+         #:do-symbols
+         #:do-external-symbols
+         #:do-all-symbols))
+  (:export . #8#)
 
   ;; Additional variable
   (:export
