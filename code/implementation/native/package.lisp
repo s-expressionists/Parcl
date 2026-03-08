@@ -232,7 +232,7 @@
         (when (or (eq actual-status status)
                   (member actual-status '(:internal :external)))
           (let ((shadowing? (member symbol shadowing-symbols :test #'eq)))
-            (funcall function symbol status shadowing?)))))))
+            (funcall function symbol actual-status shadowing?)))))))
 
 ;;;
 
