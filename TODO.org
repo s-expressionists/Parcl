@@ -165,7 +165,14 @@
   Whenever operators accept a list of symbols, a ~continue~ restart
   could skip the operation for individual list elements
 
-* Refactoring [4/10]
+* Refactoring [4/11]
+
+** TODO Re-introduce specialized conditions for designator-related type errors?
+
+   For now, we removed ~symbol-name-must-be-string~ and
+   ~symbols-must-be-designator-for-list-of-symbols~ for now and use
+   ordinary ~type-error~ s instead.  But maybe having dedicated
+   condition types like the above would be good?
 
 ** TODO Use ~s-expression-syntax~ for ~do-*-symbols~ macros
 ** TODO Split ~implementation.native~ into multiple files

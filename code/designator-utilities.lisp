@@ -39,8 +39,10 @@
          (parcl.low:symbol-name client string-designator))
         (t
          ;; TODO: dedicated error?
-         ;; TODO: expected type
-         (error 'type-error :datum string-designator :expected-type 'string))))
+         (error 'type-error :datum         string-designator
+                            :expected-type '(or character
+                                                string
+                                                (satisfies symbolp))))))
 
 ;; TODO: what should we do about repeated entries?
 (defun string-list<-designator-list (client string-designator-list)
@@ -57,16 +59,17 @@
 
 (defun check-symbol (client symbol)
   (unless (parcl.low:symbolp client symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol)) ; TODO: this is not the correct type
+    (error 'type-error :datum         symbol
+                       :expected-type '(satisfies symbolp)))
   symbol)
 
 (defun symbol-list<-designator-list (client symbol-designator-list)
-  ;; TODO(jmoringe): (every (lambda (symbol-designator) (or (stringp symbol-designator) (parcl.low:symbolp symbol-designator))
-  (unless (and (ecclesia:proper-list-p symbol-designator-list)
-               (every (lambda (object) (parcl.low:symbolp client object)) ; TODO: `check-symbol' individually?
-                      symbol-designator-list))
-    (error 'symbols-must-be-designator-for-list-of-symbols ; TODO: type-error?
-           :symbols symbol-designator-list))
+  (unless (ecclesia:proper-list-p symbol-designator-list)
+    (error 'type-error :datum         symbol-designator-list
+                       :expected-type '(satisfies ecclesia:proper-list-p)))
+  (mapc (lambda (element)
+          (check-symbol client element))
+        symbol-designator-list)
   symbol-designator-list)
 
 (defun symbol-list<-designator (client symbol-list-designator)

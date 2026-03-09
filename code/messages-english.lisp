@@ -78,18 +78,6 @@
 
   ;; Symbol related conditions
 
-  (define-reporter ((condition symbol-name-must-be-string) stream)
-    (format stream "~@<Symbol name must be a string, but the ~
-                    following was given instead: ~S.~@:>"
-            (type-error-datum condition)))
-
-  (define-reporter ((condition symbols-must-be-designator-for-list-of-symbols)
-                    stream)
-    (format stream "~@<Argument must be a designator for a list of symbols, ~
-                    but the following was found instead: ~
-                    ~S.~@:>"
-            (symbols condition)))
-
   ;; Package related conditions
 
   (define-reporter ((condition package-name-occupied-error) stream)

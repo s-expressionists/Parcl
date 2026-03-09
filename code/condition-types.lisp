@@ -22,15 +22,6 @@ system implementation does not support."))
 
 ;;; Symbol related conditions
 
-(define-condition symbol-name-must-be-string (type-error
-                                              package-system-condition)
-  ()
-  (:default-initargs :expected-type 'string))
-
-(define-condition symbols-must-be-designator-for-list-of-symbols
-    (error package-system-condition)
-  ((%symbols :initarg :symbols :reader symbols)))
-
 ;;; Package related conditions
 
 ;;; TODO: package-name-condition?
