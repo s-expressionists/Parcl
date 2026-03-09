@@ -7,7 +7,7 @@
                          client package-name) ; TODO(jmoringe): error
         :for symbol-name in symbol-names
         :for (symbol status) = (multiple-value-list
-                               (find-symbol client symbol-name package))
+                               (find-symbol client package symbol-name))
         :if (not (null status))
           :collect symbol
         :else
