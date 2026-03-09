@@ -2,7 +2,9 @@
 
 (defclass local-nicknames-mixin () ())
 
-;;; TODO: explain when this method is used
+;;; This method is used to look up NAME in the global package
+;;; environment (as opposed to relative to a given package such that
+;;; local nicknames are considered).
 (defmethod find-package-using-package ((client  local-nicknames-mixin)
                                        (package null)
                                        (name    string))
