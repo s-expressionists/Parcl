@@ -4,7 +4,7 @@
 Change the @termrefl{package-local nickname,package-local nicknames}
 within @var{package} such that @var{local-nickname} refers to
 @var{nicknamed-package} and return the package object designated by
-@var{nicknamed-package}.
+@var{package}.
 
 @var{local-nickname} is a @spectermrefl{string_designator,string
 designator} that represents the local nickname to be used to refer to
