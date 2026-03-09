@@ -2,7 +2,7 @@
 
 (in-suite :parcl.macros)
 
-(test defpackage.smoke
+(high-test defpackage.smoke
   "Smoke test for the `defpackage' macro."
   (with-mock-package-system ()
     (eval '(parcl:defpackage #1="FOO"))

@@ -11,6 +11,8 @@
    #:signals)
 
   (:import-from #:parcl.test
+   #:high-test
+
    #:set-equal
    #:set-equal/equal
 
