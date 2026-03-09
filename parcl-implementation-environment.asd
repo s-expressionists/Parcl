@@ -23,7 +23,8 @@ environment object."
 (defsystem "parcl-implementation-environment/test"
   :depends-on ("fiveam"
 
-               "parcl-core/test" ; for `parcl.test::*high-tests*'
+               "parcl-core/test"   ; for `parcl.test::*high-tests*' and
+               "parcl-macros/test" ; running macro tests with this backend
 
                "parcl-implementation-environment")
   :components  ((:module     "implementation-environment"
