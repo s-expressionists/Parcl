@@ -24,6 +24,20 @@
       (is (eq    :result        result))
       (is (equal (list symbol2) symbols)))))
 
+(test do-external-symbols.syntax-errors
+  "Ensure that `do-external-symbols' signals appropriate errors for
+syntax errors in the macro invocation."
+  ;; TODO: test errors in binding, argument and result form
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:do-external-symbols (s) . 1))))
+
+(test do-symbols.syntax-errors
+  "Ensure that `do-symbols' signals appropriate errors for
+syntax errors in the macro invocation."
+  ;; TODO: test errors in binding, argument and result form
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:do-symbols (s) . 1))))
+
 (test do-all-symbols.empty
   (with-mock-package-constellation ()
     (let ((symbols '())
@@ -44,3 +58,10 @@
                      (push symbol symbols)))
       (is (eq symbols result))
       (is (set-equal actual-symbols result)))))
+
+(test do-all-symbols.syntax-errors
+  "Ensure that `do-all-symbols' signals appropriate errors for
+syntax errors in the macro invocation."
+  ;; TODO: test errors in binding, argument and result form
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:do-all-symbols (s) . 1))))

@@ -4,6 +4,16 @@
 
 (#+sbcl sb-ext:defglobal #-sbcl defvar **builder** 'list)
 
+(defun parse-body (body)
+  (handler-bind (((or error warning)
+                   (lambda (condition)
+                     (let ((message (princ-to-string condition)))
+                       (error 'macro-syntax-error
+                              :format-control   "~A"
+                              :format-arguments (list message)
+                              :expression       body)))))
+    (ecclesia:separate-ordinary-body body)))
+
 (defmacro parse (syntax form)
   `(let* ((builder       **builder**)
           (syntax        (load-time-value

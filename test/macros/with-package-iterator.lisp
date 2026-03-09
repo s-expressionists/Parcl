@@ -130,4 +130,7 @@ syntax errors in the macro invocation."
     (macroexpand '(parcl:with-package-iterator (i '()))))
   ;; Syntax error for invalid symbol type.
   (signals parcl:macro-syntax-error
-    (macroexpand '(parcl:with-package-iterator (i '() :invalid)))))
+    (macroexpand '(parcl:with-package-iterator (i '() :invalid))))
+  ;; Syntax error for invalid body.
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:with-package-iterator (i '() :external) . 1))))

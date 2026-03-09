@@ -46,8 +46,7 @@
                                 &optional (package-designator-form '*package*)
                                           (result-form 'nil))
                                &body body)
-  (multiple-value-bind (declarations tags-and-statements)
-      (ecclesia:separate-ordinary-body body)
+  (multiple-value-bind (declarations tags-and-statements) (parse-body body)
     (expand-do-*-symbols
      '%map-external-symbols symbol-variable package-designator-form
      result-form declarations tags-and-statements)))
@@ -56,16 +55,15 @@
                        &optional (package-designator-form '*package*)
                                  (result-form 'nil))
                       &body body)
-  (multiple-value-bind (declarations tags-and-statements)
-      (ecclesia:separate-ordinary-body body)
+  ;; TODO: test
+  (multiple-value-bind (declarations tags-and-statements) (parse-body body)
     (expand-do-*-symbols
      '%map-symbols symbol-variable package-designator-form
      result-form declarations tags-and-statements)))
 
 (defmacro do-all-symbols ((symbol-variable &optional (result-form 'nil))
                           &body body)
-  (multiple-value-bind (declarations tags-and-statements)
-      (ecclesia:separate-ordinary-body body)
+  (multiple-value-bind (declarations tags-and-statements) (parse-body body)
     (expand-do-*-symbols
      '%map-all-symbols symbol-variable nil
      result-form declarations tags-and-statements)))

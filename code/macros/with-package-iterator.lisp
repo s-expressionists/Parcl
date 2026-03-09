@@ -87,8 +87,7 @@
                     :format-control   "~@<~S is not a valid symbol type.~@:>"
                     :format-arguments (list object)
                     :expression       object))
-  (multiple-value-bind (declarations tags-and-statements)
-      (ecclesia:separate-ordinary-body body)
+  (multiple-value-bind (declarations tags-and-statements) (parse-body body)
     (expand-with-package-iterator
      name package-list-form symbol-types declarations tags-and-statements)))
 
