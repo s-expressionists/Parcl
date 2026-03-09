@@ -55,7 +55,6 @@
                        &optional (package-designator-form '*package*)
                                  (result-form 'nil))
                       &body body)
-  ;; TODO: test
   (multiple-value-bind (declarations tags-and-statements) (parse-body body)
     (expand-do-*-symbols
      '%map-symbols symbol-variable package-designator-form
