@@ -13,11 +13,13 @@
          (s-expression-syntax:parse builder syntax modified-form)
        (s-expression-syntax:s-expression-syntax-error (condition)
          ;; TODO: with-current-source-form ()
-         (let ((message (progn
-                          #+TODO (s-expression-syntax:message condition)
-                          (princ-to-string condition))))
+         (let ((expression (s-expression-syntax:expression condition))
+               (message    (progn
+                             #+TODO (s-expression-syntax:message condition)
+                             (princ-to-string condition))))
            (error 'macro-syntax-error :format-control   "~S"
-                                      :format-arguments (list message)))))))
+                                      :format-arguments (list message)
+                                      :expression       expression))))))
 
 (declaim (inline string<-designator-node value<-literal-node))
 
@@ -34,11 +36,21 @@
 ;;;
 
 (defmacro define-macro (name (&rest lambda-list) ast-var &body body)
-  (let ((cl-name (cl:intern (string name) '#:common-lisp)))
-    `(progn
-       (defmacro ,name (&whole form &rest rest)
-         (declare (ignore rest))
-         (let ((,ast-var (parse ,cl-name form)))
-           ,@body))
-       #+sbcl (setf (sb-c::%fun-lambda-list (macro-function ',name))
-                    ',lambda-list))))
+  (let ((cl-name              (cl:intern (string name) '#:common-lisp))
+        (macro-function-name  (alexandria:symbolicate name '#:-macro-function))
+        (expand-function-name (alexandria:symbolicate '#:expand- name)))
+    (alexandria:with-unique-names (modified-form)
+      `(progn
+         (defun ,expand-function-name (,ast-var)
+           ,@body)
+
+         (defun ,macro-function-name (form)
+           (,expand-function-name (parse ,cl-name form)))
+
+         (defmacro ,name (&whole form &rest rest)
+           (declare (ignore rest))
+           (let ((,modified-form (list* ',cl-name (rest form)))) ; TODO: can we avoid this?
+             (,macro-function-name ,modified-form)))
+
+         #+sbcl (setf (sb-c::%fun-lambda-list (macro-function ',name))
+                      ',lambda-list)))))

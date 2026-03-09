@@ -65,6 +65,10 @@
 
    #:unexport-forbidden-for-system-package-error
    #:symbol-to-unexport                 ; reader
+
+   #:macro-syntax-error
+   #:expression                         ; reader
+
    #:iterator-at-end-error
    . #1#)
 

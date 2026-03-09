@@ -103,14 +103,13 @@ signals an error when called after reaching the end."
 ;;; + shadowing
 ;;; + list symbol types with repetition
 
-(test with-package-iterator.expansion-error.no-symbol-types
-  "Ensure that `with-package-iterator' signals a syntax error if no
-symbol types are supplied."
-  (signals parcl::macro-syntax-error
-    (macroexpand '(parcl:with-package-iterator (i '())))))
 
-(test with-package-iterator.expansion-error.invalid-symbol-type
-  "Ensure that `with-package-iterator' signals a syntax error if an
-invalid symbol type is supplied."
-  (signals parcl::macro-syntax-error
+(test with-package-iterator.syntax-errors
+  "Ensure that `with-package-iterator' signals appropriate errors for
+syntax errors in the macro invocation."
+  ;; Syntax error for no symbol types.
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:with-package-iterator (i '()))))
+  ;; Syntax error for invalid symbol type.
+  (signals parcl:macro-syntax-error
     (macroexpand '(parcl:with-package-iterator (i '() :invalid)))))

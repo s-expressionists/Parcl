@@ -1,6 +1,13 @@
 (cl:in-package #:parcl)
 
-(define-condition macro-syntax-error (simple-error program-error) ())
+(define-condition macro-syntax-error (simple-error
+                                      program-error
+                                      package-system-condition)
+  ((%expression :initarg #1=:expression
+                :reader  expression))
+  (:default-initargs
+   #1# (alexandria:required-argument #1#)))
+
 ;;; Conditions specific to `with-package-iterator'
 
 (define-condition iterator-at-end-error (package-system-condition)

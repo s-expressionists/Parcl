@@ -3,15 +3,22 @@
 (in-suite :parcl.macros)
 
 (test defpackage.smoke
+  "Smoke test for the `defpackage' macro."
   (with-mock-package-system ()
-    (parcl:defpackage #1="FOO")
+    (eval '(parcl:defpackage #1="FOO"))
     (let ((package (parcl:find-package #1#)))
       (is-true (parcl:packagep package))
       (is (equal (parcl:package-name package) #1#)))))
 
 (test defpackage.syntax-errors
-  (signals parcl::macro-syntax-error
-    (macroexpand '(parcl:defpackage 1))))
+  "Ensure that `defpackage' signals appropriate errors for invalid syntax
+during macro expansion."
+  ;; Invalid package name.
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:defpackage 1)))
+  ;; Symbol name in both `:shadow' and `:intern'.
+  (signals parcl:macro-syntax-error
+    (macroexpand '(parcl:defpackage foo (:shadow "FOO") (:intern :foo)))))
 
 (test defpackage.runtime-errors
   )

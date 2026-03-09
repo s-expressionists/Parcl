@@ -73,15 +73,20 @@
          ,@declarations
          ,@tags-and-statements))))
 
-(defmacro with-package-iterator ((name package-list-form &rest symbol-types)
+(defmacro with-package-iterator ((&whole arguments
+                                  name package-list-form &rest symbol-types)
                                  &body body)
   ;; TODO: better errors. maybe via s-expression-syntax?
   (when (null symbol-types)
-    (error 'macro-syntax-error :format-control "~@<At least one symbol-type must be supplied.~@:>"))
+    (error 'macro-syntax-error
+           :format-control "~@<At least one symbol-type must be supplied.~@:>"
+           :expression     arguments))
   (loop for object in symbol-types
         when (not (member object '(:internal :external :inherited)))
-          do (error 'macro-syntax-error :format-control   "~@<~S is not a valid symbol type.~@:>"
-                                        :format-arguments (list object)))
+          do (error 'macro-syntax-error
+                    :format-control   "~@<~S is not a valid symbol type.~@:>"
+                    :format-arguments (list object)
+                    :expression       object))
   (multiple-value-bind (declarations tags-and-statements)
       (ecclesia:separate-ordinary-body body)
     (expand-with-package-iterator
