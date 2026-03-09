@@ -44,17 +44,17 @@ package system does not support local nicknames."
     (is (a:set-equal (list package1)
                      (parcl:package-locally-nicknamed-by-list package2)))))
 
-(high-test (add-package-local-nickname.multiple-names
+(high-test (remove-package-local-nickname.multiple-names
             :client-class mock-client-with-local-nicknames)
   ;; TODO: designators?
   (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
     (parcl:add-package-local-nickname #2="b" package2 package1)
     (parcl:add-package-local-nickname #3="c" package2 package1)
-    (parcl:remove-package-local-nickname #2# package1)
+    (is (eq t (parcl:remove-package-local-nickname #2# package1)))
     (is (set-equal/equal (list (cons #3# package2))
                          (parcl:package-local-nicknames package1)))
     (is (a:set-equal (list package1)
                      (parcl:package-locally-nicknamed-by-list package2)))
-    (parcl:remove-package-local-nickname #3# package1)
+    (is (eq t (parcl:remove-package-local-nickname #3# package1)))
     (is (equal '() (parcl:package-local-nicknames package1)))
     (is (equal '() (parcl:package-locally-nicknamed-by-list package2)))))
