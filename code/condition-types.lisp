@@ -3,7 +3,10 @@
 ;;;
 
 (define-condition package-system-condition (acclimation:condition)
-  ())
+  ()
+  (:documentation
+   "This condition type is a supertype of all condition types provided by
+this system."))
 
 ;;; General conditions
 
@@ -11,7 +14,11 @@
   ((%feature :initarg #1=:feature
              :reader  feature))
   (:default-initargs
-   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#)))
+   #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#))
+  (:documentation
+   "This error is signaled when an attempt is made to use a non-standard
+feature such as package-local nicknames which the active package
+system implementation does not support."))
 
 ;;; Symbol related conditions
 
@@ -50,7 +57,7 @@ already a name or nickname of a different package."))
   (:default-initargs
    #1# (error "~@<The required initarg ~S has not been supplied.~@:>" #1#))
   (:documentation
-   "This error is the super-type for errors that refer a particular package.
+   "This error is the supertype for errors that refer a particular package.
 
 Direct instances of this condition type should not be signaled."))
 
