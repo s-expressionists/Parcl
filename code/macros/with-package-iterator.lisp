@@ -1,5 +1,7 @@
 (cl:in-package #:parcl)
 
+;;; Runtime
+
 ;;; TODO: should this be a middle generic function?
 (defun %make-symbol-iterator (client package-list symbol-types)
   (let ((internal?          (member :internal symbol-types))
@@ -17,22 +19,26 @@
                  (vector-push        symbol symbol-entries)))
              (next-package ()
                (setf current-package (pop remaining-packages))
-               (unless (null current-package)
-                 (if inherited?
-                     (parcl.middle::map-accessible-entries
-                      client
-                      (lambda (containing-package symbol export-status shadow-status)
-                        (declare (ignore shadow-status))
-                        (if (eq containing-package current-package)
-                            (maybe-push-entry symbol export-status)
-                            (maybe-push-entry symbol :inherited)))
-                      current-package)
-                     (parcl.low:map-symbol-entries
-                      client (lambda (symbol export-status shadow-status)
-                               (declare (ignore shadow-status))
-                               (maybe-push-entry symbol export-status))
-                      current-package))
-                 t))
+               (cond ((null current-package)
+                      (setf remaining-packages :end)
+                      nil)
+                     (inherited?
+                      (parcl.middle::map-accessible-entries
+                       client
+                       (lambda (containing-package symbol export-status shadow-status)
+                         (declare (ignore shadow-status))
+                         (if (eq containing-package current-package)
+                             (maybe-push-entry symbol export-status)
+                             (maybe-push-entry symbol :inherited)))
+                       current-package)
+                      t)
+                     (t
+                      (parcl.low:map-symbol-entries
+                       client (lambda (symbol export-status shadow-status)
+                                (declare (ignore shadow-status))
+                                (maybe-push-entry symbol export-status))
+                       current-package)
+                      t)))
              (next-symbol ()
                (tagbody
                 try-next-symbol
@@ -43,16 +49,20 @@
                               (vector-pop symbol-entries)
                               current-package)))
                 try-next-package
-                  (when (next-package)
-                    (go try-next-symbol))
-                  nil)))
-      (next-package)
+                  (cond ((eq remaining-packages :end)
+                         (error 'iterator-at-end-error))
+                        ((next-package)
+                         (go try-next-symbol))
+                        (t
+                         nil)))))
       #'next-symbol)))
 
 (defun make-symbol-iterator (package-designators symbol-types)
   (let* ((client   *client*)
          (packages (package-list<-designator client package-designators)))
     (%make-symbol-iterator client packages symbol-types)))
+
+;;; Macro
 
 (defun expand-with-package-iterator
     (name package-list-form symbol-types declarations tags-and-statements)

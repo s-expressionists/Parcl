@@ -65,6 +65,7 @@
 
    #:unexport-forbidden-for-system-package-error
    #:symbol-to-unexport                 ; reader
+   #:iterator-at-end-error
    . #1#)
 
   ;; Variables

@@ -86,6 +86,17 @@
         (("P1" "BAR" :internal) ("P1" "BAZ" :external)
          ("P2" "FEZ" :internal) ("P2" "WOO" :external) ("P1" "BAZ" :inherited)))))))
 
+(test with-package-iterator.iterate-at-end
+  "Ensure that the iterator established by `with-package-iterator'
+signals an error when called after reaching the end."
+  ;; Invoking the iterator again after it has reached the end is
+  ;; undefined behavior but we guarantee that `iterator-at-end-error'
+  ;; is signaled.
+  (with-mock-package-constellation ((nil "P1"))
+    (parcl:with-package-iterator (i "P1" :internal)
+      (is (equal (values nil) (i)))
+      (signals parcl:iterator-at-end-error (i)))))
+
 ;;; TODO: test corner cases
 ;;; + list packages with repetition
 ;;; + list deleted packages
