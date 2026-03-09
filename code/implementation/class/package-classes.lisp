@@ -35,8 +35,7 @@
                    :type     (or string null)
                    :initform nil))
   (:default-initargs
-   ;: TODO: make a helper function or use alexandria
-   #1# (error "The initarg ~S is required by class ~S" '#1# 'package)))
+   #1# (alexandria:required-argument #1#)))
 
 (defmethod print-object ((object package) stream)
   (print-unreadable-object (object stream :type t :identity t)

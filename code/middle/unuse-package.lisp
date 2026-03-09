@@ -7,8 +7,8 @@
       (error 'package-is-not-used :package          package
                                   :package-to-unuse package-to-unuse))
     (setf (low:use-list client package)
-          (remove package-to-unuse use-list :count 1 :test #'eq)
-          (low:used-by-list client package-to-unuse)
-          (remove package (low:used-by-list client package-to-unuse) :count 1 :test #'eq)) ; TODO: a:removef
+          (remove package-to-unuse use-list :count 1 :test #'eq))
+    (alexandria:removef (low:used-by-list client package-to-unuse) package
+                        :count 1 :test #'eq)
     ;; TODO: return value
     ))

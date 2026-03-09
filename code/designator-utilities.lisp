@@ -67,9 +67,7 @@
   (unless (ecclesia:proper-list-p symbol-designator-list)
     (error 'type-error :datum         symbol-designator-list
                        :expected-type '(satisfies ecclesia:proper-list-p)))
-  (mapc (lambda (element)
-          (check-symbol client element))
-        symbol-designator-list)
+  (mapc (alexandria:curry #'check-symbol client) symbol-designator-list)
   symbol-designator-list)
 
 (defun symbol-list<-designator (client symbol-list-designator)
@@ -85,8 +83,7 @@
       (string<-designator client package-designator)))
 
 (defun package-list<-designator-list (client package-designator-list)
-  (mapcar (lambda (designator)
-            (find-undeleted-package-or-error client designator))
+  (mapcar (alexandria:curry #'find-undeleted-package-or-error client)
           package-designator-list))
 
 (defun package-list<-designator (client package-list-designator)

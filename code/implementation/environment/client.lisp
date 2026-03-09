@@ -4,4 +4,4 @@
   ((%environment :initarg  #1=:environment
                  :accessor environment))
   (:default-initargs
-   #1# (error "Required initarg ~S" #1#)))
+   #1# (alexandria:required-argument #1#)))

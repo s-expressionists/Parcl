@@ -4,7 +4,8 @@
   :author ("Robert Strandh"
            "Jan Moringen")
   :version (:read-file-form "data/version-string.sexp")
-  :depends-on ("parcl-core"
+  :depends-on ("alexandria"
+               "parcl-core"
                "s-expression-syntax"
                "ecclesia") ; TODO: temporary
   :components ((:module     "macros"

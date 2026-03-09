@@ -14,8 +14,9 @@
 ;;; definitions that the rest of the code will use.
 (defsystem "parcl-extrinsic/packages"
   :description "Internal helper system for extrinsic variant"
-  :components ((:file "packages-extrinsic"
-                :pathname "code/packages-extrinsic")))
+  :depends-on  ("alexandria")
+  :components  ((:file     "packages-extrinsic"
+                 :pathname "code/packages-extrinsic")))
 
 (defsystem "parcl-extrinsic/ansi-test"
   :description "Run ANSI tests on the extrinsic version of parcl"

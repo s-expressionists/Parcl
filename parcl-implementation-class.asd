@@ -6,7 +6,8 @@ with slots that holds all the information related to a package."
   :author ("Robert Strandh"
            "Jan Moringen")
   :version (:read-file-form "data/version-string.sexp")
-  :depends-on ("parcl-core")
+  :depends-on ("alexandria"
+               "parcl-core")
   :components ((:module     "implementation-class"
                 :pathname   "code/implementation/class"
                 :serial     t
