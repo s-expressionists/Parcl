@@ -1,5 +1,14 @@
 #+SEQ_TODO: TODO STARTED | DONE NOTPROVIDED
 
+* TODO Design [0/1]
+
+** TODO Should ~middle:unuse-package~ be ~middle:unuse-packages~?
+
+   Pros:
+   + Would match ~cl:unuse-package~ (despite the name)
+   + would remove the return value complication
+   + Maybe more efficient in some corner cases?
+
 * STARTED Features [0/10]
 
 ** STARTED Entries in the Packages dictionary [2/7]

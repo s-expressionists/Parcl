@@ -227,20 +227,23 @@ to adjust the usage relations between @var{package} and
 
 Change package relations such that @var{package} no longer uses
 @var{package-to-unuse} @emph{in the package system specified by
-@var{client}}.
+@var{client}} and return @emph{true} if @var{package} was changed and
+@code{nil} otherwise.
 
-@middleimplements{f,unuse-package}  It differs from the standard function in
-that it takes a single package to unuse as opposed to a list of packages
-to unuse. Client code for the standard function must then call this
-function multiple times.
+@middleimplements{f,unuse-package}  It differs from the standard function
+in that it takes a single package to unuse as opposed to a list of
+packages to unuse.  Client code for the standard function must then call
+this function multiple times.  Another difference which is related to
+operating on a single package is the return value which is @code{t} for
+the standard function and a Boolean for this function.  An
+implementation of the standard function which calls this function has no
+use for the return value.
 
 The default method checks whether the removed usage relation leads to
 conflicts, signals errors as needed and uses the accessors
 @genref{use-list,@lowpackage{}} and @genref{used-by-list,@lowpackage{}}
 to remove the usage relation between @var{package} and
 @var{package-to-unuse}.
-
-TODO: return value
 @end deffn
 
 @cindex package-local nicknames
