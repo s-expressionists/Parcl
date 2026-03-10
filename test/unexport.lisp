@@ -20,7 +20,7 @@
                          (is (eq symbol  (parcl:symbol-to-unexport    condition)))
                          (let ((restart (find-restart 'parcl::do-nothing)))
                            (is (not (null restart)))
-                           (is-false (alexandria:emptyp (princ-to-string restart)))
+                           (is-false (a:emptyp (princ-to-string restart)))
                            (invoke-restart restart)))))
                   (is (eq t (parcl:unexport symbol package)))
                   (unless signaled?

@@ -40,7 +40,7 @@
   ;; TODO: what if NAME matches a local nickname within the current package?
   (let ((existing-package (find-package-using-package
                            client parcl:*package* name))
-        (new-args         (alexandria:remove-from-plist
+        (new-args         (a:remove-from-plist
                            args :use :shadowing-import-from :import-from)))
     ;; Resolve string designators to symbol objects and package
     ;; objects for options that effectively operate on those
@@ -168,7 +168,7 @@
               :do (remhash symbol-name old-shadowed))
         ;; The remaining entries correspond to removed shadowing
         ;; names.  Report those as variance.
-        (alexandria:maphash-values
+        (a:maphash-values
          (lambda (symbol)
            (ecase (note-variance client existing-package :shadow :remove symbol)
              (:old) ; keep shadowing
@@ -199,7 +199,7 @@
                        (push symbol-name export-actions)))))
         ;; The remaining entries correspond to removed exports.
         ;; Report those as variance.
-        (alexandria:maphash-values
+        (a:maphash-values
          (lambda (symbol)
            (ecase (note-variance client existing-package :export :remove symbol)
              (:old) ; keep exporting

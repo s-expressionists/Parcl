@@ -74,15 +74,14 @@
                         (setf signaled? t)
                         (let ((restart (find-restart restart-name)))
                           (is-false (null restart))
-                          (is-false (alexandria:emptyp
-                                     (princ-to-string restart)))
+                          (is-false (a:emptyp (princ-to-string restart)))
                           (invoke-restart restart)))))
                  (is (eq package1 (parcl:add-package-local-nickname
                                    #1# package3 package1)))
                  (unless signaled?
                    (fiveam:fail "Failed to signal a ~S condition" '#2#))
                  (is (eq expected-nicknamed-package
-                         (alexandria:assoc-value
+                         (a:assoc-value
                           (parcl:package-local-nicknames package1) #1#))))))))
     (one-restart 'parcl::use-new-nicknamed-package  "baz")
     (one-restart 'parcl::keep-old-nicknamed-package "bar")))

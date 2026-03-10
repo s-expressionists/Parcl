@@ -51,7 +51,7 @@ during macro expansion."
 ;;;
 
 (when nil
-  (export (mapcar (alexandria:rcurry #'intern "CL") '("FLOOR" "ABS")) "CL")
+  #++(export (mapcar (a:rcurry #'intern "CL") '("FLOOR" "ABS")) "CL")
   #++(defpackage "bar"
     (:nicknames "bar-nick")
     (:nicknames "bar-nick2")

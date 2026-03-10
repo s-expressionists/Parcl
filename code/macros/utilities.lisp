@@ -47,9 +47,9 @@
 
 (defmacro define-macro (name (&rest lambda-list) ast-var &body body)
   (let ((cl-name              (cl:intern (string name) '#:common-lisp))
-        (macro-function-name  (alexandria:symbolicate name '#:-macro-function))
-        (expand-function-name (alexandria:symbolicate '#:expand- name)))
-    (alexandria:with-unique-names (modified-form)
+        (macro-function-name  (a:symbolicate name '#:-macro-function))
+        (expand-function-name (a:symbolicate '#:expand- name)))
+    (a:with-unique-names (modified-form)
       `(progn
          (defun ,expand-function-name (,ast-var)
            ,@body)

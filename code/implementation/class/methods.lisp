@@ -51,7 +51,7 @@
 (defmethod parcl.low:map-symbol-entries
     ((client package-class-mixin) (function t) (package package)
      &optional status)
-  (alexandria:maphash-values
+  (a:maphash-values
    (lambda (entry)
      (destructuring-bind (symbol . encoded-status) entry
        (multiple-value-bind (export-status shadow-status)

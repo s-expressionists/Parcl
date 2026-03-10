@@ -39,7 +39,8 @@
                      (lambda (existing container)
                        (declare (ignore container))
                        (let ((new-data (list* ,key new-value
-                                              (alexandria:remove-from-plist existing ,key))))
+                                              (a:remove-from-plist
+                                               existing ,key))))
                          (values new-data t)))))))))
   (define low:name                 :name)
   (define low:nicknames            :nicknames)

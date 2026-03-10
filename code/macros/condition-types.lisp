@@ -6,7 +6,7 @@
   ((%expression :initarg #1=:expression
                 :reader  expression))
   (:default-initargs
-   #1# (alexandria:required-argument #1#)))
+   #1# (a:required-argument #1#)))
 
 ;;; Conditions specific to `with-package-iterator'
 

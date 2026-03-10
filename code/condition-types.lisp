@@ -14,7 +14,7 @@ this system."))
   ((%feature :initarg #1=:feature
              :reader  feature))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is signaled when an attempt is made to use a non-standard
 feature such as package-local nicknames which the active package
@@ -31,8 +31,8 @@ system implementation does not support."))
    (%existing-package :initarg #2=:existing-package
                       :reader  existing-package))
   (:default-initargs
-   #1# (alexandria:required-argument #1#)
-   #2# (alexandria:required-argument #2#)))
+   #1# (a:required-argument #1#)
+   #2# (a:required-argument #2#)))
 
 (define-condition package-name-occupied-error (error
                                                package-name-occupied-condition)
@@ -46,7 +46,7 @@ already a name or nickname of a different package."))
   ((%package :initarg #1=:package
              :reader  package-error-package))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is the supertype for errors that refer a particular package.
 
@@ -81,9 +81,9 @@ operator that requires an undeleted package object."))
    (%value  :initarg #3=:value
             :reader  value))
   (:default-initargs
-   #1# (alexandria:required-argument #1#)
-   #2# (alexandria:required-argument #2#)
-   #3# (alexandria:required-argument #3#))
+   #1# (a:required-argument #1#)
+   #2# (a:required-argument #2#)
+   #3# (a:required-argument #3#))
   (:documentation
    "This error is signaled when a package is updated in a way that is not
 compatible with the current state of the package."))
@@ -95,7 +95,7 @@ compatible with the current state of the package."))
   ((%used-by :initarg #1=:used-by
              :reader  used-by))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is signaled when an attempt is made to delete a package
 that is in use by a different package."))
@@ -107,8 +107,8 @@ that is in use by a different package."))
    (%nicknamed-package :initarg #2=:nicknamed-package
                        :reader  nicknamed-package))
   (:default-initargs
-   #1# (alexandria:required-argument #1#)
-   #2# (alexandria:required-argument #2#))
+   #1# (a:required-argument #1#)
+   #2# (a:required-argument #2#))
   (:documentation
    "This error is signaled when an attempt is made to install a local
 nickname in a package in which that local nickname already refers to a
@@ -127,7 +127,7 @@ different package."))
                     :reader   package-labels
                     :initform '()))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is signaled when an operation would introduce one or more
 conflicts between different symbols with the same symbol-name in a
@@ -137,7 +137,7 @@ particular package."))
   ((%inaccessible-symbol :initarg #1=:inaccessible-symbol
                          :reader  inaccessible-symbol))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is signaled when an attempt is made to export or unexport a
 symbol from a package in which the symbol is not accessible."))
@@ -146,7 +146,7 @@ symbol from a package in which the symbol is not accessible."))
   ((%symbol-to-unexport :initarg #1=:symbol-to-unexport
                         :reader  symbol-to-unexport))
   (:default-initargs
-   #1# (alexandria:required-argument #1#))
+   #1# (a:required-argument #1#))
   (:documentation
    "This error is signaled when an attempt is made to unexport a symbol
 from one of the packages COMMON-LISP and KEYWORD."))

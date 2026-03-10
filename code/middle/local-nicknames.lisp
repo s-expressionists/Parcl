@@ -13,7 +13,7 @@
 (defmethod find-package-using-package ((client  local-nicknames-mixin)
                                        (package t)
                                        (name    string))
-  (alexandria:if-let ((nickname-entry (find name (low:local-nicknames client package)
+  (a:if-let ((nickname-entry (find name (low:local-nicknames client package)
                                             :key #'first :test #'string=)))
     (cdr nickname-entry)
     (find-package-using-package client nil name)))

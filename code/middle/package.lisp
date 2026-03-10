@@ -3,6 +3,7 @@
    #:cl)
 
   (:local-nicknames
+   (#:a   #:alexandria)
    (#:low #:parcl.low))
 
   ;; Symbol functions

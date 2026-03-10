@@ -20,6 +20,9 @@
   (:use
    #:common-lisp)
 
+  (:local-nicknames
+   (#:a #:alexandria))
+
   ;; Conditions
   (:shadow
    . #1=(#:package-error

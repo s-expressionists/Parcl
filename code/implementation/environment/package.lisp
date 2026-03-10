@@ -2,12 +2,13 @@
   (:use
    #:common-lisp)
 
-  (:shadow
-   #:package)
-
   (:local-nicknames
+   (#:a   #:alexandria)
    (#:low #:parcl.low)
    (#:env #:computation.environment))
+
+  (:shadow
+   #:package)
 
   (:export
    #:client))

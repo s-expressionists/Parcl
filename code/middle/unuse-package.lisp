@@ -8,7 +8,7 @@
                                   :package-to-unuse package-to-unuse))
     (setf (low:use-list client package)
           (remove package-to-unuse use-list :count 1 :test #'eq))
-    (alexandria:removef (low:used-by-list client package-to-unuse) package
-                        :count 1 :test #'eq)
+    (a:removef (low:used-by-list client package-to-unuse) package
+               :count 1 :test #'eq)
     ;; TODO: return value
     ))

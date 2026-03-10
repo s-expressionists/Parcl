@@ -193,7 +193,7 @@
       (loop for row in rows
             do (loop for cell in row
                      for i from 0
-                     do (alexandria:maxf (aref widths i) (length cell))))
+                     do (a:maxf (aref widths i) (length cell))))
       (loop for first? = t then nil
             for row in rows
             do (format stream "~:[~@:_~;~]~{~V@<~A~>~^  ~}"

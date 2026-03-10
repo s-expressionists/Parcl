@@ -2,6 +2,9 @@
   (:use
    #:common-lisp)
 
+  (:local-nicknames
+   (#:a #:alexandria))
+
   (:shadow
    #:package
    #:documentation)

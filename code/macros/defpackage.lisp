@@ -40,8 +40,8 @@
   (check-options-pairwise-disjoint
    (list :shadow                shadow)
    (list :intern                intern)
-   (list :import-from           (alexandria:mappend #'cdr import-from))
-   (list :shadowing-import-from (alexandria:mappend #'cdr shadowing-import-from)))
+   (list :import-from           (a:mappend #'cdr import-from))
+   (list :shadowing-import-from (a:mappend #'cdr shadowing-import-from)))
   (check-options-disjoint :intern intern :export export)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (parcl.middle:ensure-package

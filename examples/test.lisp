@@ -7,6 +7,7 @@
    #:cl)
 
   (:local-nicknames
+   (#:a   #:alexandria)
    (#:env #:computation.environment)))
 
 (cl:in-package #:parcl.examples.environment)
@@ -26,7 +27,7 @@
              :initform nil)))
 
 (defmethod print-object ((object my-symbol) stream)
-  (let ((package-name (alexandria:when-let ((package (%package object)))
+  (let ((package-name (a:when-let ((package (%package object)))
                         ;; TODO: should use the actual protocols
                         (parcl-low-environment::%name package)))
         (name         (%name object)))

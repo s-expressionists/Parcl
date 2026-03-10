@@ -35,7 +35,7 @@
                    :type     (or string null)
                    :initform nil))
   (:default-initargs
-   #1# (alexandria:required-argument #1#)))
+   #1# (a:required-argument #1#)))
 
 (defmethod print-object ((object package) stream)
   (print-unreadable-object (object stream :type t :identity t)

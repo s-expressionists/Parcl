@@ -60,7 +60,7 @@
                  (is (eq package2 (parcl:used-by condition)))
                  (let ((restart (find-restart '#2=parcl:unuse-package)))
                    (is-false (null restart))
-                   (is-false (alexandria:emptyp (princ-to-string restart)))
+                   (is-false (a:emptyp (princ-to-string restart)))
                    (invoke-restart restart)))))
           (is (eq t (parcl:delete-package package1))))
         (unless signaled?
