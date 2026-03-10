@@ -20,43 +20,44 @@
       (error 'parcl:using-keyword-package-forbidden-error :package package)))
   ;; With the KEYWORD package out of the picture, compute the changed
   ;; use-list, check for conflicts and commit the changes.
-  ;; TODO: return if packages-to-use is empty
   (let* ((old-uses           (low:use-list client package))
          (added-uses         (set-difference packages-to-use old-uses
                                              :test #'eq))
          (new-uses           (append added-uses old-uses))
          (accessible-symbols '())
          (conflicts          '()))
-    ;; Look for conflicts among the present symbols of PACKAGE and the
-    ;; symbols PACKAGE would inherit from all packages in NEW-USES.
-    (map-accessible-entries
-     client
-     (lambda (other-package symbol export-status shadow-status)
-       (declare (ignore export-status shadow-status))
-       (let* ((name      (low:symbol-name client symbol))
-              (info      (cons symbol other-package))
-              (collision (find name accessible-symbols
-                               :key #'car :test #'string=)))
-         (cond ((null collision)
-                (push (cons name (list info)) accessible-symbols))
-               (t
-                (unless (find symbol (cdr collision) :key #'car :test #'eq)
-                  (push info (cdr collision))
-                  (pushnew collision conflicts :test #'eq))))))
-     package new-uses)
-    ;; Signal conflicts.
-    (unless (null conflicts)
-      (error 'parcl::symbol-conflicts-error
-             :package        package
-             :conflicts      conflicts
-             :package-labels (nconc (list (cons package "using"))
-                                    (loop for package in old-uses
-                                          collect (cons package "old used"))
-                                    (loop for package in added-uses
-                                          collect (cons package "new used")))))
-    ;; Update use and used-by relations.
-    (setf (low:use-list client package) new-uses)
-    (loop for used-package in added-uses
-          do (assert (not (member package (low:used-by-list client used-package)))) ; TODO: remove later
-             (push package (low:used-by-list client used-package))))
+    (unless (null added-uses)
+      ;; Look for conflicts among the present symbols of PACKAGE and
+      ;; the symbols PACKAGE would inherit from all packages in
+      ;; NEW-USES.
+      (map-accessible-entries
+       client
+       (lambda (other-package symbol export-status shadow-status)
+         (declare (ignore export-status shadow-status))
+         (let* ((name      (low:symbol-name client symbol))
+                (info      (cons symbol other-package))
+                (collision (find name accessible-symbols
+                                 :key #'car :test #'string=)))
+           (cond ((null collision)
+                  (push (cons name (list info)) accessible-symbols))
+                 (t
+                  (unless (find symbol (cdr collision) :key #'car :test #'eq)
+                    (push info (cdr collision))
+                    (pushnew collision conflicts :test #'eq))))))
+       package new-uses)
+      ;; Signal conflicts.
+      (unless (null conflicts)
+        (error 'parcl:symbol-conflicts-error
+               :package        package
+               :conflicts      conflicts
+               :package-labels (nconc
+                                (list (cons package "using"))
+                                (loop :for package :in old-uses
+                                      :collect (cons package "old used"))
+                                (loop :for package :in added-uses
+                                      :collect (cons package "new used")))))
+      ;; Update use and used-by relations.
+      (setf (low:use-list client package) new-uses)
+      (loop :for used-package :in added-uses
+            :do (push package (low:used-by-list client used-package)))))
   t)

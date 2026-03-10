@@ -18,6 +18,21 @@
     (is (a:set-equal (list package1)
                      (parcl:package-used-by-list package2)))))
 
+(high-test use-package.use-self
+  "Ensure that `use-package' works properly when a package uses itself."
+  ;; The specification does not forbid this situation, all other
+  ;; implementations seem to allow it and I can't think of any bad
+  ;; consequences.
+  (with-mock-package-constellation ((package "foo"))
+    ;; Export a symbol so that there is a chance for spurious conflict
+    ;; errors.
+    (parcl:export (parcl:intern "baz" package) package)
+    ;; Use PACKAGE and check the resulting state.
+    (is (eq t (parcl:use-package package package)))
+    (is (a:set-equal (list package) (parcl:package-use-list package)))
+    (is (a:set-equal (list package)
+                     (parcl:package-used-by-list package)))))
+
 (high-test use-package.used-package-does-not-exist
   (with-mock-package-constellation ((package1 "foo"))
     (signals parcl:package-does-not-exist-error
