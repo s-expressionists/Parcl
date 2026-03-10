@@ -209,12 +209,11 @@ are supplied.  TODO mention order for removal changes
 
 @defgena{use-packages,@middlepackage{}} client package packages-to-use
 
-Change the state of the package system such that @var{package} uses the
-packages in the list @var{packages-to-use}.
+Change package relations such that @var{package} uses the packages
+@var{package-to-unuse} @emph{in the package system specified by
+@var{client}} and return @code{t}.
 
 @middleimplements{f,use-package}
-
-TODO: return value
 
 The default method checks whether the changed usage relations lead to
 conflicts, signals errors as needed and uses the accessors

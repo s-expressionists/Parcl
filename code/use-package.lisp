@@ -5,5 +5,4 @@
       (client
        (package         package-designator)
        (packages-to-use package-list-designator))
-    (parcl.middle:use-packages client package packages-to-use)
-    t))
+    (parcl.middle:use-packages client package packages-to-use)))

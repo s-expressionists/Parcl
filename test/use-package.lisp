@@ -5,15 +5,15 @@
 (high-test use-package.smoke
   ;; TODO: designators
   (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
-    (parcl:use-package package2 package1)
+    (is (eq t (parcl:use-package package2 package1)))
     (is (a:set-equal (list package2) (parcl:package-use-list package1)))
     (is (a:set-equal (list package1)
                      (parcl:package-used-by-list package2)))))
 
 (high-test use-package.idempotent
   (with-mock-package-constellation ((package1 "foo") (package2 "bar"))
-    (parcl:use-package package2 package1)
-    (finishes (parcl:use-package package2 package1))
+    (is (eq t (parcl:use-package package2 package1)))
+    (is (eq t (parcl:use-package package2 package1)))
     (is (a:set-equal (list package2) (parcl:package-use-list package1)))
     (is (a:set-equal (list package1)
                      (parcl:package-used-by-list package2)))))

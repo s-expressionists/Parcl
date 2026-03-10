@@ -49,5 +49,4 @@
     (loop for used-package in added-uses
           do (assert (not (member package (low:used-by-list client used-package)))) ; TODO: remove later
              (push package (low:used-by-list client used-package))))
-  ;; TODO: return value
-  )
+  t)
