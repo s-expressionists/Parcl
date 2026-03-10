@@ -103,7 +103,8 @@
                                                 :nicknames '("CL")))
           (common-lisp-user (parcl:make-package "COMMON-LISP-USER"
                                                 :nicknames '("CL-USER")))
-          (regression-test  (parcl:make-package "REGRESSION-TEST" :nicknames '("RT")))
+          (regression-test  (parcl:make-package "REGRESSION-TEST"
+                                                :nicknames '("RT")))
           (cl-test          (parcl:make-package "CL-TEST" :use '("CL"))))
       (cl:do-external-symbols (symbol '#:keyword)
         (let ((new-symbol (parcl:intern (cl:symbol-name symbol) keyword)))
@@ -116,12 +117,13 @@
         ;; Force recompilation of files so that the package system
         ;; gets put into the correct state.
         (setf cl-user::*compiled-and-loaded-files* '())
-        (apply #'ansi-test-harness:ansi-test :directory         ansi-directory
-                                             :expected-failures expected-failures
-                                             :extrinsic-symbols *extrinsic-symbols*
-                                             :tests             *tests*
-                                             :skip-sync         t
-                                             args)))))
+        (apply #'ansi-test-harness:ansi-test
+               :directory         ansi-directory
+               :expected-failures expected-failures
+               :extrinsic-symbols *extrinsic-symbols*
+               :tests             *tests*
+               :skip-sync         t
+               args)))))
 
 (test)
 

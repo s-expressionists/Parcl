@@ -65,8 +65,7 @@
   (let ((entry (gethash name (%entries package))))
     (if (null entry)
         (values nil nil nil)
-        (let ((symbol         (car entry))
-              (encoded-status (cdr entry)))
+        (destructuring-bind (symbol . encoded-status) entry
           (multiple-value-bind (export-status shadow-status)
               (decode-status encoded-status)
             (values symbol export-status shadow-status))))))
