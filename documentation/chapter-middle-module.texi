@@ -256,12 +256,12 @@ to remove the usage relation between @var{package} and
   local-nickname nicknamed-package
 
 TODO: mention extension?
-TODO: return value
 
 Change the @termrefl{package-local nickname,package-local nicknames}
 within @var{package} such that @var{local-nickname} refers to
 @var{nicknamed-package} @emph{in the package system specified by
-@var{client}}.
+@var{client}} and return @emph{true} if the @var{local-nickname} did not
+already exist in @var{package} and @code{nil} otherwise.
 
 @var{package} is a package object to which the pair of
 @var{local-nickname} and @var{nicknamed-package} is to be added.
