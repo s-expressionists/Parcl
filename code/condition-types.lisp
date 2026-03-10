@@ -90,6 +90,18 @@ compatible with the current state of the package."))
 
 ;;; Conditions related to package-package relations
 
+(define-condition using-keyword-package-forbidden-error (package-error)
+  ()
+  (:documentation
+   "This error is signaled when an attempt is made to use the keyword
+package in some other package."))
+
+(define-condition used-by-keyword-package-forbidden-error (package-error)
+  ()
+  (:documentation
+   "This error is signaled when an attempt is made to use some other
+package in the keyword package."))
+
 ;;; Signaled from `delete-package'
 (define-condition package-in-use-error (package-error)
   ((%used-by :initarg #1=:used-by

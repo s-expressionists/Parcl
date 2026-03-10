@@ -215,8 +215,14 @@ Change package relations such that @var{package} uses the packages
 
 @middleimplements{f,use-package}
 
-The default method checks whether the changed usage relations lead to
-conflicts, signals errors as needed and uses the accessors
+The default method checks whether @var{package} is the @code{KEYWORD}
+package and signals an error of type
+@classref{used-by-keyword-package-forbidden-error,@toppackage{}} if it
+is.  Similarly, if @var{packages-to-use} contains the @code{KEYWORD}
+package, the default method signals an error of type
+@classref{using-keyword-package-forbidden-error,@toppackage{}}.  After
+that, the default method checks whether the changed usage relations lead
+to conflicts, signals errors as needed and uses the accessors
 @genref{use-list,@lowpackage{}} and @genref{used-by-list,@lowpackage{}}
 to adjust the usage relations between @var{package} and
 @var{packages-to-use}.

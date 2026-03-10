@@ -109,6 +109,14 @@
             (aspect condition)
             (value condition)))
 
+  (define-reporter ((condition using-keyword-package-forbidden-error) stream)
+    (format stream "~@<Attempt to use the KEYWORD package in package ~A.~@:>"
+            (package-error-package condition)))
+
+  (define-reporter ((condition used-by-keyword-package-forbidden-error) stream)
+    (format stream "~@<Attempt to make the KEYWORD package use other ~
+                    packages.~@:>"))
+
   (define-reporter ((condition package-in-use-error) stream)
     (format stream "~@<The package ~A is used by package ~A.~@:>"
             (package-error-package condition)

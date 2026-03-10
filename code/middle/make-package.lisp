@@ -13,5 +13,10 @@
     (loop for name in (list* name nicknames)
           do (setf (low:find-package client name) result))
     (setf (low:nicknames client result) nicknames)
-    (use-packages client result used-packages)
+    ;; Checking for USED-PACKAGES being empty is an optimization but
+    ;; also necessary for creating the KEYWORD package since
+    ;; `use-packages' signals an error when called with the KEYWORD
+    ;; package.
+    (unless (null used-packages)
+      (use-packages client result used-packages))
     result))

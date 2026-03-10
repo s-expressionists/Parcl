@@ -10,6 +10,16 @@
 
 ;;; TODO: why does this low-level operator accept multiple packages at once? i guess it is more efficient this way
 (defmethod use-packages ((client t) (package t) (packages-to-use t))
+  ;; The specification states that neither PACKAGE nor any element of
+  ;; PACKAGES-TO-USE can be the KEYWORD package.
+  (let ((keyword-package (low:find-package client "KEYWORD")))
+    (when (eq package keyword-package)
+      (error 'parcl:used-by-keyword-package-forbidden-error
+             :package keyword-package))
+    (when (find keyword-package packages-to-use :test #'eq)
+      (error 'parcl:using-keyword-package-forbidden-error :package package)))
+  ;; With the KEYWORD package out of the picture, compute the changed
+  ;; use-list, check for conflicts and commit the changes.
   ;; TODO: return if packages-to-use is empty
   (let* ((old-uses           (low:use-list client package))
          (added-uses         (set-difference packages-to-use old-uses

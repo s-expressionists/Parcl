@@ -51,6 +51,10 @@
    #:package-has-been-deleted-error
 
    ;; Conditions related to package-package relations
+   #:using-keyword-package-forbidden-error
+
+   #:used-by-keyword-package-forbidden-error
+
    #:package-in-use-error
    #:used-by                            ; reader
 

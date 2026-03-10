@@ -64,6 +64,15 @@
 (defmethod middle:use-packages ((client          client)
                                 (package         package)
                                 (packages-to-use t))
+  ;; Implementations usually don't have specialized conditions we
+  ;; could recognize or don't signal errors at all.  So we repeat the
+  ;; generic logic here.
+  (let ((keyword-package (load-time-value (find-package "KEYWORD"))))
+    (when (eq package keyword-package)
+      (error 'parcl:used-by-keyword-package-forbidden-error
+             :package keyword-package))
+    (when (find keyword-package packages-to-use :test #'eq)
+      (error 'parcl:using-keyword-package-forbidden-error :package package)))
   (with-translated-name-conflict ((parcl:unintern #+sbcl sb-impl::take-new)
                                   (parcl:shadow   #+sbcl sb-impl::keep-old))
     (use-package packages-to-use package)))
