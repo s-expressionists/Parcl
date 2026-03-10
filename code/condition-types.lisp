@@ -24,7 +24,6 @@ system implementation does not support."))
 
 ;;; Package related conditions
 
-;;; TODO: package-name-condition?
 (define-condition package-name-occupied-condition (package-system-condition)
   ((%new-name         :initarg #1=:new-name
                       :reader  new-name)
@@ -32,7 +31,11 @@ system implementation does not support."))
                       :reader  existing-package))
   (:default-initargs
    #1# (a:required-argument #1#)
-   #2# (a:required-argument #2#)))
+   #2# (a:required-argument #2#))
+  (:documentation
+   "This condition type is a supertype for condition types which are
+signaled when a desired package name is already occupied by an
+existing package."))
 
 (define-condition package-name-occupied-error (error
                                                package-name-occupied-condition)
