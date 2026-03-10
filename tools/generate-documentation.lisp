@@ -69,7 +69,7 @@
               #6="High Environment Functions"))
 
     (ti:write-section #100# stream)
-    (do-symbols (symbol '#:parcl) ; TODO: only exported
+    (do-external-symbols (symbol '#:parcl)
       (when (eq (symbol-package symbol) (find-package '#:parcl))
        (a:when-let ((class (find-class symbol nil)))
          (when (subtypep class 'condition)
