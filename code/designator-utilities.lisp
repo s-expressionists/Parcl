@@ -111,8 +111,7 @@
                        (package-name-designator  'package-name<-designator)
                        (package-designator       'find-undeleted-package-or-error)
                        (package-designator/weak  'find-package-or-error)
-                       (package-designator/check 'check-package-designator)
-                       (package-designator-list  'package-list<-designator-list) ; TODO: are these all used?
+                       (package-designator-list  'package-list<-designator-list)
                        (package-list-designator  'package-list<-designator))))
                (if (consp names)
                    (destructuring-bind (variable-name parameter-name) names
