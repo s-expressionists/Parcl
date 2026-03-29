@@ -12,8 +12,7 @@
   (parcl.low:symbol-package *client* symbol))
 
 (defun make-symbol (name)
-  (with-client-and-resolved-designators (client
-                                         (name string-designator))
+  (with-resolved-designators (client (name string-designator))
     (parcl.low:make-symbol client name nil)))
 
 (defun keywordp (object)

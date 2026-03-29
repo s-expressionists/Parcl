@@ -2,7 +2,6 @@
 
 (defun remove-package-local-nickname
     (local-nickname &optional(package *package*))
-  (with-client-and-resolved-designators (client
-                                         (package        package-designator)
-                                         (local-nickname string-designator))
+  (with-resolved-designators (client (package        package-designator)
+                                     (local-nickname string-designator))
     (parcl.middle:remove-local-nickname client package local-nickname)))

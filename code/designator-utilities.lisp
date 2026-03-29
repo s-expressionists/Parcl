@@ -91,9 +91,7 @@
       (package-list<-designator-list client package-list-designator)
       (list (find-undeleted-package-or-error client package-list-designator))))
 
-;; TODO: shorter name? maybe with-<something>-bindings?
-(defmacro with-client-and-resolved-designators ((client-var &rest bindings)
-                                                &body body)
+(defmacro with-resolved-designators ((client-var &rest bindings) &body body)
   (flet ((expand-binding (binding)
            (destructuring-bind (names designator-type) binding
              (let ((resolver
