@@ -1,4 +1,6 @@
 SBCL ?= sbcl
+QUICKLISP_DIRECTORY ?= $${HOME}/quicklisp/
+ASDF_SOURCE_REGISTRY ?= (quote (:source-registry (:directory "'$$(pwd)/..'") :ignore-inherited-configuration))
 
 NAME = parcl
 
@@ -34,13 +36,15 @@ generated-chapter-high-module.texi: ../tools/texinfo.lisp                \
                                     ../tools/generate-documentation.lisp \
                                     ../code/condition-types.lisp
 	$(SBCL) --noinform --disable-debugger --no-sysinit --no-userinit \
-                --eval '(declaim (optimize (debug 3)))'                  \
-                --eval '(require :asdf)'                                 \
-                --eval '(asdf:load-system "alexandria")'                 \
-                --eval '(asdf:load-system "parcl-extrinsic")'            \
-                --eval '(asdf:load-system "parcl-core" :force t)'        \
-                $(foreach file,$^,--load "$(file)")                      \
-                --quit                                                   \
+                --load "$(QUICKLISP_DIRECTORY)/setup.lisp"                         \
+                --eval '(asdf:initialize-source-registry $(ASDF_SOURCE_REGISTRY))' \
+                --eval '(declaim (optimize (debug 3)))'                            \
+                --eval '(require :asdf)'                                           \
+                --eval '(asdf:load-system "alexandria")'                           \
+                --eval '(asdf:load-system "parcl-extrinsic")'                      \
+                --eval '(asdf:load-system "parcl-core" :force t)'                  \
+                $(foreach file,$^,--load "$(file)")                                \
+                --quit                                                             \
           > $@
 
 $(NAME).info: $(INPUTS) $(IMAGES)
@@ -55,7 +59,7 @@ $(NAME).html: $(INPUTS) $(IMAGES) $(wildcard *.css)
                  $(NAME).texi
 
 clean:
-	echo rm -f *.cp *.cps *.fn *.fns                 \
+	rm -f *.cp *.cps *.fn *.fns                 \
 	      *.aux *.log *.toc                     \
 	      $(NAME).info $(NAME).pdf $(NAME).html \
 	      $(GENERATED) $(IMAGES) $(PDFS)
