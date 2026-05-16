@@ -182,8 +182,16 @@
 
 (defmethod middle:rename-package
     ((client client) (package package) (new-name t) (new-nicknames t))
-  (with-translated-name-conflict ()
-    (rename-package package new-name new-nicknames)))
+  (handler-bind ((package-error
+                   (lambda (condition)
+                     ;; TODO: this is racy
+                     (let ((existing-package (find-package new-name)))
+                       (error 'parcl:new-name-occupied-error
+                              :package          (package-error-package condition)
+                              :new-name         new-name
+                              :existing-package existing-package)))))
+    (with-translated-name-conflict ()
+      (rename-package package new-name new-nicknames))))
 
 ;;;; Implementation of low module protocols
 
