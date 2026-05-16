@@ -57,6 +57,9 @@
 
 (high-test (add-package-local-nickname.error.refers-to-different-package
             :client-class mock-client-with-local-nicknames)
+  "Ensure that an attempt to add a local nickname that already refers to
+a different package signals the correct error and establishes the
+expected restarts."
   (flet ((one-restart (restart-name expected-nicknamed-package)
            (with-mock-package-constellation ((package1 "foo")
                                              (package2 "bar")
@@ -80,8 +83,14 @@
                                    #1# package3 package1)))
                  (unless signaled?
                    (fiveam:fail "Failed to signal a ~S condition" '#2#))
-                 (is (eq expected-nicknamed-package
+                 (let ((actual-nicknamed-package
                          (a:assoc-value
-                          (parcl:package-local-nicknames package1) #1#))))))))
+                          (parcl:package-local-nicknames package1) #1#)))
+                   (is (eq expected-nicknamed-package actual-nicknamed-package)
+                       "~@<After invoking the ~S restart, expected the package ~
+                        associated with the local nickname ~S to be ~S but it ~
+                        is ~S.~@:>"
+                       restart-name #1#
+                       expected-nicknamed-package actual-nicknamed-package)))))))
     (one-restart 'parcl::use-new-nicknamed-package  "baz")
     (one-restart 'parcl::keep-old-nicknamed-package "bar")))
