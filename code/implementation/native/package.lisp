@@ -86,7 +86,18 @@
                                       (package           package)
                                       (nickname          string)
                                       (nicknamed-package package))
-  #+sbcl (sb-ext:add-package-local-nickname nickname nicknamed-package package)
+  #+sbcl (handler-bind
+             ((package-error
+                (lambda (condition)
+                  (declare (ignore condition))
+                  (with-translated-restarts
+                      ((parcl::use-new-nicknamed-package  sb-impl::change-nick)
+                       (parcl::keep-old-nicknamed-package sb-impl::keep-old))
+                   (error 'parcl:nickname-refers-to-different-package-error
+                          :package           package
+                          :nickname          nickname
+                          :nicknamed-package nicknamed-package)))))
+           (sb-ext:add-package-local-nickname nickname nicknamed-package package))
   #+ccl  (ccl:add-package-local-nickname    nickname nicknamed-package package))
 
 (defmethod middle:remove-local-nickname ((client   client)
