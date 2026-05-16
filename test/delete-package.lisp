@@ -57,6 +57,7 @@
                (lambda (condition)
                  (setf signaled? t)
                  (is (eq package1 (parcl:package-error-package condition)))
+                 ;; TODO: shouldn't this be a list of users?
                  (is (eq package2 (parcl:used-by condition)))
                  (let ((restart (find-restart '#2=parcl:unuse-package)))
                    (is-false (null restart))

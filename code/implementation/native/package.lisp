@@ -178,7 +178,14 @@
     (make-package name :nicknames nicknames :use used-packages)))
 
 (defmethod middle:delete-package ((client client) (package package))
-  (delete-package package))
+  (handler-bind ((package-error
+                   (lambda (condition)
+                     (let* ((package (package-error-package condition))
+                            (user    (first (package-used-by-list package))))
+                       (with-translated-restarts ((parcl:unuse-package continue))
+                         (error 'parcl:package-in-use-error :package package
+                                                            :used-by user))))))
+    (delete-package package)))
 
 (defmethod middle:rename-package
     ((client client) (package package) (new-name t) (new-nicknames t))
