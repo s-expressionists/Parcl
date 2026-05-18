@@ -120,12 +120,20 @@
     (unintern symbol package)))
 
 (defmethod middle:export ((client client) (package package) (symbol t))
-  (with-translated-name-conflict ((parcl:unintern            #+sbcl sb-impl::take-new)
-                                  (parcl:shadow              #+sbcl sb-impl::keep-old)
-                                  (parcl::make-new-shadowing #+sbcl sb-impl::take-new)
-                                  (parcl::make-old-shadowing #+sbcl sb-impl::keep-old)
-                                  (parcl::do-not-export      abort))
-    (export symbol package)))
+  (handler-bind ((package-error
+                   (lambda (condition)
+                     (declare (ignore condition))
+                     (with-translated-restarts ((parcl:import         continue)
+                                                (parcl::do-not-export abort))
+                       (error 'parcl:symbol-is-not-accessible-error
+                              :package             package
+                              :inaccessible-symbol symbol)))))
+    (with-translated-name-conflict ((parcl:unintern            #+sbcl sb-impl::take-new)
+                                    (parcl:shadow              #+sbcl sb-impl::keep-old)
+                                    (parcl::make-new-shadowing #+sbcl sb-impl::take-new)
+                                    (parcl::make-old-shadowing #+sbcl sb-impl::keep-old)
+                                    (parcl::do-not-export      abort))
+      (export symbol package))))
 
 (defmethod middle:unexport ((client client) (package package) (symbol t))
   (flet ((unexport-forbidden (package symbol)
