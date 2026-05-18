@@ -51,7 +51,7 @@
 
 (defmacro with-translated-name-conflict ((&rest restart-mapping) &body body)
   `(restart-case
-       (handler-bind ((#+sbcl sb-ext:name-conflict
+       (handler-bind ((#+sbcl sb-ext:name-conflict ; TODO: pass the condition type as a parameter?
                        #+ccl  (or ccl::unintern-conflict-error
                                   ccl::use-package-conflict-error
                                   ccl::export-conflict-error)
