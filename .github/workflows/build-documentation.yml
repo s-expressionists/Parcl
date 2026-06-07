@@ -13,9 +13,17 @@ jobs:
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                   sbcl texlive texlive-latex-extra
+                   sbcl texlive texlive-latex-extra librsvg2-bin
 
       - uses: actions/checkout@v1
+
+      - name: Install quicklisp
+        run: |
+          wget https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --noinform                           \
+            --load quicklisp.lisp                   \
+            --eval '(quicklisp-quickstart:install)' \
+            --quit
 
       - name: Build documentation
         run: |
@@ -23,13 +31,13 @@ jobs:
           make
           mkdir -p build build/{pdf,info}
           cp index.html build/
-          #cp *.png      build/
+          cp *.png      build/
           cp parcl.html build/
           cp parcl.pdf  build/pdf/
           cp parcl.info build/info/
 
       - name: Create artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: documentation/build
 
