@@ -39,9 +39,7 @@ generated-chapter-high-module.texi: ../tools/texinfo.lisp                \
                 --load "$(QUICKLISP_DIRECTORY)/setup.lisp"                         \
                 --eval '(asdf:initialize-source-registry $(ASDF_SOURCE_REGISTRY))' \
                 --eval '(declaim (optimize (debug 3)))'                            \
-                --eval '(require :asdf)'                                           \
-                --eval '(asdf:load-system "alexandria")'                           \
-                --eval '(asdf:load-system "parcl-extrinsic")'                      \
+                --eval '(ql:quickload "parcl-extrinsic")'                          \
                 --eval '(asdf:load-system "parcl-core" :force t)'                  \
                 $(foreach file,$^,--load "$(file)")                                \
                 --quit                                                             \
